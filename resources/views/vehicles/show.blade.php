@@ -3,7 +3,7 @@
 
         <!-- Fil d'Ariane / Retour -->
         <div class="mb-6">
-            <a href="{{ route('home') }}" class="text-xs font-semibold text-gray-500 hover:text-gray-900 transition flex items-center space-x-1">
+            <a href="{{ route('home') }}#catalog" class="text-xs font-semibold text-gray-500 hover:text-gray-900 transition flex items-center space-x-1">
                 <span>&larr; Back to Collection</span>
             </a>
         </div>

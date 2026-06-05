@@ -22,4 +22,36 @@ class VehicleController extends Controller
     {
         return view('vehicles.show', compact('vehicle'));
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('q');
+
+        if (empty($query)) {
+            return response()->json([]);
+        }
+
+        $vehicles = Vehicle::where('title', 'LIKE', "%{$query}%")
+            ->orWhere('brand', 'LIKE', "%{$query}%")
+            ->take(5)
+            ->get()
+            ->map(function ($vehicle) {
+                // Récupérer la première URL du tableau JSON
+                $imageUrl = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=400'; // Par défaut
+
+                if (is_array($vehicle->images) && count($vehicle->images) > 0) {
+                    $imageUrl = $vehicle->images[0]; // C'est directement l'URL HTTP de ta BDD
+                }
+
+                return [
+                    'id' => $vehicle->id,
+                    'title' => $vehicle->brand . ' ' . $vehicle->model, // Exemple: Porsche 911 GT3
+                    'year' => $vehicle->year,
+                    'price' => $vehicle->price,
+                    'image' => $imageUrl,
+                ];
+            });
+
+        return response()->json($vehicles);
+    }
 }

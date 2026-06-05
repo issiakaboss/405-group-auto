@@ -1,14 +1,11 @@
 <x-guest-layout>
 
-    <!-- SECTION HERO (Première Capture d'écran) -->
     <div class="relative bg-gray-900 h-[550px] flex items-center justify-center overflow-hidden">
-        <!-- Image de fond sombre avec effet d'opacité -->
         <div class="absolute inset-0 bg-black opacity-60 z-10"></div>
         <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1920&q=80"
             alt="Luxury Car"
             class="absolute inset-0 w-full h-full object-cover">
 
-        <!-- Contenu textuel par-dessus la voiture -->
         <div class="relative max-w-4xl mx-auto text-center px-4 z-20 text-white">
             <h1 class="text-5xl md:text-6xl font-bold tracking-tight mb-4">
                 Drive Your Dreams
@@ -25,7 +22,6 @@
         </div>
     </div>
 
-    <!-- SECTION 1 : WELCOME & WHY CHOOSE US (cf captures 2 & 3) -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
         <div class="text-center max-w-3xl mx-auto mb-16">
             <h2 class="text-3xl font-bold text-gray-900 mb-4">Welcome to 405 Group Auto - Your Ultimate Luxury Automotive Destination</h2>
@@ -34,14 +30,12 @@
             </p>
         </div>
 
-        <!-- Les 4 cartes d'atouts -->
         <div class="text-center mb-6">
             <h3 class="text-2xl font-bold text-gray-900 mb-2">Why Choose 405 Group Auto?</h3>
             <p class="text-gray-400 text-xs">We provide premium automotive experiences with unmatched service and quality</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
-            <!-- Carte 1 -->
             <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center">
                 <div class="p-3 bg-gray-50 rounded-full mb-4">
                     <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -51,7 +45,6 @@
                 <h4 class="font-bold text-gray-900 text-sm mb-1">Premium Quality</h4>
                 <p class="text-gray-400 text-xs">Only the finest vehicles from trusted brands worldwide.</p>
             </div>
-            <!-- Carte 2 -->
             <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center">
                 <div class="p-3 bg-gray-50 rounded-full mb-4">
                     <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -61,7 +54,6 @@
                 <h4 class="font-bold text-gray-900 text-sm mb-1">Secured Logstics</h4>
                 <p class="text-gray-400 text-xs">Full tracking from US ports straight to your local destination.</p>
             </div>
-            <!-- Carte 3 -->
             <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center">
                 <div class="p-3 bg-gray-50 rounded-full mb-4">
                     <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -71,7 +63,6 @@
                 <h4 class="font-bold text-gray-900 text-sm mb-1">Expert Support</h4>
                 <p class="text-gray-400 text-xs">24/7 dedicated support team covering two continents.</p>
             </div>
-            <!-- Carte 4 -->
             <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center">
                 <div class="p-3 bg-gray-50 rounded-full mb-4">
                     <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -83,8 +74,7 @@
             </div>
         </div>
 
-        <!-- SECTION 2 : FEATURED CARS (BOUCLE CODEE - cf capture 4) -->
-        <div class="flex justify-between items-end mb-8">
+        <div class="flex justify-between items-end mb-8" id="catalog">
             <div>
                 <h3 class="text-2xl font-bold text-gray-900">Featured Cars</h3>
                 <p class="text-gray-400 text-xs">Hand-picked premium vehicles</p>
@@ -94,19 +84,15 @@
             </a>
         </div>
 
-        <!-- Grille de cartes dynamiques -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
             @foreach($featuredVehicles as $vehicle)
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
-                <!-- Zone Image + Badges -->
                 <div class="relative h-48 bg-gray-100 overflow-hidden">
                     <img src="{{ $vehicle->images[0] }}" alt="{{ $vehicle->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
 
-                    <!-- Badges d'état (cf capture Figma, coin supérieur gauche) -->
                     <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
                         <span class="bg-red-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md shadow">Featured</span>
 
-                        <!-- Personnalisation pour le grand frère : Couleur selon la dispo ! -->
                         @if($vehicle->status === 'available_local')
                         <span class="bg-green-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md shadow">Stock Afrique</span>
                         @elseif($vehicle->status === 'in_transit')
@@ -115,9 +101,17 @@
                         <span class="bg-amber-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md shadow">Stock USA</span>
                         @endif
                     </div>
+
+                    <form action="{{ route('favorites.toggle', $vehicle->id) }}" method="POST" class="absolute top-3 right-3 z-20">
+                        @csrf
+                        <button type="submit" class="p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-sm transition group/fav hover:bg-white text-gray-600 hover:text-red-500">
+                            <svg class="h-4 w-4 {{ isset(session()->get('favorites', [])[$vehicle->id]) ? 'fill-red-500 text-red-500' : 'fill-none stroke-current' }}" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                            </svg>
+                        </button>
+                    </form>
                 </div>
 
-                <!-- Zone Contenu -->
                 <div class="p-5">
                     <h4 class="font-bold text-gray-900 text-lg mb-1">{{ $vehicle->title }}</h4>
                     <p class="text-gray-400 text-xs mb-4">{{ $vehicle->year }} &bull; {{ number_format($vehicle->mileage) }} miles &bull; {{ $vehicle->location }}</p>
@@ -127,7 +121,6 @@
                         <span class="bg-gray-50 text-gray-500 text-[11px] font-medium px-2.5 py-1 rounded-md border border-gray-100">{{ $vehicle->category }}</span>
                     </div>
 
-                    <!-- Boutons d'action (Figma : View Details / Add to Cart) -->
                     <div class="grid grid-cols-2 gap-3">
                         <a href="{{ route('vehicles.show', $vehicle->id) }}" class="text-center py-2 text-xs font-semibold text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
                             View Details
@@ -144,7 +137,6 @@
             @endforeach
         </div>
 
-        <!-- --- SECTION 3 : LATEST MODELS (NOUVEAUTÉS) --- -->
         <div class="flex justify-between items-end mb-8 mt-12">
             <div>
                 <h3 class="text-2xl font-bold text-gray-900">Latest Models</h3>
@@ -155,15 +147,12 @@
             </a>
         </div>
 
-        <!-- Grille des derniers modèles -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             @foreach($latestVehicles as $vehicle)
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
-                <!-- Zone Image -->
                 <div class="relative h-48 bg-gray-100 overflow-hidden">
                     <img src="{{ $vehicle->images[0] }}" alt="{{ $vehicle->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
 
-                    <!-- Badges Logistiques -->
                     <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
                         <span class="bg-gray-900 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md shadow">New</span>
 
@@ -175,9 +164,17 @@
                         <span class="bg-amber-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md shadow">Stock USA</span>
                         @endif
                     </div>
+
+                    <form action="{{ route('favorites.toggle', $vehicle->id) }}" method="POST" class="absolute top-3 right-3 z-20">
+                        @csrf
+                        <button type="submit" class="p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-sm transition group/fav hover:bg-white text-gray-600 hover:text-red-500">
+                            <svg class="h-4 w-4 {{ isset(session()->get('favorites', [])[$vehicle->id]) ? 'fill-red-500 text-red-500' : 'fill-none stroke-current' }}" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                            </svg>
+                        </button>
+                    </form>
                 </div>
 
-                <!-- Zone Infos -->
                 <div class="p-5">
                     <h4 class="font-bold text-gray-900 text-lg mb-1">{{ $vehicle->title }}</h4>
                     <p class="text-gray-400 text-xs mb-4">{{ $vehicle->year }} &bull; {{ number_format($vehicle->mileage) }} miles &bull; {{ $vehicle->location }}</p>
@@ -187,12 +184,10 @@
                         <span class="bg-gray-50 text-gray-500 text-[11px] font-medium px-2.5 py-1 rounded-md border border-gray-100">{{ $vehicle->category }}</span>
                     </div>
 
-                    <!-- Actions -->
                     <div class="grid grid-cols-2 gap-3">
                         <a href="{{ route('vehicles.show', $vehicle->id) }}" class="text-center py-2 text-xs font-semibold text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
                             View Details
                         </a>
-
                         <form action="{{ route('cart.add', $vehicle->id) }}" method="POST">
                             @csrf
                             <button type="submit" class="w-full text-center py-2 text-[11px] font-semibold text-white bg-[#0F172A] rounded-lg hover:bg-gray-800 transition shadow-sm">
@@ -204,25 +199,19 @@
             </div>
             @endforeach
         </div>
-        <!-- --- FIN SECTION LATEST MODELS --- -->
 
-        <!-- --- SECTION 4 : COMPLETE COLLECTION (cf image_e2bbbf.jpg) --- -->
         <div class="text-center max-w-3xl mx-auto mb-12 mt-20">
             <h3 class="text-3xl font-bold text-gray-900 mb-2">Complete Collection</h3>
             <p class="text-gray-500 text-sm">Browse our entire inventory of {{ $allVehicles->count() }} luxury and performance vehicles</p>
         </div>
 
-        <!-- Grille à 4 colonnes comme sur la maquette -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20">
             @foreach($allVehicles as $vehicle)
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between group">
-
-                <!-- Zone Image + Badges Figma (Top gauche) -->
                 <div>
                     <div class="relative h-44 bg-gray-100 overflow-hidden">
                         <img src="{{ $vehicle->images[0] }}" alt="{{ $vehicle->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
 
-                        <!-- Badges superposés selon les attributs -->
                         <div class="absolute top-3 left-3 flex flex-wrap gap-1">
                             @if($vehicle->is_featured)
                             <span class="bg-[#E11D48] text-white text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-sm">Featured</span>
@@ -232,9 +221,17 @@
                             <span class="bg-gray-900 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-sm">New</span>
                             @endif
                         </div>
+
+                        <form action="{{ route('favorites.toggle', $vehicle->id) }}" method="POST" class="absolute top-3 right-3 z-20">
+                            @csrf
+                            <button type="submit" class="p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-sm transition group/fav hover:bg-white text-gray-600 hover:text-red-500">
+                                <svg class="h-4 w-4 {{ isset(session()->get('favorites', [])[$vehicle->id]) ? 'fill-red-500 text-red-500' : 'fill-none stroke-current' }}" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                </svg>
+                            </button>
+                        </form>
                     </div>
 
-                    <!-- Infos véhicule -->
                     <div class="p-4">
                         <h4 class="font-bold text-gray-900 text-sm mb-1 tracking-tight truncate">{{ $vehicle->title }}</h4>
                         <p class="text-gray-400 text-[11px] mb-3">{{ $vehicle->year }} &bull; {{ number_format($vehicle->mileage) }} miles</p>
@@ -246,7 +243,6 @@
                     </div>
                 </div>
 
-                <!-- Boutons d'actions originaux (View Details & Add to Cart) -->
                 <div class="p-4 pt-0 grid grid-cols-2 gap-2.5">
                     <a href="{{ route('vehicles.show', $vehicle->id) }}" class="text-center py-2 text-[11px] font-semibold text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
                         View Details
@@ -258,12 +254,8 @@
                         </button>
                     </form>
                 </div>
-
             </div>
             @endforeach
         </div>
-        <!-- --- FIN SECTION COMPLETE COLLECTION --- -->
     </div>
-
-
 </x-guest-layout>

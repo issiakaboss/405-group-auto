@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div x-data="{ testDriveModal: false, selectedVehicleId: null, selectedVehicleTitle: '' }" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 class="text-3xl font-bold text-gray-900 mb-8 tracking-tight">Shopping Cart</h1>
 
         @if(count($cart) > 0)
@@ -29,8 +29,15 @@
                                     <button type="button" class="text-gray-500 hover:text-gray-700 font-bold btn-plus">&plus;</button>
                                 </div>
 
-                                <a href="{{ route('vehicles.show', $item['id']) }}" class="text-xs font-medium px-3 py-1.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition shadow-sm">View Details</a>
-                                <button type="button" class="text-xs font-medium px-3 py-1.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition shadow-sm">Schedule Test Drive</button>
+                                <a href="{{ route('vehicles.show', $item['id'] ?? $id) }}" class="text-xs font-medium px-3 py-1.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition shadow-sm">View Details</a>
+                                
+                                <button 
+                                    type="button" 
+                                    @click="testDriveModal = true; selectedVehicleId = '{{ $item['id'] ?? $id }}'; selectedVehicleTitle = '{{ addslashes($item['title']) }}'"
+                                    class="text-xs font-medium px-3 py-1.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition shadow-sm"
+                                >
+                                    Schedule Test Drive
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -82,12 +89,12 @@
                     </div>
 
                     <div class="space-y-2 pt-2">
-                        <button type="button" class="w-full py-3 px-4 bg-[#0F172A] hover:bg-gray-800 text-white font-semibold text-xs rounded-xl shadow-sm transition tracking-wide flex items-center justify-center space-x-2">
+                        <a href="{{ route('checkout.index') }}" class="w-full py-3 px-4 bg-[#0F172A] hover:bg-gray-800 text-white font-semibold text-xs rounded-xl shadow-sm transition tracking-wide flex items-center justify-center space-x-2 text-center">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                             </svg>
                             <span>Proceed to Checkout</span>
-                        </button>
+                        </a>
                         <a href="{{ route('home') }}" class="w-full inline-block text-center py-2.5 text-xs font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm">Continue Shopping</a>
                     </div>
                     <p class="text-[10px] text-gray-400 text-center pt-1">Secure checkout with 256-bit SSL encryption</p>
@@ -110,11 +117,48 @@
             <a href="{{ route('home') }}" class="inline-flex text-xs font-semibold px-4 py-2 bg-[#0F172A] text-white rounded-xl hover:bg-gray-800 transition shadow-sm">Continue Shopping</a>
         </div>
         @endif
+
+        <div x-show="testDriveModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 p-4" x-cloak x-transition>
+            <div @click.away="testDriveModal = false" class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-100 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-gray-900 text-base">Schedule a Test Drive</h3>
+                    <button @click="testDriveModal = false" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
+                </div>
+                <p class="text-xs text-gray-400">Book a private slot to drive the <span class="font-bold text-gray-900" x-text="selectedVehicleTitle"></span>.</p>
+                
+                <form action="{{ route('testdrive.store') }}" method="POST" class="space-y-4 text-xs">
+                    @csrf
+                    <input type="hidden" name="vehicle_id" :value="selectedVehicleId">
+                    
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Preferred Date</label>
+                        <input type="date" name="date" required min="{{ date('Y-m-d', strtotime('+1 day')) }}" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 bg-gray-50 focus:bg-white focus:border-gray-400 transition outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Preferred Time Slot</label>
+                        <select name="time" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 bg-gray-50 focus:bg-white focus:border-gray-400 transition outline-none">
+                            <option value="09:00">09:00 AM - 11:00 AM</option>
+                            <option value="11:00">11:00 AM - 01:00 PM</option>
+                            <option value="14:00">02:00 PM - 04:00 PM</option>
+                            <option value="16:00">04:00 PM - 06:00 PM</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Special Requirements (Optional)</label>
+                        <textarea name="notes" placeholder="Specify if you require delivery to a specific venue or features review..." class="w-full border border-gray-200 rounded-xl px-3 py-2.5 bg-gray-50 focus:bg-white focus:border-gray-400 transition h-20 resize-none outline-none"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-[#0F172A] hover:bg-gray-800 text-white font-semibold rounded-xl transition mt-2 shadow tracking-wide">
+                        Confirm Appointment
+                    </button>
+                </form>
+            </div>
+        </div>
+
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Écouter tous les clics sur les boutons plus et moins
             document.querySelectorAll('.btn-plus, .btn-minus').forEach(button => {
                 button.addEventListener('click', function() {
                     const row = this.closest('.item-row');
@@ -122,15 +166,13 @@
                     const qtySpan = row.querySelector('.qty-value');
                     let currentQty = parseInt(qtySpan.textContent);
 
-                    // Déterminer la nouvelle quantité
                     if (this.classList.contains('btn-plus')) {
                         currentQty++;
                     } else if (this.classList.contains('btn-minus')) {
                         if (currentQty > 1) currentQty--;
-                        else return; // Bloquer si c'est déjà à 1
+                        else return;
                     }
 
-                    // Envoyer la mise à jour via Fetch API à Laravel
                     fetch(`/cart/update/${itemId}`, {
                             method: 'PATCH',
                             headers: {
@@ -144,13 +186,8 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                // 1. Mettre à jour le chiffre de la quantité sur l'interface
                                 qtySpan.textContent = currentQty;
-
-                                // 2. Mettre à jour le prix de la ligne du véhicule
                                 row.querySelector('.item-total-price').textContent = data.item_subtotal;
-
-                                // 3. Mettre à jour le bloc de résumé de commande à droite
                                 document.getElementById('summary-subtotal').textContent = data.subtotal;
                                 document.getElementById('summary-tax').textContent = data.sales_tax;
                                 document.getElementById('summary-total').textContent = data.total;
