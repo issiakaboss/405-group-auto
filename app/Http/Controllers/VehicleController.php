@@ -10,6 +10,12 @@ class VehicleController extends Controller
     // Affiche la page d'accueil
     public function index()
     {
+        dd([
+        'Base de données connectée' => config('database.connections.mysql.database'),
+        'Nombre total de véhicules'  => Vehicle::count(),
+        'Véhicules Featured (true)'  => Vehicle::where('is_featured', true)->count(),
+        'Véhicules Non-Featured'     => Vehicle::where('is_featured', false)->count(),
+    ]);
         $featuredVehicles = Vehicle::where('is_featured', true)->take(3)->get();
         $latestVehicles = Vehicle::where('is_featured', false)->orderBy('year', 'desc')->take(3)->get();
         $allVehicles = Vehicle::all();
