@@ -19,6 +19,19 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 EXPOSE 8000
 
+# 1. Installation de Node.js et NPM dans l'image
+RUN apt-get update && apt-get install -y nodejs npm
+
+# 2. Copie du projet et installation des dépendances PHP et JS
+COPY . /var/www
+WORKDIR /var/www
+
+RUN composer install --no-dev --optimize-autoloader
+RUN npm install
+
+# 3. Compilation des assets Vite
+RUN npm run build
+
 COPY entrypoint.sh /var/www/entrypoint.sh
 
 # 2. Rendre le script exécutable
