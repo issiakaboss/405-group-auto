@@ -19,4 +19,5 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 EXPOSE 8000
 
-CMD php artisan migrate:fresh --seed --force && php artisan serve --host=0.0.0.0 --port=8000
+RUN chmod +x /var/www/html/entrypoint.sh
+CMD ["/var/www/html/entrypoint.sh"]
