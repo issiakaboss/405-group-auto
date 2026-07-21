@@ -19,5 +19,10 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 EXPOSE 8000
 
-RUN chmod +x /var/www/html/entrypoint.sh
-CMD ["/var/www/html/entrypoint.sh"]
+COPY entrypoint.sh /var/www/entrypoint.sh
+
+# 2. Rendre le script exécutable
+RUN chmod +x /var/www/entrypoint.sh
+
+# 3. Définir le point d'entrée
+CMD ["/var/www/entrypoint.sh"]
