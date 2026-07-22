@@ -23,7 +23,7 @@
                     </div>
                     <p class="text-xs font-semibold text-gray-600">No active orders</p>
                     <p class="text-[11px] text-gray-400 mt-0.5">Your luxury car garage is currently empty.</p>
-                    <a href="{{ route('vehicles.index') }}" class="inline-block mt-4 px-4 py-2 bg-gray-900 text-white rounded-xl font-medium text-xs shadow-sm hover:bg-gray-800 transition tracking-wide uppercase">
+                    <a href="{{ route('home') }}" class="inline-block mt-4 px-4 py-2 bg-gray-900 text-white rounded-xl font-medium text-xs shadow-sm hover:bg-gray-800 transition tracking-wide uppercase">
                         Explore Showroom
                     </a>
                 </div>
