@@ -160,17 +160,29 @@
                 <div class="md:pl-12">
                     <h3 class="text-white font-semibold text-sm tracking-wider uppercase mb-4">Quick Links</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white transition">About Us</a></li>
-                        <li><a href="#" class="hover:text-white transition">Our Cars</a></li>
-                        <li><a href="#" class="hover:text-white transition">Financing</a></li>
+                        <li><a href="{{ route('about') }}" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="{{ route('home') }}#catalog" class="hover:text-white transition">Our Cars</a></li>
+                        <li><a href="{{ route('cart.index') }}" class="hover:text-white transition">Cart</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-white font-semibold text-sm tracking-wider uppercase mb-4">Contact</h3>
                     <ul class="space-y-2 text-sm">
-                        <li class="text-gray-300">123 Luxury Auto Boulevard<br>Beverly Hills, CA 90210</li>
-                        <li>Phone: (555) 123-4567</li>
-                        <li>Email: info@405groupauto.com</li>
+                        <li>405 AUTO GROUP LLC<br>4309 NW 39th St #B</li>
+                        <li>Oklahoma City, OK 73112</li>
+                        <li class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.824-1.435-5.161-3.772-6.596-6.596l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.75Z" />
+                            </svg>
+                            <span>(+1) 405-417-3665</span>
+                        </li>
+
+                        <li class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            <span>405autogroup@gmail.com</span>
+                        </li>
                     </ul>
                 </div>
             </div>
