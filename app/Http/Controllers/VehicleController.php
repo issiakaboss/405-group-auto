@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 
@@ -9,6 +10,7 @@ class VehicleController extends Controller
 {
     public function index()
     {
+        dd(User::all());
         $featuredVehicles = Vehicle::where('is_featured', true)->take(3)->get();
         $latestVehicles = Vehicle::where('is_featured', false)->orderBy('year', 'desc')->take(3)->get();
         $allVehicles = Vehicle::all();
