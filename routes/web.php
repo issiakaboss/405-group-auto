@@ -14,8 +14,9 @@ use App\Http\Controllers\Admin\VehicleController as AdminVehicleController;
 Route::get('/', [VehicleController::class, 'index'])->name('home');
 // Recherche AJAX pour l'autocomplétion de la Navbar
 Route::get('/vehicles/search', [VehicleController::class, 'search'])->name('vehicles.search');
+Route::get('/vehicles/filter', [VehicleController::class, 'filter'])->name('vehicles.filter');
 Route::get('/cars/{vehicle}', [VehicleController::class, 'show'])->name('vehicles.show');
-
+// Dans routes/web.php sous --- CATALOGUE & RECHERCHE ---
 // --- PANIER (CART) ---
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add/{vehicle}', [CartController::class, 'add'])->name('cart.add');

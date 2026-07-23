@@ -32,7 +32,7 @@
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
                             <tr class="bg-gray-50 text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-100">
-                                <th class="p-4">Order ID</th>
+                                <th class="p-4">Order Details</th>
                                 <th class="p-4">Date</th>
                                 <th class="p-4">Delivery Address</th>
                                 <th class="p-4">Phone</th>
@@ -44,29 +44,47 @@
                             @foreach($orders as $order)
                             <tr class="hover:bg-gray-50/40 transition">
                                 <td class="p-4 font-bold text-gray-900 tracking-wide">
-                                    #405-{{ $order->id }}
+                                    <div>#405-{{ $order->id }}</div>
+
+                                    {{-- Affichage des véhicules associés à la commande --}}
+                                    @if(isset($order->items) && $order->items->isNotEmpty())
+                                    <div class="mt-1 font-normal text-[11px] text-gray-500 space-y-0.5">
+                                        @foreach($order->items as $item)
+                                        <div>• {{ $item->title ?? 'Vehicle' }} (x{{ $item->quantity ?? 1 }})</div>
+                                        @endforeach
+                                    </div>
+                                    @endif
                                 </td>
-                                <td class="p-4 text-gray-500 whitespace-nowrap">
+                                <td class="p-4 text-gray-500 whitespace-nowrap align-top">
                                     {{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}
                                 </td>
-                                <td class="p-4 max-w-xs truncate font-medium text-gray-700" title="{{ $order->address }}">
+                                <td class="p-4 max-w-xs truncate font-medium text-gray-700 align-top" title="{{ $order->address }}">
                                     {{ $order->address }}
                                 </td>
-                                <td class="p-4 font-mono text-gray-500 whitespace-nowrap">
+                                <td class="p-4 font-mono text-gray-500 whitespace-nowrap align-top">
                                     {{ $order->phone }}
                                 </td>
-                                <td class="p-4 font-bold text-gray-900 text-sm whitespace-nowrap">
+                                <td class="p-4 font-bold text-gray-900 text-sm whitespace-nowrap align-top">
                                     ${{ number_format($order->total) }}
                                 </td>
-                                <td class="p-4 text-center whitespace-nowrap">
+                                <td class="p-4 text-center whitespace-nowrap align-top">
                                     @if($order->status === 'pending_review')
                                     <span class="inline-flex items-center px-2.5 py-1 text-[10px] font-semibold bg-amber-50 text-amber-700 rounded-full border border-amber-200/50 uppercase tracking-wider">
                                         <span class="w-1.5 h-1.5 bg-amber-500 rounded-full mr-1.5 animate-pulse"></span>
                                         Pending Review
                                     </span>
-                                    @else
+                                    @elseif($order->status === 'in_transit')
+                                    <span class="inline-flex items-center px-2.5 py-1 text-[10px] font-semibold bg-blue-50 text-blue-700 rounded-full border border-blue-200/50 uppercase tracking-wider">
+                                        <span class="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5 animate-pulse"></span>
+                                        In Transit
+                                    </span>
+                                    @elseif($order->status === 'completed')
                                     <span class="inline-flex items-center px-2.5 py-1 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200/50 uppercase tracking-wider">
                                         <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5"></span>
+                                        Completed
+                                    </span>
+                                    @else
+                                    <span class="inline-flex items-center px-2.5 py-1 text-[10px] font-semibold bg-gray-100 text-gray-700 rounded-full uppercase tracking-wider">
                                         {{ str_replace('_', ' ', $order->status) }}
                                     </span>
                                     @endif

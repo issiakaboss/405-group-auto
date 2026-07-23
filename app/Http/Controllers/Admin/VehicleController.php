@@ -99,28 +99,38 @@ class VehicleController extends Controller
             'category' => 'required|string',
             'location' => 'required|string',
             'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
+            'deleted_images' => 'nullable|array',
         ]);
 
-        // On récupère les anciennes images par défaut
-        $uploadedImages = $vehicle->images ?? [];
+        // 1. On récupère le tableau d'images actuelles
+        $currentImages = is_array($vehicle->images) ? $vehicle->images : [];
 
-        // Si l'utilisateur charge de NOUVELLES images
+        // 2. Traiter les suppressions ciblées
+        if ($request->has('deleted_images')) {
+            foreach ($request->deleted_images as $imageToDelete) {
+                $relativePath = str_replace('/storage/', '', $imageToDelete);
+                Storage::disk('public')->delete($relativePath);
+                $currentImages = array_filter($currentImages, function ($path) use ($imageToDelete) {
+                    return $path !== $imageToDelete;
+                });
+            }
+        }
+
+        // 3. Traiter les nouvelles images ajoutées (conservées + nouvelles)
         if ($request->hasFile('images')) {
-            // Ton initialisation de manager Intervention v3/v4 qui fonctionne bien maintenant
-            $manager = \Intervention\Image\ImageManager::usingDriver(\Intervention\Image\Drivers\Gd\Driver::class);
+            $manager = ImageManager::usingDriver(Driver::class);
 
             foreach ($request->file('images') as $file) {
                 $filename = uniqid() . '.webp';
                 $image = $manager->decodePath($file->getRealPath());
                 $image->scale(width: 800);
-                $encoded = $image->encodeUsingFormat(\Intervention\Image\Format::WEBP, quality: 80);
-
-                \Illuminate\Support\Facades\Storage::disk('public')->put('vehicles/' . $filename, $encoded->toString());
-                $uploadedImages[] = '/storage/vehicles/' . $filename;
+                $encoded = $image->encodeUsingFormat(Format::WEBP, quality: 80);
+                Storage::disk('public')->put('vehicles/' . $filename, $encoded->toString());
+                $currentImages[] = '/storage/vehicles/' . $filename;
             }
         }
 
-        // Mise à jour propre
+        // 4. Mise à jour en BDD avec réindexation propre du tableau d'images
         $vehicle->update([
             'brand' => $request->brand,
             'model' => $request->model,
@@ -132,7 +142,7 @@ class VehicleController extends Controller
             'fuel_type' => $request->fuel_type,
             'category' => $request->category,
             'location' => $request->location,
-            'images' => $uploadedImages, // 📂 On sauvegarde uniquement le tableau d'images ici !
+            'images' => array_values($currentImages),
         ]);
 
         return redirect()->route('admin.vehicles.index')->with('success', 'Vehicle updated successfully!');

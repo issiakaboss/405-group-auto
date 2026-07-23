@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Enums\VehicleStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -25,7 +26,7 @@ return new class extends Migration
            $table->json('images');
 
             // Notre touche spéciale Import/Export USA - Afrique
-            $table->enum('status', ['available_usa', 'in_transit', 'available_local'])->default('available_usa');
+          $table->string('status')->default(VehicleStatus::AVAILABLE_USA->value);
             $table->string('location'); 
 
             $table->boolean('is_featured')->default(false);
