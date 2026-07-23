@@ -16,7 +16,9 @@
 
                 <form action="{{ route('admin.vehicles.update', $vehicle->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6 text-xs font-semibold text-gray-700">
                     @csrf
-                    @method('PUT') <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    @method('PUT')
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-gray-600 mb-1.5">Brand / Constructeur</label>
                             <input type="text" name="brand" value="{{ $vehicle->brand }}" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-gray-950 focus:ring-0 transition text-xs" required>
@@ -83,12 +85,26 @@
                             </div>
                         </div>
 
-                        <div id="images-preview" class="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4">
-                            @if($vehicle->images)
-                            @foreach($vehicle->images as $img)
-                            <div class="relative rounded-xl overflow-hidden border border-gray-100 shadow-sm aspect-[16/10]">
-                                <img src="{{ $img }}" class="w-full h-full object-cover">
-                                <span class="absolute top-1 left-1 bg-gray-950/70 text-[8px] text-white px-1.5 py-0.5 rounded font-bold">Active</span>
+                        <!-- Champ caché pour stocker les images à supprimer -->
+                        <div id="deleted-images-container"></div>
+
+                        <!-- Galerie combinée -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4" id="existing-images-container">
+                            @if(is_array($vehicle->images))
+                            @foreach($vehicle->images as $index => $imagePath)
+                            <div class="relative group aspect-[16/10] bg-gray-50 border border-gray-100 rounded-xl overflow-hidden shadow-sm" id="image-card-{{ $index }}">
+                                <img src="{{ asset($imagePath) }}" class="w-full h-full object-cover">
+
+                                <span class="absolute top-1.5 left-1.5 bg-black/60 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
+                                    Active
+                                </span>
+
+                                <!-- Trigger de la Modal Personnalisée -->
+                                <button type="button"
+                                    onclick="requestImageDeletion('{{ $imagePath }}', 'image-card-{{ $index }}')"
+                                    class="absolute top-1.5 right-1.5 bg-red-500 hover:bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shadow-md transition duration-150 z-10">
+                                    ✕
+                                </button>
                             </div>
                             @endforeach
                             @endif
@@ -110,27 +126,108 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById('image-edit-input').addEventListener('change', function(event) {
-            const previewContainer = document.getElementById('images-preview');
-            // Optionnel : On efface l'aperçu de la BDD uniquement si l'user fait un choix de fichiers pour montrer ce qui va être envoyé
-            previewContainer.innerHTML = '';
+    <!-- Composant Modal de confirmation -->
+    <x-confirm-modal
+        name="delete-photo-modal"
+        title="Delete Photo?"
+        message="Are you sure you want to remove this photo from the vehicle profile?"
+        confirmText="Yes, Remove"
+        cancelText="Cancel"
+        type="danger" />
 
-            const files = event.target.files;
-            if (files) {
-                Array.from(files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const div = document.createElement('div');
-                        div.className = 'relative group aspect-[16/10] bg-gray-50 border border-gray-100 rounded-xl overflow-hidden shadow-sm';
-                        div.innerHTML = `
-                            <img src="${e.target.result}" class="w-full h-full object-cover">
-                            <div class="absolute top-1 left-1 bg-emerald-600 text-[8px] text-white px-1.5 py-0.5 rounded font-bold">New</div>
-                        `;
-                        previewContainer.appendChild(div);
-                    };
-                    reader.readAsDataURL(file);
-                });
+    <script>
+        let selectedFilesMap = new Map();
+        const editImageInput = document.getElementById('image-edit-input');
+        const imagesGrid = document.getElementById('existing-images-container');
+
+        editImageInput.addEventListener('change', function(event) {
+            const files = Array.from(event.target.files);
+            if (!files.length) return;
+
+            files.forEach(file => {
+                const fileKey = `${file.name}-${file.size}-${file.lastModified}`;
+                if (!selectedFilesMap.has(fileKey)) {
+                    selectedFilesMap.set(fileKey, file);
+                    renderNewImagePreview(file, fileKey);
+                }
+            });
+
+            syncInputFiles();
+        });
+
+        function renderNewImagePreview(file, fileKey) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'relative group aspect-[16/10] bg-gray-50 border-2 border-dashed border-indigo-500 rounded-xl overflow-hidden shadow-sm';
+                div.id = `new-img-${fileKey}`;
+
+                div.innerHTML = `
+                    <img src="${e.target.result}" class="w-full h-full object-cover">
+                    <span class="absolute top-1.5 left-1.5 bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
+                        New
+                    </span>
+                    <button type="button" 
+                            onclick="removeNewFile('${fileKey}')" 
+                            class="absolute top-1.5 right-1.5 bg-red-500 hover:bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shadow-md transition duration-150 z-10">
+                        ✕
+                    </button>
+                    <div class="absolute bottom-1 right-1 bg-black/50 text-white text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
+                        ${(file.size / 1024 / 1024).toFixed(1)} MB
+                    </div>
+                `;
+
+                imagesGrid.appendChild(div);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function removeNewFile(fileKey) {
+            selectedFilesMap.delete(fileKey);
+            const card = document.getElementById(`new-img-${fileKey}`);
+            if (card) {
+                card.remove();
+            }
+            syncInputFiles();
+        }
+
+        function syncInputFiles() {
+            const dt = new DataTransfer();
+            selectedFilesMap.forEach(file => dt.items.add(file));
+            editImageInput.files = dt.files;
+        }
+
+        // 1. Ouvre la modal Alpine.js en passant le chemin et l'id du DOM en payload
+        function requestImageDeletion(imagePath, cardId) {
+            window.dispatchEvent(new CustomEvent('open-modal-delete-photo-modal', {
+                detail: {
+                    imagePath,
+                    cardId
+                }
+            }));
+        }
+
+        // 2. Écoute la confirmation provenant de la modal
+        window.addEventListener('confirmed-delete-photo-modal', function(event) {
+            const {
+                imagePath,
+                cardId
+            } = event.detail;
+
+            // Ajouter à la liste des suppressions backend
+            const container = document.getElementById('deleted-images-container');
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'deleted_images[]';
+            input.value = imagePath;
+            container.appendChild(input);
+
+            // Supprimer la carte de l'interface
+            const card = document.getElementById(cardId);
+            if (card) {
+                card.remove();
             }
         });
     </script>

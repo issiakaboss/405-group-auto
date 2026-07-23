@@ -30,7 +30,7 @@
                 <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex items-center justify-between">
                     <div>
                         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Estimated Catalog Value</span>
-                        <span class="text-2xl font-black text-gray-950 mt-1 block">${{ number_format(App\Models\Vehicle::sum('price')) }}</span>
+                        <span class="text-2xl font-black text-gray-950 mt-1 block">${{ number_format($totalValue) }}</span>
                     </div>
                     <div class="h-10 w-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400">💰</div>
                 </div>
@@ -70,13 +70,19 @@
                                 </td>
                                 <td class="py-4 px-6">
                                     <div class="flex items-center justify-center space-x-3">
-                                        <a href="{{ route('admin.vehicles.edit', $vehicle->id) }}" class="text-blue-600 hover:text-blue-900 font-medium transition text-xs">
+                                        <a href="{{ route('admin.vehicles.edit', $vehicle) }}" class="text-blue-600 hover:text-blue-900 font-medium transition text-xs">
                                             Edit
                                         </a>
-                                        <form action="{{ route('admin.vehicles.destroy', $vehicle) }}" method="POST" onsubmit="return confirm('Etes-vous sûr de vouloir supprimer ce véhicule du catalogue ?');">
+
+                                        <!-- Formulaire de suppression avec ID dynamique -->
+                                        <form id="delete-form-{{ $vehicle->id }}" action="{{ route('admin.vehicles.destroy', $vehicle) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="p-2 text-red-500 hover:bg-red-50 rounded-xl transition" title="Delete Car">
+
+                                            <button type="button"
+                                                onclick="requestVehicleDeletion('{{ $vehicle->id }}')"
+                                                class="p-2 text-red-500 hover:bg-red-50 rounded-xl transition"
+                                                title="Delete Car">
                                                 🗑️ Delete
                                             </button>
                                         </form>
@@ -103,4 +109,32 @@
 
         </div>
     </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <x-confirm-modal
+        name="delete-vehicle-modal"
+        title="Delete Vehicle?"
+        message="Are you sure you want to delete this vehicle from the inventory? This action cannot be undone."
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
+        type="danger" />
+
+    <script>
+        function requestVehicleDeletion(vehicleId) {
+            window.dispatchEvent(new CustomEvent('open-modal-delete-vehicle-modal', {
+                detail: {
+                    vehicleId
+                }
+            }));
+        }
+
+        window.addEventListener('confirmed-delete-vehicle-modal', function(event) {
+            const vehicleId = event.detail.vehicleId;
+            const form = document.getElementById(`delete-form-${vehicleId}`);
+
+            if (form) {
+                form.submit();
+            }
+        });
+    </script>
 </x-app-layout>

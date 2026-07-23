@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', '405 Group Auto') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
@@ -68,26 +69,27 @@
 
                 <div class="flex items-center space-x-6 text-gray-700">
 
+                    <!-- FAVORITES LINK -->
                     <a href="{{ route('favorites.index') }}" class="hover:text-gray-900 transition relative">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                         </svg>
-                        @if(session('favorites') && count(session('favorites')) > 0)
-                        <span class="absolute -top-1.5 -right-1.5 bg-gray-900 text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center shadow">
-                            {{ count(session('favorites')) }}
+                        <span id="fav-badge" class="absolute -top-1.5 -right-1.5 bg-gray-900 text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center shadow {{ (!session('favorites') || count(session('favorites')) == 0) ? 'hidden' : '' }}">
+                            {{ session('favorites') ? count(session('favorites')) : 0 }}
                         </span>
-                        @endif
                     </a>
 
+                    <!-- CART LINK -->
                     <a href="{{ route('cart.index') }}" class="hover:text-gray-900 transition relative">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                         </svg>
-                        @if(session('cart') && count(session('cart')) > 0)
-                        <span class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center shadow">
-                            {{ count(session('cart')) }}
+                        @php
+                        $cartCount = session('cart') ? array_sum(array_column(session('cart'), 'quantity')) : 0;
+                        @endphp
+                        <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center shadow {{ $cartCount == 0 ? 'hidden' : '' }}">
+                            {{ $cartCount }}
                         </span>
-                        @endif
                     </a>
 
                     @auth

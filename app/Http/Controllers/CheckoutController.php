@@ -11,13 +11,14 @@ class CheckoutController extends Controller
     public function index()
     {
         $cart = session()->get('cart', []);
+        
         if (empty($cart)) {
-            return redirect()->route('cart.index')->with('success', 'Your cart is empty.');
+            return redirect()->route('cart.index')->with('warning', 'Your cart is empty.');
         }
 
-        $subtotal = array_sum(array_map(function ($item) {
-            return $item['price'] * ($item['quantity'] ?? 1);
-        }, $cart));
+        $subtotal = array_reduce($cart, function ($carry, $item) {
+            return $carry + ($item['price'] * ($item['quantity'] ?? 1));
+        }, 0);
 
         $tax = $subtotal * 0.08;
         $total = $subtotal + $tax;
@@ -28,28 +29,66 @@ class CheckoutController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'phone' => 'required',
-            'address' => 'required',
-            'city' => 'required',
-            'country' => 'required',
+            'phone'   => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+            'city'    => 'required|string|max:100',
+            'country' => 'required|string|max:100',
         ]);
 
         $cart = session()->get('cart', []);
-        // Écriture de la commande fictive
-        $orderId = DB::table('orders')->insertGetId([
-            'user_id' => Auth::user()?->id,
-            'total' => array_sum(array_column($cart, 'price')) * 1.08,
-            'status' => 'pending_review',
-            'address' => $request->address . ', ' . $request->city . ', ' . $request->country,
-            'phone' => $request->phone,
-            'created_at' => now()
-        ]);
 
-        // Vider la session et la base de données
-        session()->forget('cart');
-        DB::table('carts')->where('user_id', Auth::user()?->id)->delete();
+        if (empty($cart)) {
+            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+        }
 
-        return redirect()->route('checkout.success');
+        // Calcul exact du total avec quantité et taxe
+        $subtotal = array_reduce($cart, function ($carry, $item) {
+            return $carry + ($item['price'] * ($item['quantity'] ?? 1));
+        }, 0);
+        
+        $total = $subtotal * 1.08;
+
+        DB::beginTransaction();
+
+        try {
+            // 1. Insertion de la commande globale
+            $orderId = DB::table('orders')->insertGetId([
+                'user_id'    => Auth::id(),
+                'total'      => $total,
+                'status'     => 'pending_review',
+                'address'    => $request->address . ', ' . $request->city . ', ' . $request->country,
+                'phone'      => $request->phone,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // 2. Insertion des articles de la commande (Si la table order_items existe)
+            if (DB::getSchemaBuilder()->hasTable('order_items')) {
+                foreach ($cart as $id => $item) {
+                    DB::table('order_items')->insert([
+                        'order_id'   => $orderId,
+                        'vehicle_id' => $item['id'] ?? $id,
+                        'title'      => $item['title'] ?? 'Vehicle',
+                        'price'      => $item['price'],
+                        'quantity'   => $item['quantity'] ?? 1,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+
+            // 3. Vider la session et la BDD pour cet utilisateur
+            session()->forget('cart');
+            DB::table('carts')->where('user_id', Auth::id())->delete();
+
+            DB::commit();
+
+            return redirect()->route('checkout.success');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'An error occurred while processing your order. Please try again.');
+        }
     }
 
     public function success()
