@@ -14,6 +14,11 @@ class VehicleController extends Controller
         $latestVehicles = Vehicle::where('is_featured', false)->orderBy('year', 'desc')->take(3)->get();
         $allVehicles = Vehicle::all();
 
+        // Récupération des véhicules vendus ou livrés (via les commandes associées)
+        $recentlySoldVehicles = Vehicle::whereHas('orders', function ($query) {
+            $query->where('orders.status', \App\Models\Enums\OrderStatus::DELIVERED);
+        })->take(3)->get();
+
         // Récupérer les options uniques pour alimenter les listes déroulantes de filtres
         $brands = Vehicle::select('brand')->distinct()->pluck('brand');
         $categories = Vehicle::select('category')->distinct()->pluck('category');
@@ -21,12 +26,13 @@ class VehicleController extends Controller
         $transmissions = Vehicle::select('transmission')->whereNotNull('transmission')->distinct()->pluck('transmission');
 
         return view('welcome', compact(
-            'featuredVehicles', 
-            'latestVehicles', 
-            'allVehicles', 
-            'brands', 
-            'categories', 
-            'fuelTypes', 
+            'featuredVehicles',
+            'latestVehicles',
+            'recentlySoldVehicles', // <-- Ajouté ici
+            'allVehicles',
+            'brands',
+            'categories',
+            'fuelTypes',
             'transmissions'
         ));
     }
@@ -40,8 +46,8 @@ class VehicleController extends Controller
             $search = $request->get('search');
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'LIKE', "%{$search}%")
-                  ->orWhere('brand', 'LIKE', "%{$search}%")
-                  ->orWhere('model', 'LIKE', "%{$search}%");
+                    ->orWhere('brand', 'LIKE', "%{$search}%")
+                    ->orWhere('model', 'LIKE', "%{$search}%");
             });
         }
 

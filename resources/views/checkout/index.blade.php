@@ -3,6 +3,24 @@
         <h1 class="text-2xl font-bold mb-8">Secure Checkout</h1>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+            <!-- Affichage des erreurs / messages Flash -->
+            @if (session('error'))
+            <div class="mb-4 p-4 text-sm text-red-800 bg-red-100 rounded-lg">
+                {{ session('error') }}
+            </div>
+            @endif
+
+            @if ($errors->any())
+            <div class="mb-4 p-4 text-sm text-red-800 bg-red-100 rounded-lg">
+                <ul class="list-disc pl-5">
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
             <form action="{{ route('checkout.store') }}" method="POST" class="space-y-4 text-xs">
                 @csrf
                 <h3 class="font-bold text-sm border-b pb-2">Delivery & Import Documentation Info</h3>

@@ -107,6 +107,10 @@
                             <a href="{{ route('admin.vehicles.index') }}" class="block px-4 py-2 font-bold text-amber-600 hover:bg-amber-50 transition uppercase tracking-wider text-[10px]">
                                 ⚙️ Fleet Administration
                             </a>
+                            <!-- AJOUT ICI : -->
+                            <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2 font-bold text-amber-600 hover:bg-amber-50 transition uppercase tracking-wider text-[10px]">
+                                📦 Manage Orders
+                            </a>
                             <hr class="border-gray-100 my-1">
                             @endrole
 

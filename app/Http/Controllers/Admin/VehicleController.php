@@ -148,6 +148,17 @@ class VehicleController extends Controller
         return redirect()->route('admin.vehicles.index')->with('success', 'Vehicle updated successfully!');
     }
 
+    // Changement de statut rapide depuis la liste
+    public function updateStatus(Request $request, Vehicle $vehicle)
+    {
+        $request->validate([
+            'status' => 'required|string', // Ou validation via ton Enum
+        ]);
+        $vehicle->update(['status' => $request->status]);
+
+        return back()->with('success', 'Vehicle status updated successfully!');
+    }
+
     // Supprimer un véhicule
     public function destroy(Vehicle $vehicle)
     {

@@ -63,18 +63,12 @@
                             {{ $vehicle->category }}
                         </span>
 
-                        @php
-                        $status = $vehicle->status->value ?? $vehicle->status;
-                        @endphp
-
-                        @if($status === \App\Models\Enums\VehicleStatus::AVAILABLE_LOCAL->value || $status === 'available_local')
-                        <span class="bg-emerald-100 text-emerald-800 text-[10px] uppercase font-bold px-2.5 py-1 rounded-md border border-emerald-200">Stock Afrique</span>
-                        @elseif($status === \App\Models\Enums\VehicleStatus::IN_TRANSIT->value || $status === 'in_transit')
-                        <span class="bg-blue-100 text-blue-800 text-[10px] uppercase font-bold px-2.5 py-1 rounded-md border border-blue-200">En Mer</span>
-                        @elseif($status === \App\Models\Enums\VehicleStatus::SOLD->value || $status === 'sold')
+                        @if($vehicle->hasBeenSold())
                         <span class="bg-rose-100 text-rose-800 text-[10px] uppercase font-bold px-2.5 py-1 rounded-md border border-rose-200">Vendu</span>
                         @else
-                        <span class="bg-amber-100 text-amber-800 text-[10px] uppercase font-bold px-2.5 py-1 rounded-md border border-amber-200">Stock USA</span>
+                        <span class="{{ $vehicle->status->badgeColor() }} text-[10px] uppercase font-bold px-2.5 py-1 rounded-md shadow-sm">
+                            {{ $vehicle->status->label() }}
+                        </span>
                         @endif
                     </div>
 
@@ -112,39 +106,78 @@
                     </svg>
                     <div>
                         <span class="block text-[10px] uppercase tracking-wider text-gray-400 font-medium">Current Location</span>
-                        <span class="text-xs font-semibold text-gray-900">{{ $vehicle->location }}</span>
+                        <span class="text-xs font-semibold text-gray-900">{{ is_object($vehicle->location) ? $vehicle->location->label() : $vehicle->location }}</span>
                     </div>
                 </div>
 
-                <!-- Boutons d'action principaux (Panier + Favoris) -->
-                <div class="pt-4 flex items-center gap-3">
-                    @if($status === \App\Models\Enums\VehicleStatus::SOLD->value || $status === 'sold')
-                    <button disabled class="flex-1 py-3.5 px-6 font-semibold text-sm text-gray-400 bg-gray-200 rounded-xl cursor-not-allowed text-center">
-                        Vehicle Sold
-                    </button>
-                    @else
-                    <!-- Formulaire Ajout au Panier -->
-                    <form action="{{ route('cart.add', $vehicle->id) }}" method="POST" class="flex-1">
-                        @csrf
-                        <button type="submit" class="w-full py-3.5 px-6 font-semibold text-sm text-white bg-[#0F172A] rounded-xl hover:bg-gray-800 transition shadow-md flex items-center justify-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                            </svg>
-                            <span>Add to Cart</span>
-                        </button>
-                    </form>
+                <!-- BLOC D'ACTION PRINCIPAL -->
+                <div class="pt-4 space-y-3">
+
+                    {{-- Banner explicatif en mode "Order Similar" --}}
+                    @if(request('action') === 'order_similar')
+                    <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
+                        <svg class="w-5 h-5 text-amber-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                        </svg>
+                        <p class="text-xs text-amber-800 leading-relaxed">
+                            This unit is currently unavailable, but you can place an order for a <strong>similar unit</strong> with matching specifications.
+                        </p>
+                    </div>
                     @endif
 
-                    <!-- Formulaire Favoris -->
-                    @php $isFav = isset(session('favorites', [])[$vehicle->id]); @endphp
-                    <form action="{{ route('favorites.toggle', $vehicle->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="p-3.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition text-gray-600">
-                            <svg class="w-5 h-5 {{ $isFav ? 'fill-red-500 text-red-500' : 'fill-none stroke-current' }}" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                            </svg>
-                        </button>
-                    </form>
+                    <div class="flex items-center gap-3">
+                        @if(request('action') === 'order_similar')
+                        {{-- OPTION 1: Bouton de commande pour unité similaire --}}
+                        <form action="{{ route('cart.add-similar', $vehicle->id) }}" method="POST" class="flex-1">
+                            @csrf
+                            <button type="submit"
+                                class="w-full py-3.5 px-6 font-semibold text-sm text-white bg-amber-600 rounded-xl hover:bg-amber-700 transition shadow-md flex items-center justify-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                                <span>Order Similar Unit</span>
+                            </button>
+                        </form>
+
+                        @elseif($vehicle->hasBeenSold() || $vehicle->isCurrentlyReserved())
+                        {{-- Vehicle Vendu / Réservé sans paramètre order_similar --}}
+                        <div class="flex-1 flex gap-2">
+                            <button disabled
+                                class="flex-1 py-3.5 px-6 font-semibold text-sm text-gray-400 bg-gray-200 rounded-xl cursor-not-allowed text-center">
+                                Vehicle Sold / Reserved
+                            </button>
+                            <a href="{{ route('vehicles.show', ['vehicle' => $vehicle->id, 'action' => 'order_similar']) }}"
+                                class="py-3.5 px-4 font-semibold text-xs text-amber-800 bg-amber-100 hover:bg-amber-200 rounded-xl transition flex items-center justify-center text-center">
+                                Order Similar
+                            </a>
+                        </div>
+
+                        @else
+                        {{-- Vehicle disponible : Ajout standard au panier --}}
+                        <form action="{{ route('cart.add', $vehicle->id) }}" method="POST" class="flex-1">
+                            @csrf
+                            <button type="submit"
+                                class="w-full py-3.5 px-6 font-semibold text-sm text-white bg-[#0F172A] rounded-xl hover:bg-gray-800 transition shadow-md flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                                </svg>
+                                <span>Add to Cart</span>
+                            </button>
+                        </form>
+                        @endif
+
+                        {{-- Formulaire Favoris --}}
+                        @php $isFav = isset(session('favorites', [])[$vehicle->id]); @endphp
+                        <form action="{{ route('favorites.toggle', $vehicle->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="p-3.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition text-gray-600">
+                                <svg class="w-5 h-5 {{ $isFav ? 'fill-red-500 text-red-500' : 'fill-none stroke-current' }}" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+
                 </div>
 
             </div>

@@ -16,9 +16,18 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
+                    <!-- APPRÈS : Ajout du lien Orders -->
                     @role('admin')
-                    <x-nav-link :href="route('admin.vehicles.index')" :active="request()->routeIs('admin.*')">
+                    <x-nav-link :href="route('admin.vehicles.index')" :active="request()->routeIs('admin.vehicles.*')">
                         <span class="text-amber-600 font-bold">⚙️ {{ __('Admin Fleet') }}</span>
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
+                        <span class="text-amber-600 font-bold">📦 {{ __('Orders') }}</span>
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                        <span class="text-amber-500 font-bold">👥 Admins</span>
                     </x-nav-link>
                     @endrole
                 </div>

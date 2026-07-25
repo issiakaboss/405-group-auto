@@ -45,6 +45,7 @@
                                 <th class="py-4 px-6">Specs</th>
                                 <th class="py-4 px-6">Location</th>
                                 <th class="py-4 px-6 text-right">Price</th>
+                                <th class="py-4 px-6">Status</th>
                                 <th class="py-4 px-6 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -67,6 +68,18 @@
                                 </td>
                                 <td class="py-4 px-6 text-right font-bold text-gray-950 text-sm">
                                     ${{ number_format($vehicle->price) }}
+                                </td>
+                                <td class="py-4 px-6">
+                                    <form action="{{ route('admin.vehicles.update-status', $vehicle) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <select name="status" onchange="this.form.submit()"
+                                            class="text-xs font-bold rounded-lg border-gray-200 py-1 px-2 focus:ring-gray-950 focus:border-gray-950">
+                                            <option value="available" {{ $vehicle->status === 'available' ? 'selected' : '' }}>🟢 Available</option>
+                                            <option value="reserved" {{ $vehicle->status === 'reserved' ? 'selected' : '' }}>🟡 Reserved</option>
+                                            <option value="sold" {{ $vehicle->status === 'sold' ? 'selected' : '' }}>🔴 Sold</option>
+                                        </select>
+                                    </form>
                                 </td>
                                 <td class="py-4 px-6">
                                     <div class="flex items-center justify-center space-x-3">

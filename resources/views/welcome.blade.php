@@ -78,41 +78,40 @@
             </div>
         </div>
 
-        <!-- SECTION 1 DE VÉHICULES : FEATURED CARS -->
-        @if($featuredVehicles->isNotEmpty())
+        <!-- SECTION HISTORIQUE DES VENTES & LIVRAISONS (PREUVE SOCIALE) -->
+        @if(isset($recentlySoldVehicles) && $recentlySoldVehicles->isNotEmpty())
         <div class="flex justify-between items-end mb-8">
             <div>
-                <h3 class="text-2xl font-bold text-gray-900">Featured Cars</h3>
-                <p class="text-gray-400 text-xs">Hand-picked premium vehicles</p>
+                <h3 class="text-2xl font-bold text-gray-900">Recently Sold & Delivered</h3>
+                <p class="text-gray-400 text-xs">Explore models recently delivered to our clients. Order a similar unit today!</p>
             </div>
             <a href="#catalog" class="inline-flex items-center text-xs font-semibold px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-700 transition">
-                View All &rarr;
+                Browse Full Catalog &rarr;
             </a>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-            @foreach($featuredVehicles as $vehicle)
+            @foreach($recentlySoldVehicles as $vehicle)
             @php
-            $statusVal = $vehicle->status->value ?? $vehicle->status;
+            $statusEnum = $vehicle->status instanceof \App\Models\Enums\VehicleStatus
+            ? $vehicle->status
+            : \App\Models\Enums\VehicleStatus::tryFrom($vehicle->status);
             @endphp
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group opacity-95">
                 <div class="relative h-48 bg-gray-100 overflow-hidden">
                     <img src="{{ !empty($vehicle->images) ? $vehicle->images[0] : 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80' }}"
                         alt="{{ $vehicle->title }}"
                         class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
 
-                    <!-- Alignment avec \App\Models\Enums\VehicleStatus -->
-                    <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                        <span class="bg-red-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md shadow">Featured</span>
-
-                        @if($statusVal === \App\Models\Enums\VehicleStatus::AVAILABLE_LOCAL->value || $statusVal === 'available_local')
-                        <span class="bg-emerald-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md shadow">Stock Afrique</span>
-                        @elseif($statusVal === \App\Models\Enums\VehicleStatus::IN_TRANSIT->value || $statusVal === 'in_transit')
-                        <span class="bg-blue-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md shadow">En Mer</span>
-                        @elseif($statusVal === \App\Models\Enums\VehicleStatus::SOLD->value || $statusVal === 'sold')
-                        <span class="bg-rose-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md shadow">Vendu</span>
-                        @else
-                        <span class="bg-amber-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md shadow">Stock USA</span>
+                    <!-- Badges d'historique -->
+                    <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
+                        <span class="bg-red-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md shadow">
+                            Vendu / Livré
+                        </span>
+                        @if($statusEnum)
+                        <span class="{{ $statusEnum->badgeColor() }} text-[10px] uppercase font-bold px-2 py-0.5 rounded-md shadow">
+                            {{ $statusEnum->label() }}
+                        </span>
                         @endif
                     </div>
 
@@ -128,7 +127,20 @@
 
                 <div class="p-5">
                     <h4 class="font-bold text-gray-900 text-lg mb-1">{{ $vehicle->title }}</h4>
-                    <p class="text-gray-400 text-xs mb-4">{{ $vehicle->year }} &bull; {{ number_format($vehicle->mileage) }} miles &bull; {{ $vehicle->location }}</p>
+                    <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
+                        <span>{{ $vehicle->year }}</span>
+                        <span>&bull;</span>
+                        <span>{{ number_format($vehicle->mileage) }} mi</span>
+                    </div>
+
+                    {{-- Localisation / Position du véhicule --}}
+                    <div class="flex items-center text-xs text-gray-600 bg-gray-50 px-2.5 py-1.5 rounded-lg mb-4 w-max border border-gray-100">
+                        <svg class="w-3.5 h-3.5 text-gray-400 mr-1.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                        </svg>
+                        <span class="font-medium truncate max-w-[200px]">{{ $vehicle->location?->label() ?? 'USA Warehouse' }}</span>
+                    </div>
 
                     <div class="flex justify-between items-center mb-5">
                         <span class="text-xl font-bold text-gray-900">${{ number_format($vehicle->price) }}</span>
@@ -136,30 +148,23 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
-                        <a href="{{ route('vehicles.show', $vehicle->id) }}" class="text-center py-2 text-xs font-semibold text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                        {{-- Bouton View Details --}}
+                        <a href="{{ route('vehicles.show', $vehicle->id) }}"
+                            class="py-2 px-4 border border-gray-200 text-gray-700 font-semibold text-xs rounded-xl hover:bg-gray-50 transition">
                             View Details
                         </a>
 
-                        @if($statusVal === \App\Models\Enums\VehicleStatus::SOLD->value || $statusVal === 'sold')
-                        <button disabled class="w-full text-center py-2 text-[11px] font-semibold text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
-                            Sold
-                        </button>
-                        @else
-                        <form action="{{ route('cart.add', $vehicle->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="w-full text-center py-2 text-[11px] font-semibold text-white bg-[#0F172A] rounded-lg hover:bg-gray-800 transition shadow-sm">
-                                Add to Cart
-                            </button>
-                        </form>
-                        @endif
+                        {{-- Bouton Order Similar --}}
+                        <a href="{{ route('vehicles.show', ['vehicle' => $vehicle->id, 'action' => 'order_similar']) }}"
+                            class="py-2 px-4 bg-amber-100 text-amber-900 font-semibold text-xs rounded-xl hover:bg-amber-200 transition">
+                            Order Similar
+                        </a>
                     </div>
                 </div>
             </div>
             @endforeach
         </div>
         @endif
-
-        <!-- (La section "Latest Models" a été supprimée ici pour éviter les doublons avec le catalogue) -->
 
         <!-- SECTION COMPLETE COLLECTION WITH LIVE FILTERS -->
         <div class="text-center max-w-3xl mx-auto mb-8 mt-12" id="catalog">

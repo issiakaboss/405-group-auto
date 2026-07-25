@@ -26,8 +26,12 @@
                             <div class="space-y-2">
                                 <div>
                                     <h4 class="font-bold text-gray-900 text-lg">{{ $item['title'] }}</h4>
-                                    <p class="text-sm text-gray-400 font-medium">{{ $item['year'] }} &bull; {{ number_format((float)($item['mileage'] ?? 0)) }} miles</p>
-                                    <p class="text-xs text-gray-400 mt-0.5">{{ $item['category'] }} &bull; {{ $item['fuel_type'] ?? 'Gasoline' }}</p>
+                                    <p class="text-sm text-gray-400 font-medium">
+                                        {{ $item['year'] ?? '' }} &bull; {{ number_format((float)($item['mileage'] ?? 0)) }} miles
+                                    </p>
+                                    <p class="text-xs text-gray-400 mt-0.5">
+                                        {{ $item['category'] ?? '' }} &bull; {{ $item['fuel_type'] ?? 'Gasoline' }}
+                                    </p>
                                 </div>
 
                                 <div class="flex items-center space-x-4 pt-2">

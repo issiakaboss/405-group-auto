@@ -9,6 +9,8 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\VehicleController as AdminVehicleController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 
 // --- CATALOGUE & RECHERCHE ---
 Route::get('/', [VehicleController::class, 'index'])->name('home');
@@ -20,6 +22,7 @@ Route::get('/cars/{vehicle}', [VehicleController::class, 'show'])->name('vehicle
 // --- PANIER (CART) ---
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add/{vehicle}', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/add-similar/{vehicle}', [CartController::class, 'addSimilar'])->name('cart.add-similar');
 Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
 
@@ -61,9 +64,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // 🛠️ Les deux routes manquantes pour l'édition :
     Route::get('/vehicles/{vehicle}/edit', [AdminVehicleController::class, 'edit'])->name('vehicles.edit');
     Route::put('/vehicles/{vehicle}', [AdminVehicleController::class, 'update'])->name('vehicles.update');
-
-    // Route de suppression
+    Route::patch('/vehicles/{vehicle}/status', [AdminVehicleController::class, 'updateStatus'])->name('vehicles.update-status');
     Route::delete('/vehicles/{vehicle}', [AdminVehicleController::class, 'destroy'])->name('vehicles.destroy');
+
+    // --- GESTION DES COMMANDES (ORDERS) ---
+    Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
+
+    // Routes de gestion des Administrateurs
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
 });
 
 require __DIR__ . '/auth.php';

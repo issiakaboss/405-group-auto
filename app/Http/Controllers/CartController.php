@@ -116,4 +116,30 @@ class CartController extends Controller
 
         return redirect()->back()->with('success', 'Vehicle removed from cart');
     }
+
+    public function addSimilar(Request $request, Vehicle $vehicle)
+    {
+        $cart = session()->get('cart', []);
+
+        $cartKey = 'similar_' . $vehicle->id;
+
+        $cart[$cartKey] = [
+            'id'         => $cartKey, // Utiliser la clé unique
+            'vehicle_id' => $vehicle->id,
+            'title'      => 'Similar: ' . $vehicle->title,
+            'price'      => $vehicle->price,
+            'image'      => !empty($vehicle->images) ? $vehicle->images[0] : 'default.jpg',
+            'year'       => $vehicle->year,
+            'category'   => $vehicle->category,
+            'location'   => $vehicle->location,
+            'mileage'    => $vehicle->mileage,
+            'fuel_type'  => $vehicle->fuel_type,
+            'is_similar' => true,
+            'quantity'   => 1,
+        ];
+
+        session()->put('cart', $cart);
+
+        return redirect()->route('cart.index')->with('success', 'Similar vehicle request added to your cart!');
+    }
 }
