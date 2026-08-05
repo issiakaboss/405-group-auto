@@ -2,8 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Enums\OrderStatus;
+use App\Models\Enums\BodyStyle;
+use App\Models\Enums\FuelType;
+use App\Models\Enums\MoneyOwedStatus;
+use App\Models\Enums\Transmission;
+use App\Models\Enums\VehicleColor;
 use App\Models\Enums\VehicleLocation;
+use App\Models\Enums\VehicleType;
+use App\Models\Enums\OrderStatus;
 use App\Models\Enums\VehicleStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,47 +22,53 @@ class Vehicle extends Model
 
     protected $fillable = [
         'title',
-        'brand',
+        'make',
         'model',
+        'trim',
         'year',
         'mileage',
+        'vehicle_type',
+        'body_style',
+        'exterior_color',
+        'interior_color',
         'fuel_type',
         'transmission',
-        'category',
+        'has_clean_title',
+        'money_still_owed',
+        'location',
         'price',
+        'description',
         'images',
         'status',
-        'location',
         'is_featured',
     ];
 
     protected $casts = [
-        'status'      => VehicleStatus::class,
-        'location'    => VehicleLocation::class,
-        'images'      => 'array',
+        'vehicle_type' => VehicleType::class,
+        'body_style' => BodyStyle::class,
+        'exterior_color' => VehicleColor::class,
+        'interior_color' => VehicleColor::class,
+        'fuel_type' => FuelType::class,
+        'transmission' => Transmission::class,
+        'has_clean_title' => 'boolean',
+        'money_still_owed' => MoneyOwedStatus::class,
+        'status' => VehicleStatus::class,
+        'location' => VehicleLocation::class,
+        'images' => 'array',
         'is_featured' => 'boolean',
-        'price'       => 'decimal:2',
+        'price' => 'decimal:2',
     ];
 
-  /**
-     * Les éléments de commande associés à ce véhicule.
-     */
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    /**
-     * Les commandes associées à ce véhicule (via order_items).
-     */
     public function orders(): HasManyThrough
     {
         return $this->hasManyThrough(Order::class, OrderItem::class, 'vehicle_id', 'id', 'id', 'order_id');
     }
 
-    /**
-     * Vérifie si cette unité physique précise a une commande en cours.
-     */
     public function isCurrentlyReserved(): bool
     {
         return $this->orders()
@@ -68,13 +80,44 @@ class Vehicle extends Model
             ->exists();
     }
 
-    /**
-     * Vérifie si ce véhicule a été livré/vendu.
-     */
     public function hasBeenSold(): bool
     {
         return $this->orders()
             ->where('orders.status', OrderStatus::DELIVERED)
             ->exists();
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Vehicle $vehicle): void {
+            if (empty($vehicle->title)) {
+                $vehicle->title = trim(sprintf('%s %s %s', $vehicle->make, $vehicle->model, $vehicle->trim ?: ''));
+            }
+        });
+
+        static::updating(function (Vehicle $vehicle): void {
+            if (empty($vehicle->title)) {
+                $vehicle->title = trim(sprintf('%s %s %s', $vehicle->make, $vehicle->model, $vehicle->trim ?: ''));
+            }
+        });
+    }
+
+    public function getBrandAttribute(): ?string
+    {
+        return $this->attributes['make'] ?? null;
+    }
+
+    public function getCategoryAttribute(): ?string
+    {
+        return $this->attributes['vehicle_type'] ?? null;
+    }
+
+    public function getTitleAttribute($value): string
+    {
+        if (! empty($value)) {
+            return $value;
+        }
+
+        return trim(sprintf('%s %s %s', $this->make, $this->model, $this->trim ?: ''));
     }
 }

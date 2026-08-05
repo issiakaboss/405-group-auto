@@ -37,7 +37,7 @@ class SyncCartOnLogin
                     "price" => $car->price,
                     "image" => $images[0] ?? '',
                     "year" => $car->year,
-                    "category" => $car->category,
+                    "category" => $car->vehicle_type ?? $car->category ?? null,
                     "location" => $car->location,
                     "quantity" => $car->quantity,
                 ];

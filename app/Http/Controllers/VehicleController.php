@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Vehicle;
+use App\Models\VehicleRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class VehicleController extends Controller
 {
@@ -14,21 +15,19 @@ class VehicleController extends Controller
         $latestVehicles = Vehicle::where('is_featured', false)->orderBy('year', 'desc')->take(3)->get();
         $allVehicles = Vehicle::all();
 
-        // Récupération des véhicules vendus ou livrés (via les commandes associées)
         $recentlySoldVehicles = Vehicle::whereHas('orders', function ($query) {
             $query->where('orders.status', \App\Models\Enums\OrderStatus::DELIVERED);
         })->take(3)->get();
 
-        // Récupérer les options uniques pour alimenter les listes déroulantes de filtres
-        $brands = Vehicle::select('brand')->distinct()->pluck('brand');
-        $categories = Vehicle::select('category')->distinct()->pluck('category');
+        $brands = Vehicle::select('make')->distinct()->pluck('make');
+        $categories = Vehicle::select('vehicle_type')->distinct()->pluck('vehicle_type');
         $fuelTypes = Vehicle::select('fuel_type')->whereNotNull('fuel_type')->distinct()->pluck('fuel_type');
         $transmissions = Vehicle::select('transmission')->whereNotNull('transmission')->distinct()->pluck('transmission');
 
         return view('welcome', compact(
             'featuredVehicles',
             'latestVehicles',
-            'recentlySoldVehicles', // <-- Ajouté ici
+            'recentlySoldVehicles',
             'allVehicles',
             'brands',
             'categories',
@@ -41,37 +40,31 @@ class VehicleController extends Controller
     {
         $query = Vehicle::query();
 
-        // Filtrage par texte (recherche)
         if ($request->filled('search')) {
             $search = $request->get('search');
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'LIKE', "%{$search}%")
-                    ->orWhere('brand', 'LIKE', "%{$search}%")
+                    ->orWhere('make', 'LIKE', "%{$search}%")
                     ->orWhere('model', 'LIKE', "%{$search}%");
             });
         }
 
-        // Marque
         if ($request->filled('brand')) {
-            $query->where('brand', $request->get('brand'));
+            $query->where('make', $request->get('brand'));
         }
 
-        // Catégorie
         if ($request->filled('category')) {
-            $query->where('category', $request->get('category'));
+            $query->where('vehicle_type', $request->get('category'));
         }
 
-        // Type de carburant
         if ($request->filled('fuel_type')) {
             $query->where('fuel_type', $request->get('fuel_type'));
         }
 
-        // Transmission
         if ($request->filled('transmission')) {
             $query->where('transmission', $request->get('transmission'));
         }
 
-        // Prix min / max
         if ($request->filled('min_price')) {
             $query->where('price', '>=', $request->get('min_price'));
         }
@@ -79,7 +72,6 @@ class VehicleController extends Controller
             $query->where('price', '<=', $request->get('max_price'));
         }
 
-        // Tri (Sort)
         match ($request->get('sort')) {
             'price_asc' => $query->orderBy('price', 'asc'),
             'price_desc' => $query->orderBy('price', 'desc'),
@@ -93,7 +85,7 @@ class VehicleController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'html' => view('vehicles.partials.list', compact('vehicles'))->render(),
-                'count' => $vehicles->count()
+                'count' => $vehicles->count(),
             ]);
         }
 
@@ -114,7 +106,8 @@ class VehicleController extends Controller
         }
 
         $vehicles = Vehicle::where('title', 'LIKE', "%{$query}%")
-            ->orWhere('brand', 'LIKE', "%{$query}%")
+            ->orWhere('make', 'LIKE', "%{$query}%")
+            ->orWhere('model', 'LIKE', "%{$query}%")
             ->take(5)
             ->get()
             ->map(function ($vehicle) {
@@ -126,7 +119,7 @@ class VehicleController extends Controller
 
                 return [
                     'id' => $vehicle->id,
-                    'title' => $vehicle->brand . ' ' . $vehicle->model,
+                    'title' => $vehicle->make . ' ' . $vehicle->model,
                     'year' => $vehicle->year,
                     'price' => $vehicle->price,
                     'image' => $imageUrl,
@@ -134,5 +127,47 @@ class VehicleController extends Controller
             });
 
         return response()->json($vehicles);
+    }
+
+    public function storeRequest(Request $request)
+    {
+        $request->validate([
+            'make' => ['required', 'string', 'max:255'],
+            'model' => ['required', 'string', 'max:255'],
+            'year_min' => ['nullable', 'integer', 'min:1900'],
+            'year_max' => ['nullable', 'integer', 'min:1900'],
+            'max_budget' => ['nullable', 'integer', 'min:0'],
+            'desired_mileage' => ['nullable', 'integer', 'min:0'],
+            'body_style' => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'phone' => ['required', 'string', 'max:20'],
+            'zip_code' => ['required', 'string', 'max:20'],
+        ]);
+
+        VehicleRequest::create($request->all());
+
+        return redirect()->back()->with('success', 'Your custom vehicle request has been submitted successfully. Our team will be in touch soon.');
+    }
+
+    public function storeContact(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'phone' => ['required', 'string', 'max:20'],
+            'message' => ['required', 'string'],
+        ]);
+
+        DB::table('contacts')->insert([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'message' => $request->message,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Your message has been sent successfully.');
     }
 }

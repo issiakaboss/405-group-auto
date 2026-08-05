@@ -1,31 +1,30 @@
 <?php
-
 namespace App\Models\Enums;
 
 enum VehicleStatus: string
 {
-    case AVAILABLE_USA   = 'available_usa';
-    case AVAILABLE_LOCAL = 'available_local';
-    case IN_TRANSIT      = 'in_transit';
-    case ON_ORDER        = 'on_order'; // Disponible sur commande / importation
+    case AVAILABLE  = 'available';   // En stock aux USA (disponible à l'achat / commande)
+    case IN_TRANSIT = 'in_transit';  // En cours d'expédition maritime / douane
+    case RESERVED   = 'reserved';    // Acompte versé par un client
+    case SOLD       = 'sold';        // Vendu et livré
 
     public function label(): string
     {
         return match ($this) {
-            self::AVAILABLE_USA   => 'Stock USA',
-            self::AVAILABLE_LOCAL => 'Stock Local',
-            self::IN_TRANSIT      => 'En Transit',
-            self::ON_ORDER        => 'Sur Commande',
+            self::AVAILABLE  => 'Disponible (USA)',
+            self::IN_TRANSIT => 'En Transit',
+            self::RESERVED   => 'Réservé',
+            self::SOLD       => 'Vendu',
         };
     }
 
     public function badgeColor(): string
     {
         return match ($this) {
-            self::AVAILABLE_USA   => 'bg-amber-600 text-white',
-            self::AVAILABLE_LOCAL => 'bg-green-600 text-white',
-            self::IN_TRANSIT      => 'bg-blue-600 text-white',
-            self::ON_ORDER        => 'bg-purple-600 text-white',
+            self::AVAILABLE  => 'bg-emerald-600 text-white',
+            self::IN_TRANSIT => 'bg-blue-600 text-white',
+            self::RESERVED   => 'bg-amber-500 text-white',
+            self::SOLD       => 'bg-gray-600 text-white',
         };
     }
 }

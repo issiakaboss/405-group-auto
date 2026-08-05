@@ -10,11 +10,11 @@ class CartController extends Controller
     public function index()
     {
         $cart = session()->get('cart', []);
-
         $total = 0;
+
         foreach ($cart as $item) {
-            $quantity = $item['quantity'] ?? 1;
-            $total += $item['price'] * $quantity;
+            $quantity = (int) ($item['quantity'] ?? 1);
+            $total += (float) ($item['price'] ?? 0) * $quantity;
         }
 
         return view('cart.index', compact('cart', 'total'));
@@ -28,33 +28,32 @@ class CartController extends Controller
             $cart[$vehicle->id]['quantity']++;
         } else {
             $cart[$vehicle->id] = [
-                "id" => $vehicle->id,
-                "title" => $vehicle->title,
-                "price" => $vehicle->price,
-                "image" => $vehicle->images[0] ?? 'default.jpg',
-                "year" => $vehicle->year,
-                "category" => $vehicle->category,
-                "location" => $vehicle->location,
-                "mileage" => $vehicle->mileage,
-                "fuel_type" => $vehicle->fuel_type,
-                "quantity" => 1
+                'id' => $vehicle->id,
+                'vehicle_id' => $vehicle->id,
+                'title' => $vehicle->title,
+                'price' => $vehicle->price,
+                'image' => is_array($vehicle->images) && count($vehicle->images) > 0 ? $vehicle->images[0] : 'default.jpg',
+                'year' => $vehicle->year,
+                'category' => $vehicle->vehicle_type?->value ?? $vehicle->vehicle_type,
+                'location' => $vehicle->location,
+                'mileage' => $vehicle->mileage,
+                'fuel_type' => $vehicle->fuel_type?->value ?? $vehicle->fuel_type,
+                'quantity' => 1,
             ];
         }
 
         session()->put('cart', $cart);
-
-        // Calcul du nombre total d'articles (somme des quantités)
         $cartCount = array_sum(array_column($cart, 'quantity'));
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Vehicle added to cart successfully!',
-                'cart_count' => $cartCount
+                'message' => 'Vehicle added to your selection list successfully!',
+                'cart_count' => $cartCount,
             ]);
         }
 
-        return redirect()->back()->with('success', 'Vehicle added to cart successfully!');
+        return redirect()->back()->with('success', 'Vehicle added to your selection list successfully!');
     }
 
     public function update(Request $request, $id)
@@ -62,28 +61,22 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
 
         if (isset($cart[$id])) {
-            $quantity = max(1, intval($request->quantity));
+            $quantity = max(1, (int) $request->quantity);
             $cart[$id]['quantity'] = $quantity;
-
             session()->put('cart', $cart);
 
             $subtotal = 0;
             foreach ($cart as $item) {
-                $itemQty = $item['quantity'] ?? 1;
-                $subtotal += $item['price'] * $itemQty;
+                $subtotal += (float) ($item['price'] ?? 0) * ((int) ($item['quantity'] ?? 1));
             }
-
-            $salesTax = $subtotal * 0.08;
-            $total = $subtotal + $salesTax;
-            $cartCount = array_sum(array_column($cart, 'quantity'));
 
             return response()->json([
                 'success' => true,
                 'item_subtotal' => '$' . number_format($cart[$id]['price'] * $quantity),
-                'cart_count' => $cartCount,
+                'cart_count' => array_sum(array_column($cart, 'quantity')),
+                'raw_subtotal' => $subtotal,
                 'subtotal' => '$' . number_format($subtotal),
-                'sales_tax' => '$' . number_format($salesTax),
-                'total' => '$' . number_format($total)
+                'total' => '$' . number_format($subtotal),
             ]);
         }
 
@@ -100,46 +93,44 @@ class CartController extends Controller
         }
 
         $subtotal = array_reduce($cart, function ($carry, $item) {
-            return $carry + ($item['price'] * ($item['quantity'] ?? 1));
+            return $carry + ((float) ($item['price'] ?? 0) * ((int) ($item['quantity'] ?? 1)));
         }, 0);
 
-        // Retourner du JSON si la requête est AJAX / Expects JSON
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
-                'cart_count' => count($cart),
+                'cart_count' => array_sum(array_column($cart, 'quantity')),
                 'raw_subtotal' => $subtotal,
                 'subtotal' => number_format($subtotal),
-                'total' => number_format($subtotal * 1.08),
+                'total' => number_format($subtotal),
             ]);
         }
 
-        return redirect()->back()->with('success', 'Vehicle removed from cart');
+        return redirect()->back()->with('success', 'Vehicle removed from your selection list');
     }
 
     public function addSimilar(Request $request, Vehicle $vehicle)
     {
         $cart = session()->get('cart', []);
-
         $cartKey = 'similar_' . $vehicle->id;
 
         $cart[$cartKey] = [
-            'id'         => $cartKey, // Utiliser la clé unique
+            'id' => $cartKey,
             'vehicle_id' => $vehicle->id,
-            'title'      => 'Similar: ' . $vehicle->title,
-            'price'      => $vehicle->price,
-            'image'      => !empty($vehicle->images) ? $vehicle->images[0] : 'default.jpg',
-            'year'       => $vehicle->year,
-            'category'   => $vehicle->category,
-            'location'   => $vehicle->location,
-            'mileage'    => $vehicle->mileage,
-            'fuel_type'  => $vehicle->fuel_type,
+            'title' => 'Similar: ' . $vehicle->title,
+            'price' => $vehicle->price,
+            'image' => is_array($vehicle->images) && count($vehicle->images) > 0 ? $vehicle->images[0] : 'default.jpg',
+            'year' => $vehicle->year,
+            'category' => $vehicle->vehicle_type?->value ?? $vehicle->vehicle_type,
+            'location' => $vehicle->location,
+            'mileage' => $vehicle->mileage,
+            'fuel_type' => $vehicle->fuel_type?->value ?? $vehicle->fuel_type,
             'is_similar' => true,
-            'quantity'   => 1,
+            'quantity' => 1,
         ];
 
         session()->put('cart', $cart);
 
-        return redirect()->route('cart.index')->with('success', 'Similar vehicle request added to your cart!');
+        return redirect()->route('cart.index')->with('success', 'Similar vehicle request added to your selection list!');
     }
 }

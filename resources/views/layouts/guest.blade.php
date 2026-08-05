@@ -29,7 +29,6 @@
                     <a href="{{ route('home') }}" class="text-gray-500 hover:text-gray-900 transition">Home</a>
                     <a href="{{ route('home') }}#catalog" class="text-gray-500 hover:text-gray-900 transition">Cars</a>
                     <a href="{{ route('about') }}" class="text-gray-500 hover:text-gray-900 transition">About</a>
-                    <a href="{{ route('contact') }}" class="text-gray-500 hover:text-gray-900 transition">Contact</a>
                 </div>
 
                 <div class="hidden lg:block flex-1 max-w-xs mx-8 relative" @click-away="searchFocused = false">
@@ -107,9 +106,11 @@
                             <a href="{{ route('admin.vehicles.index') }}" class="block px-4 py-2 font-bold text-amber-600 hover:bg-amber-50 transition uppercase tracking-wider text-[10px]">
                                 ⚙️ Fleet Administration
                             </a>
-                            <!-- AJOUT ICI : -->
                             <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2 font-bold text-amber-600 hover:bg-amber-50 transition uppercase tracking-wider text-[10px]">
                                 📦 Manage Orders
+                            </a>
+                            <a href="{{ route('admin.vehicle-requests.index') }}" class="block px-4 py-2 font-bold text-amber-600 hover:bg-amber-50 transition uppercase tracking-wider text-[10px]">
+                                🚗 Vehicle Requests
                             </a>
                             <hr class="border-gray-100 my-1">
                             @endrole

@@ -1,81 +1,125 @@
 <x-guest-layout>
 
-    <!-- HERO BANNER -->
-    <div class="relative bg-gray-900 h-[550px] flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0 bg-black opacity-60 z-10"></div>
-        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1920&q=80"
-            alt="Luxury Car"
-            class="absolute inset-0 w-full h-full object-cover">
+    <!-- HERO BANNER SANS PHOTO DE FOND -->
+    <div class="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 py-16 px-4 flex items-center justify-center border-b border-slate-800">
+        <div class="max-w-4xl mx-auto text-center flex flex-col items-center">
 
-        <div class="relative max-w-4xl mx-auto text-center px-4 z-20 text-white">
-            <h1 class="text-5xl md:text-6xl font-bold tracking-tight mb-4">
+            <!-- Logo nettoyé en format SVG ou PNG transparent -->
+            <img src="{{ asset('images/logo.jpeg') }}"
+                alt="405 Auto Group Logo"
+                class="h-28 md:h-36 w-auto mb-6 object-contain drop-shadow-md">
+
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-3">
                 Drive Your Dreams
             </h1>
-            <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+
+            <p class="text-base md:text-lg text-gray-400 mb-8 max-w-xl">
                 Discover the finest collection of luxury and performance vehicles.
             </p>
-            <a href="#catalog" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-full bg-white text-gray-900 hover:bg-gray-100 transition shadow-lg">
-                Browse Cars
-                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+
+            <a href="#catalog" class="inline-flex items-center justify-center px-7 py-3 text-sm font-semibold rounded-full bg-white text-slate-900 hover:bg-amber-500 hover:text-white transition shadow-lg gap-2">
+                <span>Browse Cars</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
             </a>
         </div>
     </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-0">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
-
-        <!-- SECTION TEXTE INTRODUCTIF -->
-        <div class="text-center max-w-3xl mx-auto mb-16">
-            <h2 class="text-3xl font-bold text-gray-900 mb-4">Welcome to 405 Group Auto - Your Ultimate Luxury Automotive Destination</h2>
-            <p class="text-gray-500 text-sm leading-relaxed">
-                405 Group Auto is a premium e-commerce platform designed for luxury vehicle enthusiasts. We offer a curated selection of the world's most prestigious brands. Our complete shopping experience features detailed information for each vehicle, seamless contact tracking, and custom import structures from the USA directly to Africa.
+        <!-- SECTION COMPLETE COLLECTION WITH LIVE FILTERS -->
+        <div class="text-left  mx-auto mb-8 mt-12" id="catalog">
+            <h3 class="text-3xl font-bold text-gray-900 mb-2">Complete Collection</h3>
+            <p class="text-gray-500 text-sm">
+                Browse our inventory (<span id="vehicle-count">{{ $allVehicles->count() }}</span> vehicles found)
             </p>
         </div>
 
-        <!-- SECTION WHY CHOOSE US -->
-        <div class="text-center mb-6">
-            <h3 class="text-2xl font-bold text-gray-900 mb-2">Why Choose 405 Group Auto?</h3>
-            <p class="text-gray-400 text-xs">We provide premium automotive experiences with unmatched service and quality</p>
+        <!-- BARRE DE FILTRES DYNAMIQUE -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-10">
+            <form id="filter-form" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Search -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Search</label>
+                        <input type="text" name="search" id="filter-search" placeholder="Brand, model..."
+                            class="w-full text-xs rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <!-- Make / Brand -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Make</label>
+                        <select name="brand" class="w-full text-xs rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                            <option value="">All Makes</option>
+                            @foreach($brands as $brand)
+                            <option value="{{ $brand }}">{{ $brand }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Category -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Category</label>
+                        <select name="category" class="w-full text-xs rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                            <option value="">All Categories</option>
+                            @foreach($categories as $category)
+                            @php $categoryValue = is_object($category) ? $category->value : $category; @endphp
+                            <option value="{{ $categoryValue }}">{{ $categoryValue }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Sort By -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Sort By</label>
+                        <select name="sort" class="w-full text-xs rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                            <option value="latest">Newest First</option>
+                            <option value="price_asc">Price: Low to High</option>
+                            <option value="price_desc">Price: High to Low</option>
+                            <option value="year_desc">Year: Newest</option>
+                            <option value="mileage_asc">Mileage: Lowest</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-gray-100">
+                    <!-- Fuel Type -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Fuel Type</label>
+                        <select name="fuel_type" class="w-full text-xs rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                            <option value="">All Fuel Types</option>
+                            @foreach($fuelTypes as $fuel)
+                            @php $fuelValue = is_object($fuel) ? $fuel->value : $fuel; @endphp
+                            <option value="{{ $fuelValue }}">{{ ucfirst($fuelValue) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Transmission -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Transmission</label>
+                        <select name="transmission" class="w-full text-xs rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                            <option value="">All Transmissions</option>
+                            @foreach($transmissions as $trans)
+                            @php $transValue = is_object($trans) ? $trans->value : $trans; @endphp
+                            <option value="{{ $transValue }}">{{ ucfirst($transValue) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Reset Button -->
+                    <div class="flex items-end">
+                        <button type="button" id="reset-filters" class="w-full py-2 px-4 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
+                            Reset Filters
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center">
-                <div class="p-3 bg-gray-50 rounded-full mb-4">
-                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499c.172-.435.76-.435.932 0l2.309 4.671 5.127.745c.478.07.667.653.322.988l-3.715 3.62 1.13 5.086c.106.478-.396.84-.811.614L12 16.732l-4.507 2.372c-.415.226-.917-.136-.811-.614l1.13-5.087-3.715-3.62c-.345-.336-.156-.918.322-.988l5.128-.745 2.308-4.671Z" />
-                    </svg>
-                </div>
-                <h4 class="font-bold text-gray-900 text-sm mb-1">Premium Quality</h4>
-                <p class="text-gray-400 text-xs">Only the finest vehicles from trusted brands worldwide.</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center">
-                <div class="p-3 bg-gray-50 rounded-full mb-4">
-                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751A11.956 11.956 0 0 1 12 2.714Z" />
-                    </svg>
-                </div>
-                <h4 class="font-bold text-gray-900 text-sm mb-1">Secured Logistics</h4>
-                <p class="text-gray-400 text-xs">Full tracking from US ports straight to your local destination.</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center">
-                <div class="p-3 bg-gray-50 rounded-full mb-4">
-                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75v-4.5m0 4.5h4.5m-4.5 0 6-6m-3 18c-4.97 0-9-4.03-9-9s4.03-9 9-9 9 4.03 9 9-4.03 9-9 9Zm0-3.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z" />
-                    </svg>
-                </div>
-                <h4 class="font-bold text-gray-900 text-sm mb-1">Expert Support</h4>
-                <p class="text-gray-400 text-xs">24/7 dedicated support team covering two continents.</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center">
-                <div class="p-3 bg-gray-50 rounded-full mb-4">
-                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.504-1.125-1.125-1.125h-3.75c-.621 0-1.125.504-1.125 1.125v3.375m9 0h-9M9 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                    </svg>
-                </div>
-                <h4 class="font-bold text-gray-900 text-sm mb-1">Transatlantic Deals</h4>
-                <p class="text-gray-400 text-xs">Direct auction access in the USA with optimized localized pricing.</p>
-            </div>
+        <!-- GRILLE DE VÉHICULES (DYNAMIC TARGET) -->
+        <div id="vehicles-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 relative min-h-[200px]">
+            @include('vehicles.partials.list', ['vehicles' => $allVehicles])
         </div>
 
         <!-- SECTION HISTORIQUE DES VENTES & LIVRAISONS (PREUVE SOCIALE) -->
@@ -90,12 +134,17 @@
             </a>
         </div>
 
+
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
             @foreach($recentlySoldVehicles as $vehicle)
             @php
             $statusEnum = $vehicle->status instanceof \App\Models\Enums\VehicleStatus
             ? $vehicle->status
             : \App\Models\Enums\VehicleStatus::tryFrom($vehicle->status);
+            $locationLabel = $vehicle->location instanceof \App\Models\Enums\VehicleLocation
+            ? $vehicle->location->label()
+            : (\App\Models\Enums\VehicleLocation::tryFrom($vehicle->location)?->label() ?? 'USA Warehouse');
             @endphp
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group opacity-95">
                 <div class="relative h-48 bg-gray-100 overflow-hidden">
@@ -139,12 +188,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                         </svg>
-                        <span class="font-medium truncate max-w-[200px]">{{ $vehicle->location?->label() ?? 'USA Warehouse' }}</span>
+                        <span class="font-medium truncate max-w-[200px]">{{ $locationLabel }}</span>
                     </div>
 
-                    <div class="flex justify-between items-center mb-5">
+                    <div class="flex justify-between items-center mb-5 gap-2">
                         <span class="text-xl font-bold text-gray-900">${{ number_format($vehicle->price) }}</span>
-                        <span class="bg-gray-50 text-gray-500 text-[11px] font-medium px-2.5 py-1 rounded-md border border-gray-100">{{ $vehicle->category }}</span>
+                        <span class="bg-gray-50 text-gray-500 text-[11px] font-medium px-2.5 py-1 rounded-md border border-gray-100 max-w-[45%] truncate">
+                            {{ $vehicle->vehicle_type?->label() ?? $vehicle->vehicle_type?->value ?? $vehicle->vehicle_type ?? $vehicle->category }}
+                        </span>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
@@ -166,96 +217,70 @@
         </div>
         @endif
 
-        <!-- SECTION COMPLETE COLLECTION WITH LIVE FILTERS -->
-        <div class="text-center max-w-3xl mx-auto mb-8 mt-12" id="catalog">
-            <h3 class="text-3xl font-bold text-gray-900 mb-2">Complete Collection</h3>
-            <p class="text-gray-500 text-sm">
-                Browse our inventory (<span id="vehicle-count">{{ $allVehicles->count() }}</span> vehicles found)
-            </p>
-        </div>
+        <!-- a custom car configuration -->
+        <div id="vehicle-request" class="mt-8 bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+            <div class="mb-6">
+                <p class="text-xs uppercase tracking-[0.24em] text-amber-700 font-semibold mb-2">Vehicle Finder</p>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Request a Custom Vehicle</h2>
+                <p class="text-sm text-gray-600">Tell us what you are looking for and we will help you source the right fit from our market.</p>
+            </div>
 
-        <!-- BARRE DE FILTRES DYNAMIQUE -->
-        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-10">
-            <form id="filter-form" class="space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Search -->
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Search</label>
-                        <input type="text" name="search" id="filter-search" placeholder="Brand, model..."
-                            class="w-full text-xs rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
-                    </div>
-
-                    <!-- Make / Brand -->
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Make</label>
-                        <select name="brand" class="w-full text-xs rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
-                            <option value="">All Makes</option>
-                            @foreach($brands as $brand)
-                            <option value="{{ $brand }}">{{ $brand }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Category -->
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Category</label>
-                        <select name="category" class="w-full text-xs rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
-                            <option value="">All Categories</option>
-                            @foreach($categories as $category)
-                            <option value="{{ $category }}">{{ $category }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Sort By -->
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Sort By</label>
-                        <select name="sort" class="w-full text-xs rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
-                            <option value="latest">Newest First</option>
-                            <option value="price_asc">Price: Low to High</option>
-                            <option value="price_desc">Price: High to Low</option>
-                            <option value="year_desc">Year: Newest</option>
-                            <option value="mileage_asc">Mileage: Lowest</option>
-                        </select>
-                    </div>
+            <form action="{{ route('vehicles.request') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @csrf
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Make</label>
+                    <input type="text" name="make" required class="w-full rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
                 </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-gray-100">
-                    <!-- Fuel Type -->
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Fuel Type</label>
-                        <select name="fuel_type" class="w-full text-xs rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
-                            <option value="">All Fuel Types</option>
-                            @foreach($fuelTypes as $fuel)
-                            <option value="{{ $fuel }}">{{ ucfirst($fuel) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Transmission -->
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Transmission</label>
-                        <select name="transmission" class="w-full text-xs rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
-                            <option value="">All Transmissions</option>
-                            @foreach($transmissions as $trans)
-                            <option value="{{ $trans }}">{{ ucfirst($trans) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Reset Button -->
-                    <div class="flex items-end">
-                        <button type="button" id="reset-filters" class="w-full py-2 px-4 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
-                            Reset Filters
-                        </button>
-                    </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Model</label>
+                    <input type="text" name="model" required class="w-full rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Year Min</label>
+                    <input type="number" name="year_min" min="1900" class="w-full rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Year Max</label>
+                    <input type="number" name="year_max" min="1900" class="w-full rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Max Budget ($)</label>
+                    <input type="number" name="max_budget" min="0" class="w-full rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Desired Mileage</label>
+                    <input type="number" name="desired_mileage" min="0" class="w-full rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Body Style</label>
+                    <input type="text" name="body_style" class="w-full rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Your Name</label>
+                    <input type="text" name="name" required class="w-full rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Email</label>
+                    <input type="email" name="email" required class="w-full rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Phone</label>
+                    <input type="text" name="phone" required class="w-full rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">ZIP Code</label>
+                    <input type="text" name="zip_code" required class="w-full rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Notes</label>
+                    <textarea name="notes" rows="4" class="w-full rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-900"></textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <button type="submit" class="w-full py-3 px-4 bg-[#0F172A] text-white rounded-xl font-semibold text-sm hover:bg-gray-800 transition">
+                        Submit Vehicle Request
+                    </button>
                 </div>
             </form>
-        </div>
-
-        <!-- GRILLE DE VÉHICULES (DYNAMIC TARGET) -->
-        <div id="vehicles-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 relative min-h-[200px]">
-            @include('vehicles.partials.list', ['vehicles' => $allVehicles])
         </div>
 
     </div>

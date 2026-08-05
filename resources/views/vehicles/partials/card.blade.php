@@ -2,45 +2,50 @@
     <div>
         {{-- Image & Badges --}}
         <div class="relative h-44 bg-gray-100 overflow-hidden">
-            <img src="{{ is_array($vehicle->images) && count($vehicle->images) > 0 ? $vehicle->images[0] : 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=400' }}" 
-                 alt="{{ $vehicle->title }}" 
-                 class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            <img src="{{ is_array($vehicle->images) && count($vehicle->images) > 0 ? $vehicle->images[0] : 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=400' }}"
+                alt="{{ $vehicle->title }}"
+                class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
 
             {{-- Badges de statut & tags --}}
             <div class="absolute top-3 left-3 flex flex-wrap gap-1 z-10">
                 {{-- Badge de statut dynamique via l'Enum --}}
                 @php
-                    $statusEnum = $vehicle->status instanceof \App\Models\Enums\VehicleStatus 
-                        ? $vehicle->status 
-                        : \App\Models\Enums\VehicleStatus::tryFrom($vehicle->status);
+                $statusEnum = $vehicle->status instanceof \App\Models\Enums\VehicleStatus
+                ? $vehicle->status
+                : \App\Models\Enums\VehicleStatus::tryFrom($vehicle->status);
                 @endphp
 
                 @if($statusEnum)
-                    <span class="{{ $statusEnum->badgeColor() }} text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-sm">
-                        {{ $statusEnum->label() }}
-                    </span>
+                <span class="{{ $statusEnum->badgeColor() }} text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-sm">
+                    {{ $statusEnum->label() }}
+                </span>
                 @endif
 
                 @if($vehicle->is_featured)
-                    <span class="bg-[#E11D48] text-white text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-sm">Featured</span>
+                <span class="bg-[#E11D48] text-white text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-sm">Featured</span>
                 @endif
 
                 @if($vehicle->year >= 2025)
-                    <span class="bg-gray-900 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-sm">New</span>
+                <span class="bg-gray-900 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-sm">New</span>
                 @endif
             </div>
 
             {{-- Badge de localisation (flottant sur l'image) --}}
+            @php
+            $locationLabel = $vehicle->location instanceof \App\Models\Enums\VehicleLocation
+            ? $vehicle->location->label()
+            : (\App\Models\Enums\VehicleLocation::tryFrom($vehicle->location)?->label() ?? 'USA Warehouse');
+            @endphp
             @if(!empty($vehicle->location))
-                <div class="absolute bottom-2.5 left-3 z-10">
-                    <span class="inline-flex items-center gap-1 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2 py-0.5 rounded-md shadow">
-                        <svg class="w-3 h-3 text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                        </svg>
-                        <span class="truncate max-w-[150px]">{{ $vehicle->location?->label() }}</span>
-                    </span>
-                </div>
+            <div class="absolute bottom-2.5 left-3 z-10">
+                <span class="inline-flex items-center gap-1 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2 py-0.5 rounded-md shadow">
+                    <svg class="w-3 h-3 text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                    </svg>
+                    <span class="truncate max-w-[150px]">{{ $locationLabel }}</span>
+                </span>
+            </div>
             @endif
 
             {{-- Bouton Favoris --}}
@@ -64,14 +69,16 @@
                 <span>&bull;</span>
                 <span>{{ number_format($vehicle->mileage) }} mi</span>
                 @if(!empty($vehicle->location))
-                    <span>&bull;</span>
-                    <span class="text-gray-600 font-medium truncate">{{ $vehicle->location->label() }}</span>
+                <span>&bull;</span>
+                <span class="text-gray-600 font-medium truncate">{{ $locationLabel }}</span>
                 @endif
             </div>
 
-            <div class="flex justify-between items-center mb-1">
+            <div class="flex justify-between items-center mb-1 gap-2">
                 <span class="text-base font-bold text-gray-900">${{ number_format($vehicle->price) }}</span>
-                <span class="bg-gray-50 text-gray-500 text-[10px] font-medium px-2 py-0.5 rounded border border-gray-100">{{ $vehicle->category }}</span>
+                <span class="bg-gray-50 text-gray-500 text-[10px] font-medium px-2 py-0.5 rounded border border-gray-100 max-w-[45%] truncate">
+                    {{ $vehicle->vehicle_type?->label() ?? $vehicle->vehicle_type?->value ?? $vehicle->vehicle_type ?? $vehicle->category }}
+                </span>
             </div>
         </div>
     </div>
@@ -83,17 +90,17 @@
         </a>
 
         @if($vehicle->hasBeenSold() || $vehicle->isCurrentlyReserved())
-            <a href="{{ route('vehicles.show', ['vehicle' => $vehicle->id, 'action' => 'order_similar']) }}" 
-               class="text-center py-2 text-[11px] font-semibold text-amber-900 bg-amber-100 rounded-lg hover:bg-amber-200 transition">
-                Order Similar
-            </a>
+        <a href="{{ route('vehicles.show', ['vehicle' => $vehicle->id, 'action' => 'order_similar']) }}"
+            class="text-center py-2 text-[11px] font-semibold text-amber-900 bg-amber-100 rounded-lg hover:bg-amber-200 transition">
+            Order Similar
+        </a>
         @else
-            <form action="{{ route('cart.add', $vehicle->id) }}" method="POST">
-                @csrf
-                <button type="submit" class="w-full text-center py-2 text-[11px] font-semibold text-white bg-[#0F172A] rounded-lg hover:bg-gray-800 transition shadow-sm">
-                    Add to Cart
-                </button>
-            </form>
+        <form action="{{ route('cart.add', $vehicle->id) }}" method="POST">
+            @csrf
+            <button type="submit" class="w-full text-center py-2 text-[11px] font-semibold text-white bg-[#0F172A] rounded-lg hover:bg-gray-800 transition shadow-sm">
+                Add to Cart
+            </button>
+        </form>
         @endif
     </div>
 </div>

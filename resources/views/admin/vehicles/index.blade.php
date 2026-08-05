@@ -53,10 +53,10 @@
                             @forelse($vehicles as $vehicle)
                             <tr class="hover:bg-gray-50/70 transition">
                                 <td class="py-4 px-6 flex items-center space-x-4">
-                                    <img src="{{ is_array($vehicle->images) ? $vehicle->images[0] : 'default.jpg' }}" class="w-14 h-10 object-cover rounded-lg bg-gray-50 border border-gray-100 flex-shrink-0">
+                                    <img src="{{ is_array($vehicle->images) && count($vehicle->images) > 0 ? $vehicle->images[0] : asset('images/default-car.jpg') }}" class="w-14 h-10 object-cover rounded-lg bg-gray-50 border border-gray-100 flex-shrink-0">
                                     <div>
-                                        <p class="font-bold text-gray-950 text-sm">{{ $vehicle->brand }} {{ $vehicle->model }}</p>
-                                        <p class="text-[10px] text-gray-400 font-semibold uppercase mt-0.5">{{ $vehicle->category }} • {{ $vehicle->year }}</p>
+                                        <p class="font-bold text-gray-950 text-sm">{{ $vehicle->make }} {{ $vehicle->model }} {{ $vehicle->trim }}</p>
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase mt-0.5">{{ $vehicle->vehicle_type }} • {{ $vehicle->year }}</p>
                                     </div>
                                 </td>
                                 <td class="py-4 px-6">
@@ -70,14 +70,15 @@
                                     ${{ number_format($vehicle->price) }}
                                 </td>
                                 <td class="py-4 px-6">
-                                    <form action="{{ route('admin.vehicles.update-status', $vehicle) }}" method="POST">
+                                    <form action="{{ route('admin.vehicles.update-status', $vehicle->id) }}" method="POST">
                                         @csrf
                                         @method('PATCH')
-                                        <select name="status" onchange="this.form.submit()"
-                                            class="text-xs font-bold rounded-lg border-gray-200 py-1 px-2 focus:ring-gray-950 focus:border-gray-950">
-                                            <option value="available" {{ $vehicle->status === 'available' ? 'selected' : '' }}>🟢 Available</option>
-                                            <option value="reserved" {{ $vehicle->status === 'reserved' ? 'selected' : '' }}>🟡 Reserved</option>
-                                            <option value="sold" {{ $vehicle->status === 'sold' ? 'selected' : '' }}>🔴 Sold</option>
+                                        <select name="status" onchange="this.form.submit()" class="text-xs font-bold rounded-lg border-gray-200">
+                                            @foreach(\App\Models\Enums\VehicleStatus::cases() as $status)
+                                            <option value="{{ $status->value }}" {{ ($vehicle->status?->value ?? $vehicle->status) === $status->value ? 'selected' : '' }}>
+                                                {{ method_exists($status, 'label') ? $status->label() : $status->name }}
+                                            </option>
+                                            @endforeach
                                         </select>
                                     </form>
                                 </td>

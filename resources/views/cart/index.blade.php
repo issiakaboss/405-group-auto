@@ -79,40 +79,33 @@
                 <!-- RÉSUMÉ DE COMMANDE -->
                 <div class="space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-                        <h3 class="font-bold text-gray-900 text-sm">Order Summary</h3>
+                        <h3 class="font-bold text-gray-900 text-sm">Selection Summary</h3>
 
                         <div class="space-y-3 text-sm">
                             <div class="flex justify-between text-gray-500">
-                                <span id="summary-text">Subtotal (<span id="summary-count">{{ count($cart) }}</span> <span id="summary-unit">{{ count($cart) > 1 ? 'cars' : 'car' }}</span>)</span>
+                                <span id="summary-text">Vehicles selected (<span id="summary-count">{{ count($cart) }}</span> <span id="summary-unit">{{ count($cart) > 1 ? 'cars' : 'car' }}</span>)</span>
                                 <span class="font-semibold text-gray-900" id="summary-subtotal">${{ number_format($total) }}</span>
                             </div>
                             <div class="flex justify-between text-gray-500">
-                                <span>Sales Tax (8%)</span>
-                                <span class="font-semibold text-gray-900" id="summary-tax">${{ number_format($total * 0.08) }}</span>
-                            </div>
-                            <div class="flex justify-between text-gray-500">
-                                <span>Delivery</span>
-                                <span class="text-green-600 font-bold">Free</span>
+                                <span>Inquiry Review</span>
+                                <span class="text-green-600 font-bold">No payment</span>
                             </div>
 
                             <hr class="border-gray-100 my-4">
 
                             <div class="flex justify-between text-base font-extrabold text-gray-900">
                                 <span>Total</span>
-                                <span id="summary-total">${{ number_format($total * 1.08) }}</span>
+                                <span id="summary-total">${{ number_format($total) }}</span>
                             </div>
                         </div>
 
                         <div class="space-y-2 pt-2">
                             <a href="{{ route('checkout.index') }}" class="w-full py-3 px-4 bg-[#0F172A] hover:bg-gray-800 text-white font-semibold text-xs rounded-xl shadow-sm transition tracking-wide flex items-center justify-center space-x-2 text-center">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                                </svg>
-                                <span>Proceed to Checkout</span>
+                                <span>Submit Selection for Review</span>
                             </a>
                             <a href="{{ route('home') }}" class="w-full inline-block text-center py-2.5 text-xs font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm">Continue Shopping</a>
                         </div>
-                        <p class="text-[10px] text-gray-400 text-center pt-1">Secure checkout with 256-bit SSL encryption</p>
+                        <p class="text-[10px] text-gray-400 text-center pt-1">No payment processing is used on this site.</p>
                     </div>
 
                     <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-3">

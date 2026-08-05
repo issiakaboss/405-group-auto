@@ -9,43 +9,46 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Format;
+use App\Models\Enums\VehicleStatus;
+use Illuminate\Validation\Rule;
 
 class VehicleController extends Controller
 {
-    // Liste des véhicules pour l'admin
     public function index()
     {
         $vehicles = Vehicle::latest()->paginate(10);
-
-        // Petites stats rapides pour le tableau de bord
         $totalCars = Vehicle::count();
         $totalValue = Vehicle::sum('price');
 
-        // ⚙️ CORRECTION : On passe les noms sous forme de chaînes de caractères
         return view('admin.vehicles.index', compact('vehicles', 'totalCars', 'totalValue'));
     }
 
-    // Formulaire de création
     public function create()
     {
         return view('admin.vehicles.create');
     }
 
-    // Enregistrement d'un nouveau véhicule
     public function store(Request $request)
     {
-        $request->validate([
-            'brand' => 'required|string|max:255',
+        $validated = $request->validate([
+            'make' => 'required|string|max:255',
             'model' => 'required|string|max:255',
+            'trim' => 'nullable|string|max:255',
             'price' => 'required|numeric|min:0',
             'year' => 'required|integer|min:1900|max:' . (date('Y') + 1),
             'mileage' => 'required|integer|min:0',
-            'transmission' => 'required|string',
-            'fuel_type' => 'required|string',
-            'category' => 'required|string',
-            'location' => 'required|string',
+            'vehicle_type' => 'required|string',
+            'body_style' => 'required|string',
+            'exterior_color' => 'required|string',
+            'interior_color' => 'required|string',
+            'transmission' => 'nullable|string',
+            'fuel_type' => 'nullable|string',
+            'location' => 'required|string|max:255',
+            'has_clean_title' => 'nullable|boolean',
+            'money_still_owed' => 'nullable|string',
+            'description' => 'nullable|string',
             'images' => 'required',
-            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120', // Max 5MB par image
+            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
         $uploadedImages = [];
@@ -63,49 +66,61 @@ class VehicleController extends Controller
         }
 
         Vehicle::create([
-            'brand' => $request->brand,
+            'make' => $request->make,
             'model' => $request->model,
-            'title' => $request->brand . ' ' . $request->model,
+            'trim' => $request->trim,
+            'title' => trim(sprintf('%s %s %s', $request->make, $request->model, $request->trim ?: '')),
             'price' => $request->price,
             'year' => $request->year,
             'mileage' => $request->mileage,
-            'transmission' => $request->transmission,
+            'vehicle_type' => $request->vehicle_type,
+            'body_style' => $request->body_style,
+            'exterior_color' => $request->exterior_color,
+            'interior_color' => $request->interior_color,
             'fuel_type' => $request->fuel_type,
-            'category' => $request->category,
+            'transmission' => $request->transmission,
+            'has_clean_title' => $request->boolean('has_clean_title'),
+            'money_still_owed' => $request->money_still_owed,
+            'description' => $request->description,
             'location' => $request->location,
-            'images' => $uploadedImages, // Casté en JSON automatiquement par le modèle
+            'status' => $request->status ?? 'available_usa',
+            'is_featured' => $request->boolean('is_featured'),
+            'images' => $uploadedImages,
         ]);
 
         return redirect()->route('admin.vehicles.index')->with('success', 'Vehicle added to inventory successfully!');
     }
 
-    // Formulaire d'édition
     public function edit(Vehicle $vehicle)
     {
         return view('admin.vehicles.edit', compact('vehicle'));
     }
 
-    // Mise à jour en Base de Données
     public function update(Request $request, Vehicle $vehicle)
     {
-        $request->validate([
-            'brand' => 'required|string|max:255',
+        $validated = $request->validate([
+            'make' => 'required|string|max:255',
             'model' => 'required|string|max:255',
+            'trim' => 'nullable|string|max:255',
             'price' => 'required|numeric|min:0',
             'year' => 'required|integer|min:1900|max:' . (date('Y') + 1),
             'mileage' => 'required|integer|min:0',
-            'transmission' => 'required|string',
-            'fuel_type' => 'required|string',
-            'category' => 'required|string',
-            'location' => 'required|string',
+            'vehicle_type' => 'required|string',
+            'body_style' => 'required|string',
+            'exterior_color' => 'required|string',
+            'interior_color' => 'required|string',
+            'transmission' => 'nullable|string',
+            'fuel_type' => 'nullable|string',
+            'location' => 'required|string|max:255',
+            'has_clean_title' => 'nullable|boolean',
+            'money_still_owed' => 'nullable|string',
+            'description' => 'nullable|string',
             'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
             'deleted_images' => 'nullable|array',
         ]);
 
-        // 1. On récupère le tableau d'images actuelles
         $currentImages = is_array($vehicle->images) ? $vehicle->images : [];
 
-        // 2. Traiter les suppressions ciblées
         if ($request->has('deleted_images')) {
             foreach ($request->deleted_images as $imageToDelete) {
                 $relativePath = str_replace('/storage/', '', $imageToDelete);
@@ -116,7 +131,6 @@ class VehicleController extends Controller
             }
         }
 
-        // 3. Traiter les nouvelles images ajoutées (conservées + nouvelles)
         if ($request->hasFile('images')) {
             $manager = ImageManager::usingDriver(Driver::class);
 
@@ -130,39 +144,45 @@ class VehicleController extends Controller
             }
         }
 
-        // 4. Mise à jour en BDD avec réindexation propre du tableau d'images
         $vehicle->update([
-            'brand' => $request->brand,
+            'make' => $request->make,
             'model' => $request->model,
-            'title' => $request->brand . ' ' . $request->model,
+            'trim' => $request->trim,
+            'title' => trim(sprintf('%s %s %s', $request->make, $request->model, $request->trim ?: '')),
             'price' => $request->price,
             'year' => $request->year,
             'mileage' => $request->mileage,
+            'vehicle_type' => $request->vehicle_type,
+            'body_style' => $request->body_style,
+            'exterior_color' => $request->exterior_color,
+            'interior_color' => $request->interior_color,
             'transmission' => $request->transmission,
             'fuel_type' => $request->fuel_type,
-            'category' => $request->category,
+            'has_clean_title' => $request->boolean('has_clean_title'),
+            'money_still_owed' => $request->money_still_owed,
+            'description' => $request->description,
             'location' => $request->location,
+            'status' => $request->status ?? $vehicle->status,
+            'is_featured' => $request->boolean('is_featured'),
             'images' => array_values($currentImages),
         ]);
 
         return redirect()->route('admin.vehicles.index')->with('success', 'Vehicle updated successfully!');
     }
-
-    // Changement de statut rapide depuis la liste
     public function updateStatus(Request $request, Vehicle $vehicle)
     {
-        $request->validate([
-            'status' => 'required|string', // Ou validation via ton Enum
+        $validated = $request->validate([
+            'status' => ['required', Rule::enum(VehicleStatus::class)],
         ]);
-        $vehicle->update(['status' => $request->status]);
+
+        $vehicle->update([
+            'status' => $validated['status'],
+        ]);
 
         return back()->with('success', 'Vehicle status updated successfully!');
     }
-
-    // Supprimer un véhicule
     public function destroy(Vehicle $vehicle)
     {
-        // Supprimer physiquement les images du serveur pour ne pas saturer l'espace
         if (is_array($vehicle->images)) {
             foreach ($vehicle->images as $path) {
                 $relativePath = str_replace('/storage/', '', $path);

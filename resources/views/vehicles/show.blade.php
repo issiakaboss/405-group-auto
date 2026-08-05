@@ -1,4 +1,14 @@
 <x-guest-layout>
+    @php
+        $isUsVisitor = request()->attributes->get('is_us_visitor', true);
+        $statusEnum = $vehicle->status instanceof \App\Models\Enums\VehicleStatus
+            ? $vehicle->status
+            : \App\Models\Enums\VehicleStatus::tryFrom($vehicle->status);
+        $locationLabel = $vehicle->location instanceof \App\Models\Enums\VehicleLocation
+            ? $vehicle->location->label()
+            : (\App\Models\Enums\VehicleLocation::tryFrom($vehicle->location)?->label() ?? 'USA Warehouse');
+    @endphp
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
         x-data="{ 
              activeImage: '{{ !empty($vehicle->images) ? $vehicle->images[0] : 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80' }}', 
@@ -60,14 +70,14 @@
                     <!-- Badges Logistiques et Statuts -->
                     <div class="mb-3 flex items-center gap-2 flex-wrap">
                         <span class="bg-gray-100 text-gray-800 text-[10px] uppercase font-bold px-2.5 py-1 rounded-md border border-gray-200">
-                            {{ $vehicle->category }}
+                            {{ $vehicle->vehicle_type?->label() ?? $vehicle->vehicle_type?->value ?? $vehicle->vehicle_type ?? $vehicle->category ?? 'Vehicle' }}
                         </span>
 
                         @if($vehicle->hasBeenSold())
                         <span class="bg-rose-100 text-rose-800 text-[10px] uppercase font-bold px-2.5 py-1 rounded-md border border-rose-200">Vendu</span>
-                        @else
-                        <span class="{{ $vehicle->status->badgeColor() }} text-[10px] uppercase font-bold px-2.5 py-1 rounded-md shadow-sm">
-                            {{ $vehicle->status->label() }}
+                        @elseif($statusEnum)
+                        <span class="{{ $statusEnum->badgeColor() }} text-[10px] uppercase font-bold px-2.5 py-1 rounded-md shadow-sm">
+                            {{ $statusEnum->label() }}
                         </span>
                         @endif
                     </div>
@@ -90,11 +100,11 @@
                     </div>
                     <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-100">
                         <span class="block text-[11px] text-gray-400 uppercase font-medium">Transmission</span>
-                        <span class="font-semibold text-gray-900 text-sm">{{ $vehicle->transmission }}</span>
+                        <span class="font-semibold text-gray-900 text-sm">{{ $vehicle->transmission ?? 'N/A' }}</span>
                     </div>
                     <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-100">
                         <span class="block text-[11px] text-gray-400 uppercase font-medium">Fuel Type</span>
-                        <span class="font-semibold text-gray-900 text-sm">{{ $vehicle->fuel_type }}</span>
+                        <span class="font-semibold text-gray-900 text-sm">{{ $vehicle->fuel_type ?? 'N/A' }}</span>
                     </div>
                 </div>
 
@@ -106,14 +116,78 @@
                     </svg>
                     <div>
                         <span class="block text-[10px] uppercase tracking-wider text-gray-400 font-medium">Current Location</span>
-                        <span class="text-xs font-semibold text-gray-900">{{ is_object($vehicle->location) ? $vehicle->location->label() : $vehicle->location }}</span>
+                        <span class="text-xs font-semibold text-gray-900">{{ $locationLabel }}</span>
                     </div>
+                </div>
+
+                <!-- DÉTAILS COMPLÉMENTAIRES / SPÉCIFICATIONS -->
+                <div class="border-t border-gray-100 pt-6 space-y-4">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Detailed Specifications</h3>
+
+                    <div class="grid grid-cols-2 gap-y-3 gap-x-4 text-xs">
+                        @if($vehicle->make)
+                        <div class="flex justify-between border-b border-gray-50 pb-2">
+                            <span class="text-gray-400">Make</span>
+                            <span class="font-semibold text-gray-800">{{ $vehicle->make }}</span>
+                        </div>
+                        @endif
+
+                        @if($vehicle->model)
+                        <div class="flex justify-between border-b border-gray-50 pb-2">
+                            <span class="text-gray-400">Model</span>
+                            <span class="font-semibold text-gray-800">{{ $vehicle->model }}</span>
+                        </div>
+                        @endif
+
+                        @if($vehicle->engine)
+                        <div class="flex justify-between border-b border-gray-50 pb-2">
+                            <span class="text-gray-400">Engine</span>
+                            <span class="font-semibold text-gray-800">{{ $vehicle->engine }}</span>
+                        </div>
+                        @endif
+
+                        @if($vehicle->drive_train)
+                        <div class="flex justify-between border-b border-gray-50 pb-2">
+                            <span class="text-gray-400">Drivetrain</span>
+                            <span class="font-semibold text-gray-800">{{ $vehicle->drive_train }}</span>
+                        </div>
+                        @endif
+
+                        @if($vehicle->exterior_color)
+                        <div class="flex justify-between border-b border-gray-50 pb-2">
+                            <span class="text-gray-400">Exterior Color</span>
+                            <span class="font-semibold text-gray-800">{{ $vehicle->exterior_color }}</span>
+                        </div>
+                        @endif
+
+                        @if($vehicle->interior_color)
+                        <div class="flex justify-between border-b border-gray-50 pb-2">
+                            <span class="text-gray-400">Interior Color</span>
+                            <span class="font-semibold text-gray-800">{{ $vehicle->interior_color }}</span>
+                        </div>
+                        @endif
+
+                        @if($vehicle->vin)
+                        <div class="flex justify-between border-b border-gray-50 pb-2 col-span-2">
+                            <span class="text-gray-400">VIN</span>
+                            <span class="font-mono font-semibold text-gray-800">{{ $vehicle->vin }}</span>
+                        </div>
+                        @endif
+                    </div>
+
+                    @if($vehicle->description)
+                    <div class="pt-2">
+                        <span class="block text-xs text-gray-400 font-medium mb-1">Description</span>
+                        <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            {{ $vehicle->description }}
+                        </p>
+                    </div>
+                    @endif
                 </div>
 
                 <!-- BLOC D'ACTION PRINCIPAL -->
                 <div class="pt-4 space-y-3">
 
-                    {{-- Banner explicatif en mode "Order Similar" --}}
                     @if(request('action') === 'order_similar')
                     <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
                         <svg class="w-5 h-5 text-amber-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -127,7 +201,6 @@
 
                     <div class="flex items-center gap-3">
                         @if(request('action') === 'order_similar')
-                        {{-- OPTION 1: Bouton de commande pour unité similaire --}}
                         <form action="{{ route('cart.add-similar', $vehicle->id) }}" method="POST" class="flex-1">
                             @csrf
                             <button type="submit"
@@ -140,7 +213,6 @@
                         </form>
 
                         @elseif($vehicle->hasBeenSold() || $vehicle->isCurrentlyReserved())
-                        {{-- Vehicle Vendu / Réservé sans paramètre order_similar --}}
                         <div class="flex-1 flex gap-2">
                             <button disabled
                                 class="flex-1 py-3.5 px-6 font-semibold text-sm text-gray-400 bg-gray-200 rounded-xl cursor-not-allowed text-center">
@@ -153,7 +225,6 @@
                         </div>
 
                         @else
-                        {{-- Vehicle disponible : Ajout standard au panier --}}
                         <form action="{{ route('cart.add', $vehicle->id) }}" method="POST" class="flex-1">
                             @csrf
                             <button type="submit"
@@ -166,7 +237,6 @@
                         </form>
                         @endif
 
-                        {{-- Formulaire Favoris --}}
                         @php $isFav = isset(session('favorites', [])[$vehicle->id]); @endphp
                         <form action="{{ route('favorites.toggle', $vehicle->id) }}" method="POST">
                             @csrf
@@ -195,7 +265,6 @@
             x-transition:leave-end="opacity-0"
             class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
 
-            <!-- Bouton de Fermeture (X) -->
             <button @click="isZoomOpen = false"
                 class="absolute top-6 right-6 text-white hover:text-gray-300 transition focus:outline-none">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -203,7 +272,6 @@
                 </svg>
             </button>
 
-            <!-- Image Zoomée -->
             <div class="max-w-5xl max-h-[90vh] overflow-hidden" @click.away="isZoomOpen = false">
                 <img :src="activeImage" alt="Zoomed view" class="w-full h-full object-contain rounded-lg">
             </div>

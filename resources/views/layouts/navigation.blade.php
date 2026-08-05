@@ -26,6 +26,10 @@
                         <span class="text-amber-600 font-bold">📦 {{ __('Orders') }}</span>
                     </x-nav-link>
 
+                    <x-nav-link :href="route('admin.vehicle-requests.index')" :active="request()->routeIs('admin.vehicle-requests.*')">
+                        <span class="text-amber-600 font-bold">🚗 {{ __('Vehicle Requests') }}</span>
+                    </x-nav-link>
+
                     <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                         <span class="text-amber-500 font-bold">👥 Admins</span>
                     </x-nav-link>
@@ -83,6 +87,9 @@
             @role('admin')
             <x-responsive-nav-link :href="route('admin.vehicles.index')" :active="request()->routeIs('admin.*')" class="text-amber-600 font-bold">
                 ⚙️ {{ __('Admin Fleet') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.vehicle-requests.index')" :active="request()->routeIs('admin.vehicle-requests.*')" class="text-amber-600 font-bold">
+                🚗 {{ __('Vehicle Requests') }}
             </x-responsive-nav-link>
             @endrole
         </div>

@@ -16,20 +16,24 @@ return new class extends Migration
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('brand');
+            $table->string('make');
             $table->string('model');
+            $table->string('trim')->nullable();
             $table->integer('year');
             $table->integer('mileage');
+            $table->string('vehicle_type');
+            $table->string('body_style');
+            $table->string('exterior_color');
+            $table->string('interior_color');
             $table->string('fuel_type');
             $table->string('transmission');
-            $table->string('category');
+            $table->boolean('has_clean_title')->default(false);
+            $table->string('money_still_owed')->nullable();
+            $table->text('description')->nullable();
             $table->decimal('price', 12, 2);
             $table->json('images');
-
-            // Notre touche spéciale Import/Export USA - Afrique
-            $table->string('status')->default(VehicleStatus::AVAILABLE_USA->value);
+            $table->string('status')->default(VehicleStatus::AVAILABLE->value);
             $table->string('location')->default(VehicleLocation::USA_OKLAHOMA->value);
-
             $table->boolean('is_featured')->default(false);
             $table->timestamps();
         });
