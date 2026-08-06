@@ -25,6 +25,7 @@ Route::middleware('geo.us')->group(function () {
     Route::post('/cart/add-similar/{vehicle}', [CartController::class, 'addSimilar'])->name('cart.add-similar');
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
     Route::post('/test-drive/schedule', [TestDriveController::class, 'store'])->name('testdrive.store');
 });
 

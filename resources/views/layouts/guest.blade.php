@@ -18,11 +18,12 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
 
-                <div class="flex items-center space-x-2 flex-shrink-0">
-                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.75a1.125 1.125 0 0 1-1.125-1.125V15h1.5a1.5 1.5 0 0 0 1.5-1.5V11.25A3.375 3.375 0 0 1 9 8.25h5.25a3.375 3.375 0 0 1 3.375 3.375v2.25a1.5 1.5 0 0 0 1.5 1.5h1.5v2.625a1.125 1.125 0 0 1-1.125 1.125H18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h-6m1.5-9h3.75m-3.75 3h4.5M12 15.75h.008v.008H12v-.008Z" />
-                    </svg>
-                    <a href="{{ route('home') }}" class="font-bold text-xl tracking-tight text-gray-900">405 Group Auto</a>
+                <div class="flex items-center flex-shrink-0">
+                    <a href="{{ route('home') }}" class="flex items-center py-2">
+                        <img src="{{ asset('images/logo2-nbg.png') }}"
+                            alt="405 Auto Group Logo"
+                            class="h-10 md:h-12 w-auto object-contain">
+                    </a>
                 </div>
 
                 <div class="hidden md:flex space-x-8 text-sm font-medium">
@@ -150,51 +151,92 @@
         {{ $slot }}
     </main>
 
-    <footer class="bg-[#030712] text-gray-400 pt-16 pb-8 mt-20">
+    <footer class="bg-slate-950 text-slate-400 pt-16 pb-8 border-t border-slate-800/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 pb-12 border-b border-gray-800">
-                <div>
-                    <div class="flex items-center space-x-2 text-white mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.75a1.125 1.125 0 0 1-1.125-1.125V15h1.5a1.5 1.5 0 0 0 1.5-1.5V11.25A3.375 3.375 0 0 1 9 8.25h5.25a3.375 3.375 0 0 1 3.375 3.375v2.25a1.5 1.5 0 0 0 1.5 1.5h1.5v2.625a1.125 1.125 0 0 1-1.125 1.125H18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h-6m1.5-9h3.75m-3.75 3h4.5M12 15.75h.008v.008H12v-.008Z" />
-                        </svg>
-                        <span class="font-bold text-xl tracking-tight text-white">405 Group Auto</span>
+            {{-- Grille Principale (4 Colonnes) --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-slate-800/80">
+
+                {{-- Col 1: Marque & Description avec Logo2 --}}
+                <div class="space-y-4">
+                    <div class="flex items-center mb-4">
+                        <img src="{{ asset('images/logo2.jpeg') }}" alt="405 Auto Group LLC" class="h-12 w-auto object-contain">
                     </div>
-                    <p class="text-sm text-gray-400 leading-relaxed">
-                        Your premier destination for luxury and performance vehicles. We offer the finest selection of cars from the world's most prestigious brands.
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Your premier destination for luxury and performance vehicles. Sourcing top-tier inventory directly from nationwide US dealer auctions and private networks.
                     </p>
                 </div>
-                <div class="md:pl-12">
-                    <h3 class="text-white font-semibold text-sm tracking-wider uppercase mb-4">Quick Links</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="{{ route('about') }}" class="hover:text-white transition">About Us</a></li>
-                        <li><a href="{{ route('home') }}#catalog" class="hover:text-white transition">Our Cars</a></li>
-                        <li><a href="{{ route('cart.index') }}" class="hover:text-white transition">Cart</a></li>
+
+                {{-- Col 2: Navigation Rapide --}}
+                <div>
+                    <h3 class="text-white font-bold text-xs tracking-wider uppercase mb-4">Quick Navigation</h3>
+                    <ul class="space-y-2.5 text-xs">
+                        <li><a href="{{ route('home') }}" class="hover:text-amber-400 transition-colors">Home</a></li>
+                        <li><a href="{{ route('home') }}#catalog" class="hover:text-amber-400 transition-colors">Inventory Catalog</a></li>
+                        <li><a href="{{ route('about') }}" class="hover:text-amber-400 transition-colors">About Us</a></li>
+                        <li><a href="{{ route('cart.index') }}" class="hover:text-amber-400 transition-colors flex items-center gap-1.5">
+                                <span>Cart</span>
+                                @if(count(session()->get('cart', [])) > 0)
+                                <span class="bg-amber-500 text-slate-950 font-bold text-[10px] px-1.5 py-0.5 rounded-full">
+                                    {{ count(session()->get('cart', [])) }}
+                                </span>
+                                @endif
+                            </a></li>
                     </ul>
                 </div>
-                <div>
-                    <h3 class="text-white font-semibold text-sm tracking-wider uppercase mb-4">Contact</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li>405 AUTO GROUP LLC<br>4309 NW 39th St #B</li>
-                        <li>Oklahoma City, OK 73112</li>
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.824-1.435-5.161-3.772-6.596-6.596l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.75Z" />
-                            </svg>
-                            <span>(+1) 405-417-3665</span>
-                        </li>
 
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                {{-- Col 3: Service Finder --}}
+                <div>
+                    <h3 class="text-white font-bold text-xs tracking-wider uppercase mb-4">Services</h3>
+                    <ul class="space-y-2.5 text-xs">
+                        <li>
+                            <a href="{{route('home')}}#vehicle-request" class="hover:text-amber-400 transition-colors inline-flex items-center gap-1">
+                                <span>Vehicle Finder Service</span>
+                                <span class="text-[9px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded font-semibold border border-amber-500/20">Custom Order</span>
+                            </a>
+                        </li>
+                        <li><a href="#" class="hover:text-amber-400 transition-colors">US Auto Shipping</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition-colors">Vehicle History Verification</a></li>
+                    </ul>
+                </div>
+
+                {{-- Col 4: Contact & Adresse --}}
+                <div>
+                    <h3 class="text-white font-bold text-xs tracking-wider uppercase mb-4">Contact Us</h3>
+                    <ul class="space-y-3 text-xs">
+                        <li class="flex items-start gap-2.5">
+                            <svg class="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                             </svg>
-                            <span>405autogroup@gmail.com</span>
+                            <span>405 AUTO GROUP LLC<br>4309 NW 39th St #B<br>Oklahoma City, OK 73112</span>
+                        </li>
+                        <li>
+                            <a href="tel:+14054173665" class="flex items-center gap-2.5 hover:text-white transition-colors">
+                                <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.824-1.435-5.161-3.772-6.596-6.596l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.75Z" />
+                                </svg>
+                                <span>(+1) 405-417-3665</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:405autogroup@gmail.com" class="flex items-center gap-2.5 hover:text-white transition-colors">
+                                <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                                </svg>
+                                <span class="truncate">405autogroup@gmail.com</span>
+                            </a>
                         </li>
                     </ul>
                 </div>
             </div>
-            <div class="mt-8 flex justify-center text-xs text-gray-500">
-                <p>&copy; {{ date('Y') }} 405 Group Auto. All rights reserved.</p>
+
+            {{-- Bas du Footer : Copyright & Mentions --}}
+            <div class="mt-8 pt-4 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-4">
+                <p>&copy; {{ date('Y') }} 405 Auto Group LLC. All rights reserved.</p>
+                <div class="flex items-center space-x-6">
+                    <a href="#" class="hover:text-slate-400 transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-slate-400 transition">Terms of Service</a>
+                </div>
             </div>
         </div>
     </footer>

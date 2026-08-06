@@ -109,6 +109,23 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Vehicle removed from your selection list');
     }
 
+    public function clear(Request $request)
+    {
+        // Vider la session panier
+        session()->forget('cart');
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'cart_count' => 0,
+                'subtotal' => '$0',
+                'total' => 0
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Cart cleared successfully.');
+    }
+
     public function addSimilar(Request $request, Vehicle $vehicle)
     {
         $cart = session()->get('cart', []);
