@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->foreignId('vehicle_id')->constrained()->onDelete('cascade');
             $table->string('title');
-            $table->decimal('price', 10, 2);
+            $table->decimal('price', 12, 2);
             $table->integer('quantity')->default(1);
             $table->timestamps();
         });

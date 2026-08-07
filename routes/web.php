@@ -3,8 +3,9 @@
 use App\Http\Controllers\Admin\VehicleController as AdminVehicleController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Admin\VehicleRequestController;
+use App\Http\Controllers\Admin\VehicleRequestController as AdminVehicleRequestController ;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\VehicleRequestController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FavoriteController;
@@ -17,7 +18,7 @@ Route::get('/', [VehicleController::class, 'index'])->name('home');
 Route::get('/vehicles/search', [VehicleController::class, 'search'])->name('vehicles.search');
 Route::get('/vehicles/filter', [VehicleController::class, 'filter'])->name('vehicles.filter');
 Route::get('/cars/{vehicle}', [VehicleController::class, 'show'])->name('vehicles.show');
-Route::post('/vehicles/request', [VehicleController::class, 'storeRequest'])->name('vehicles.request');
+Route::post('/vehicles/request', [VehicleRequestController::class, 'store'])->name('vehicles.request');
 
 Route::middleware('geo.us')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -61,7 +62,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
 
-    Route::get('/vehicle-requests', [VehicleRequestController::class, 'index'])->name('vehicle-requests.index');
+    Route::get('/vehicle-requests', [AdminVehicleRequestController::class, 'index'])->name('vehicle-requests.index');
 
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
     Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');

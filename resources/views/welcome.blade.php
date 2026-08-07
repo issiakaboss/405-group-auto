@@ -197,7 +197,7 @@
                         </a>
                         <a href="{{ route('vehicles.show', ['vehicle' => $vehicle->id, 'action' => 'order_similar']) }}"
                             class="py-2.5 px-3 bg-amber-500 text-white text-center font-bold text-xs rounded-xl hover:bg-amber-600 transition shadow-sm">
-                            Order Similar
+                            Reserve Similar
                         </a>
                     </div>
                 </div>

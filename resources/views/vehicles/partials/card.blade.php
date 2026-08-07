@@ -136,7 +136,7 @@
         @if($vehicle->hasBeenSold() || $vehicle->isCurrentlyReserved())
             <a href="{{ route('vehicles.show', ['vehicle' => $vehicle->id, 'action' => 'order_similar']) }}"
                class="w-full text-center py-2.5 px-2 text-xs font-bold text-slate-900 bg-amber-400 hover:bg-amber-500 rounded-xl transition shadow-sm">
-                Order Similar
+                Reserve Similar
             </a>
         @else
             <form action="{{ route('cart.add', $vehicle->id) }}" method="POST" class="w-full">

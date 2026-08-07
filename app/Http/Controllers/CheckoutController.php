@@ -27,11 +27,11 @@ class CheckoutController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'phone' => ['required', 'string', 'max:20'],
-            'zip_code' => ['required', 'string', 'max:20'],
-            'notes' => ['nullable', 'string'],
+            'phone'   => ['required', 'string', 'max:30'],
+            'address' => ['required', 'string', 'max:255'],
+            'city'    => ['required', 'string', 'max:100'],
+            'country' => ['required', 'string', 'max:100'],
+            'notes'   => ['nullable', 'string', 'max:1000'],
         ]);
 
         $cart = session()->get('cart', []);
@@ -44,24 +44,27 @@ class CheckoutController extends Controller
 
         try {
             $orderId = DB::table('orders')->insertGetId([
-                'user_id' => Auth::id(),
-                'total' => array_reduce($cart, fn($carry, $item) => $carry + ((float) ($item['price'] ?? 0) * ((int) ($item['quantity'] ?? 1))), 0),
-                'status' => OrderStatus::PENDING_REVIEW->value,
-                'address' => $request->zip_code,
-                'phone' => $request->phone,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'user_id'               => Auth::id(),
+                'total_estimated_price' => array_reduce($cart, fn($carry, $item) => $carry + ((float) ($item['price'] ?? 0) * ((int) ($item['quantity'] ?? 1))), 0),
+                'status'                => OrderStatus::PENDING_REVIEW->value,
+                'address'               => $request->address,
+                'city'                  => $request->city,
+                'country'               => $request->country,
+                'phone'                 => $request->phone,
+                'notes'                 => $request->notes,
+                'created_at'            => now(),
+                'updated_at'            => now(),
             ]);
 
             foreach ($cart as $item) {
                 $vehicleId = $item['vehicle_id'] ?? $item['id'];
 
                 DB::table('order_items')->insert([
-                    'order_id' => $orderId,
+                    'order_id'   => $orderId,
                     'vehicle_id' => $vehicleId,
-                    'title' => $item['title'] ?? 'Vehicle',
-                    'price' => $item['price'],
-                    'quantity' => $item['quantity'] ?? 1,
+                    'title'      => $item['title'] ?? 'Vehicle',
+                    'price'      => $item['price'],
+                    'quantity'   => $item['quantity'] ?? 1,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -70,13 +73,12 @@ class CheckoutController extends Controller
             session()->forget('cart');
             DB::commit();
 
-            return redirect()->route('checkout.success')->with('success', 'Your selection has been submitted successfully. An administrator will contact you shortly.');
+            return redirect()->route('checkout.success')->with('success', 'Your reservation request has been submitted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Inquiry submission failed: ' . $e->getMessage());
         }
     }
-
     public function success()
     {
         return view('checkout.success');

@@ -38,7 +38,7 @@ class OrderController extends Controller
         if ($request->status === OrderStatus::CANCELLED->value) {
             $vehicleIds = DB::table('order_items')->where('order_id', $id)->pluck('vehicle_id');
             DB::table('vehicles')->whereIn('id', $vehicleIds)->update([
-                'status' => VehicleStatus::AVAILABLE_USA->value // ou AVAILABLE_LOCAL selon le stock
+                'status' => VehicleStatus::AVAILABLE ->value // ou AVAILABLE_LOCAL selon le stock
             ]);
         }
 

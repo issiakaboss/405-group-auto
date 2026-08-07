@@ -65,7 +65,7 @@
                                     {{ $order->phone }}
                                 </td>
                                 <td class="p-4 font-bold text-gray-900 text-sm whitespace-nowrap align-top">
-                                    ${{ number_format($order->total) }}
+                                    ${{ number_format($order->total_estimated_price) }}
                                 </td>
                                 <td class="p-4 text-center whitespace-nowrap align-top">
                                     @if($order->status === 'pending_review')
