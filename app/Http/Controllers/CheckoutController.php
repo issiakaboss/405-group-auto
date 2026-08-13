@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Enums\OrderStatus;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -82,5 +83,15 @@ class CheckoutController extends Controller
     public function success()
     {
         return view('checkout.success');
+    }
+
+    public function show(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        $order->load('items');
+
+        return view('orders.show', compact('order'));
     }
 }

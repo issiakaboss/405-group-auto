@@ -3,7 +3,8 @@
 use App\Http\Controllers\Admin\VehicleController as AdminVehicleController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Admin\VehicleRequestController as AdminVehicleRequestController ;
+use App\Http\Controllers\Admin\VehicleRequestController as AdminVehicleRequestController;
+use App\Http\Controllers\Admin\TestDriveController as AdminTestDriveController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\VehicleRequestController;
 use App\Http\Controllers\CheckoutController;
@@ -48,6 +49,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/order', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+
+    Route::patch('/my-test-drives/{testDrive}/cancel', [TestDriveController::class, 'cancel'])->name('user.test-drives.cancel');
+    Route::patch('/my-vehicle-requests/{vehicleRequest}/cancel', [VehicleRequestController::class, 'cancel'])->name('user.vehicle-requests.cancel');
+
+    Route::get('/my-orders/{order}', [CheckoutController::class, 'show'])->name('user.orders.show');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -59,10 +65,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/vehicles/{vehicle}/status', [AdminVehicleController::class, 'updateStatus'])->name('vehicles.update-status');
     Route::delete('/vehicles/{vehicle}', [AdminVehicleController::class, 'destroy'])->name('vehicles.destroy');
 
+    Route::get('/vehicle-requests/{vehicleRequest}', [AdminVehicleRequestController::class, 'show'])->name('vehicle-requests.show');
+    Route::patch('/vehicle-requests/{vehicleRequest}/status', [AdminVehicleRequestController::class, 'updateStatus'])->name('vehicle-requests.update-status');
+
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
 
     Route::get('/vehicle-requests', [AdminVehicleRequestController::class, 'index'])->name('vehicle-requests.index');
+
+    // Gestion des Test Drives
+    Route::get('/test-drives', [AdminTestDriveController::class, 'index'])->name('test-drives.index');
+    Route::get('/test-drives/{testDrive}', [AdminTestDriveController::class, 'show'])->name('test-drives.show');
+    Route::patch('/test-drives/{testDrive}/status', [AdminTestDriveController::class, 'updateStatus'])->name('test-drives.update-status');
 
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
     Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');

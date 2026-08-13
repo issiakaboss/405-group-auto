@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('vehicle_requests', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('make');
             $table->string('model');
             $table->integer('year_min')->nullable();
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('zip_code');
             $table->text('notes')->nullable();
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

@@ -14,10 +14,11 @@
 
 <body class="font-sans text-gray-900 antialiased bg-white" x-data="{ searchResults: [], searchFocused: false }">
 
-    <nav class="border-b border-gray-100 bg-white sticky top-0 z-50">
+    <nav class="border-b border-slate-200 bg-slate-100/95 backdrop-blur-md sticky top-0 z-50 transition-all shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
 
+                <!-- LOGO -->
                 <div class="flex items-center flex-shrink-0">
                     <a href="{{ route('home') }}" class="flex items-center py-2">
                         <img src="{{ asset('images/logo2-nbg.png') }}"
@@ -26,13 +27,24 @@
                     </a>
                 </div>
 
+                <!-- NAVIGATION LINKS (Simples et épurés) -->
                 <div class="hidden md:flex space-x-8 text-sm font-medium">
-                    <a href="{{ route('home') }}" class="text-gray-500 hover:text-gray-900 transition">Home</a>
-                    <a href="{{ route('home') }}#catalog" class="text-gray-500 hover:text-gray-900 transition">Cars</a>
-                    <a href="{{ route('about') }}" class="text-gray-500 hover:text-gray-900 transition">About</a>
+
+                    <!-- Home Link -->
+                    <a href="{{ route('home') }}"
+                        class="py-2 transition {{ request()->routeIs('home') ? 'text-amber-500 font-bold border-b-2 border-amber-500' : 'text-gray-600 hover:text-amber-500' }}">
+                        Home
+                    </a>
+
+                    <!-- About Link -->
+                    <a href="{{ route('about') }}"
+                        class="py-2 transition {{ request()->routeIs('about') ? 'text-amber-500 font-bold border-b-2 border-amber-500' : 'text-gray-600 hover:text-amber-500' }}">
+                        About us
+                    </a>
                 </div>
 
-                <div class="hidden lg:block flex-1 max-w-xs mx-8 relative" @click-away="searchFocused = false">
+                <!-- SEARCH BAR -->
+                <div class="hidden lg:block flex-1 max-w-xs mx-8 relative" x-data="{ searchFocused: false, searchResults: [] }" @click.away="searchFocused = false">
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -44,11 +56,11 @@
                             placeholder="Search cars..."
                             @focus="searchFocused = true"
                             @input.debounce.300ms="
-                                fetch(`/vehicles/search?q=${$event.target.value}`)
-                                    .then(res => res.json())
-                                    .then(data => { searchResults = data; searchFocused = true; })
-                            "
-                            class="w-full text-sm pl-10 pr-4 py-1.5 bg-gray-50 border border-transparent rounded-lg focus:bg-white focus:border-gray-300 focus:ring-0 transition">
+                            fetch(`/vehicles/search?q=${$event.target.value}`)
+                                .then(res => res.json())
+                                .then(data => { searchResults = data; searchFocused = true; })
+                        "
+                            class="w-full text-sm pl-10 pr-4 py-1.5 bg-white border border-gray-300 rounded-lg focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition shadow-inner">
                     </div>
 
                     <div
@@ -67,42 +79,44 @@
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-6 text-gray-700">
+                <!-- ICONS & PROFILE -->
+                <div class="flex items-center space-x-4 text-gray-700">
 
                     <!-- FAVORITES LINK -->
-                    <a href="{{ route('favorites.index') }}" class="hover:text-gray-900 transition relative">
+                    <a href="{{ route('favorites.index') }}"
+                        class="p-2 transition relative {{ request()->routeIs('favorites.*') ? 'text-amber-500' : 'hover:text-amber-500' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                         </svg>
-                        <span id="fav-badge" class="absolute -top-1.5 -right-1.5 bg-gray-900 text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center shadow {{ (!session('favorites') || count(session('favorites')) == 0) ? 'hidden' : '' }}">
+                        <span id="fav-badge" class="absolute -top-1 -right-1 bg-gray-900 text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center shadow {{ (!session('favorites') || count(session('favorites')) == 0) ? 'hidden' : '' }}">
                             {{ session('favorites') ? count(session('favorites')) : 0 }}
                         </span>
                     </a>
 
                     <!-- CART LINK -->
-                    <a href="{{ route('cart.index') }}" class="hover:text-gray-900 transition relative">
+                    <a href="{{ route('cart.index') }}"
+                        class="p-2 transition relative {{ request()->routeIs('cart.*') ? 'text-amber-500' : 'hover:text-amber-500' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                         </svg>
                         @php
                         $cartCount = session('cart') ? array_sum(array_column(session('cart'), 'quantity')) : 0;
                         @endphp
-                        <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center shadow {{ $cartCount == 0 ? 'hidden' : '' }}">
+                        <span id="cart-badge" class="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center shadow {{ $cartCount == 0 ? 'hidden' : '' }}">
                             {{ $cartCount }}
                         </span>
                     </a>
 
                     @auth
                     <div class="relative" x-data="{ open: false }">
-                        <button @click="open = !open" class="flex items-center space-x-1 focus:outline-none hover:text-gray-900 transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <button @click="open = !open" class="flex items-center space-x-1.5 p-1.5 rounded-lg focus:outline-none hover:text-amber-500 transition">
+                            <svg class="w-5 h-5 text-gray-700 hover:text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                             </svg>
                             <span class="text-xs font-semibold max-w-[80px] truncate">{{ Auth::user()->name }}</span>
                         </button>
 
                         <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-xl py-1 z-50 text-xs font-medium" x-cloak>
-
                             @role('admin')
                             <a href="{{ route('admin.vehicles.index') }}" class="block px-4 py-2 font-bold text-amber-600 hover:bg-amber-50 transition uppercase tracking-wider text-[10px]">
                                 ⚙️ Fleet Administration
@@ -127,7 +141,7 @@
                         </div>
                     </div>
                     @else
-                    <a href="{{ route('login') }}" class="hover:text-gray-900 transition">
+                    <a href="{{ route('login') }}" class="p-2 transition hover:text-amber-500">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                         </svg>
@@ -139,13 +153,8 @@
         </div>
     </nav>
 
-    @if(session('success'))
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl text-xs font-semibold flex items-center space-x-2 shadow-sm">
-            <span>{{ session('success') }}</span>
-        </div>
-    </div>
-    @endif
+    <!-- COMPOSANT TOAST / SUCCÈS -->
+    <x-toast-notification />
 
     <main>
         {{ $slot }}
@@ -223,7 +232,7 @@
                                 <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                                 </svg>
-                                <span class="truncate">405autogroup@gmail.com</span>
+                                <span class="truncate">info@405group-auto.com</span>
                             </a>
                         </li>
                     </ul>

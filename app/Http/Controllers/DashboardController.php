@@ -2,36 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Models\TestDrive;
+use App\Models\VehicleRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function index()
+  public function index()
     {
         $userId = Auth::id();
 
-        // 1. Récupération des commandes de l'utilisateur
-        $orders = DB::table('orders')
+        // 1. Rendez-vous Test Drive avec la relation Vehicle
+        $testDrives = TestDrive::with('vehicle')
             ->where('user_id', $userId)
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->get();
 
-        // 2. Si la table order_items existe, on rattachera les véhicules associés
-        if (DB::getSchemaBuilder()->hasTable('order_items') && $orders->isNotEmpty()) {
-            $orderIds = $orders->pluck('id')->toArray();
-            
-            $items = DB::table('order_items')
-                ->whereIn('order_id', $orderIds)
-                ->get()
-                ->groupBy('order_id');
+        // 2. Demandes sur-mesure (Custom Requests)
+        $vehicleRequests = VehicleRequest::where('user_id', $userId)
+            ->latest()
+            ->get();
 
-            foreach ($orders as $order) {
-                $order->items = $items->get($order->id, collect());
-            }
-        }
+        // 3. Commandes / Demandes de sélection avec leurs articles
+        $orders = Order::with('items')
+            ->where('user_id', $userId)
+            ->latest()
+            ->get();
 
-        return view('dashboard', compact('orders'));
+        return view('dashboard', compact('testDrives', 'vehicleRequests', 'orders'));
     }
 }
