@@ -9,14 +9,20 @@
     : (\App\Models\Enums\VehicleLocation::tryFrom($vehicle->location)?->label() ?? 'USA Warehouse');
     @endphp
 
+    <!-- Container Principal avec État Alpine Global -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
         x-data="{ 
              activeImage: '{{ !empty($vehicle->images) ? $vehicle->images[0] : 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80' }}', 
              isZoomOpen: false,
              visitDate: '{{ date('Y-m-d', strtotime('+1 day')) }}',
-             visitTime: '10:00'
+             visitTime: '10:00 AM',
+             testDriveModal: false,
+             selectedVehicleId: '{{ $vehicle->id }}',
+             selectedVehicleTitle: '{{ addslashes($vehicle->title ?? $vehicle->make . ' ' . $vehicle->model) }}',
+             selectedDate: '',
+             selectedTime: ''
          }"
-        @keydown.escape.window="isZoomOpen = false">
+        @keydown.escape.window="isZoomOpen = false; testDriveModal = false">
 
         <!-- Fil d'Ariane / Retour -->
         <div class="mb-6">
@@ -31,7 +37,7 @@
         <!-- Grille Principale -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
 
-            <!-- BLOC GAUCHE : Galerie (7 colonnes sur desktop) -->
+            <!-- BLOC GAUCHE : Galerie -->
             <div class="lg:col-span-7 space-y-4">
                 <!-- Image Principale -->
                 <div class="relative bg-slate-900 rounded-2xl overflow-hidden aspect-[16/10] shadow-md border border-slate-200 group cursor-zoom-in"
@@ -67,7 +73,7 @@
                 @endif
             </div>
 
-            <!-- BLOC DROITE : Spécifications & Formulaire de Visite (5 colonnes) -->
+            <!-- BLOC DROITE : Spécifications & Formulaire de Visite -->
             <div class="lg:col-span-5 space-y-6">
                 <div>
                     <!-- Badges Logistiques -->
@@ -129,7 +135,6 @@
                 <!-- 1. ACTIONS PRINCIPALES (PANIER & FAVORIS) -->
                 <div class="space-y-3 mb-6">
                     <div class="flex gap-3">
-                        <!-- Action principale : Ajouter à la sélection -->
                         <form action="{{ route('cart.add', $vehicle->id) }}" method="POST" class="flex-1">
                             @csrf
                             <button type="submit" class="w-full py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl text-xs uppercase tracking-wider transition">
@@ -137,7 +142,6 @@
                             </button>
                         </form>
 
-                        <!-- Favoris -->
                         <form action="{{ route('favorites.toggle', $vehicle->id) }}" method="POST">
                             @csrf
                             <button type="submit" class="p-3.5 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl transition text-slate-700">
@@ -150,7 +154,7 @@
                 </div>
 
                 <!-- 2. BLOC DÉDIÉ : PRISE DE RENDEZ-VOUS EN SHOWROOM -->
-                <div class="bg-slate-900 text-white p-5 rounded-2xl shadow-xl space-y-4" x-data="{ visitDate: '{{ date('Y-m-d') }}', visitTime: '10:00 AM' }">
+                <div class="bg-slate-900 text-white p-5 rounded-2xl shadow-xl space-y-4">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                         <h3 class="text-xs font-bold tracking-wide uppercase text-amber-400 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -164,26 +168,32 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Preferred Date</label>
-                            <input type="date" x-model="visitDate" min="{{ date('Y-m-d') }}"
+                            <input type="date" x-model="visitDate" min="{{ date('Y-m-d', strtotime('+1 day')) }}"
                                 class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Time Slot</label>
                             <select x-model="visitTime"
                                 class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
-                                <option value="10:00 AM">10:00 AM</option>
-                                <option value="02:00 PM">02:00 PM</option>
+                                @foreach(\App\Models\Enums\VisitTimeSlot::cases() as $slot)
+                                <option value="{{ $slot->value }}">{{ $slot->label() }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
 
-                    <!-- Un seul bouton dans ce bloc, dédié à la réservation -->
+                    <!-- Bouton Déclencheur du Modal -->
                     <button type="button"
-                        @click="$dispatch('open-modal-showroom-visit', { id: '{{ $vehicle->id }}', date: visitDate, time: visitTime })"
+                        @click="
+                            selectedDate = visitDate;
+                            selectedTime = visitTime;
+                            testDriveModal = true;
+                        "
                         class="w-full py-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl text-xs uppercase tracking-wider transition">
                         Book Appointment
                     </button>
                 </div>
+
                 <!-- DÉTAILS COMPLÉMENTAIRES -->
                 <div class="border-t border-slate-200 pt-5 space-y-4">
                     <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Detailed Specifications</h3>
@@ -273,6 +283,57 @@
 
             <div class="max-w-5xl max-h-[90vh] overflow-hidden" @click.away="isZoomOpen = false">
                 <img :src="activeImage" alt="Zoomed view" class="w-full h-full object-contain rounded-xl shadow-2xl">
+            </div>
+        </div>
+
+        <!-- MODAL SCHEDULE TEST DRIVE / SHOWROOM VISIT -->
+        <div x-show="testDriveModal"
+            class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            x-cloak
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0">
+
+            <div @click.away="testDriveModal = false" class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-100 space-y-4">
+                <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                    <h3 class="font-bold text-gray-900 text-base">Schedule a Test Drive</h3>
+                    <button type="button" @click="testDriveModal = false" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
+                </div>
+                
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    Book a private slot to inspect and test drive the <span class="font-bold text-gray-900" x-text="selectedVehicleTitle"></span>.
+                </p>
+
+                <form action="{{ route('testdrive.store') }}" method="POST" class="space-y-4 text-xs">
+                    @csrf
+                    <input type="hidden" name="vehicle_id" :value="selectedVehicleId">
+
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Preferred Date</label>
+                        <input type="date" name="date" x-model="selectedDate" required min="{{ date('Y-m-d', strtotime('+1 day')) }}" class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 bg-gray-50 focus:bg-white focus:border-amber-400 transition outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Preferred Time Slot</label>
+                        <select name="visit_time" x-model="selectedTime" class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 bg-gray-50 focus:bg-white focus:border-amber-400 transition outline-none text-gray-800">
+                            @foreach(\App\Models\Enums\VisitTimeSlot::cases() as $slot)
+                            <option value="{{ $slot->value }}">{{ $slot->label() }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Special Requirements (Optional)</label>
+                        <textarea name="notes" placeholder="Specify if you require delivery to a specific venue or features review..." class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 bg-gray-50 focus:bg-white focus:border-amber-400 transition h-20 resize-none outline-none"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-[#0F172A] hover:bg-slate-800 text-white font-semibold rounded-xl transition mt-2 shadow tracking-wide uppercase text-xs">
+                        Confirm Appointment
+                    </button>
+                </form>
             </div>
         </div>
 

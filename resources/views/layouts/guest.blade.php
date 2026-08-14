@@ -129,8 +129,9 @@
                             </a>
                             <hr class="border-gray-100 my-1">
                             @endrole
-
+                            @role('user')
                             <a href="{{ url('/dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-50">My Orders & Drives</a>
+                            @endrole
                             <hr class="border-gray-100">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf

@@ -1,20 +1,13 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-bold text-xl text-white leading-tight">
-            {{ __('My Account Dashboard') }}
-        </h2>
-    </x-slot>
 
     <!-- Fond global très sombre -->
     <div class="py-12 bg-[#080d1a] min-h-[80vh] text-slate-100">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
-
-            @if(session('success'))
-            <div class="p-4 bg-emerald-950/60 border border-emerald-800/80 text-emerald-300 text-xs font-medium rounded-xl flex items-center space-x-2">
-                <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>{{ session('success') }}</span>
+            <div>
+                <h2 class="font-bold text-2xl text-white leading-tight">
+                    {{ __('My Account Dashboard') }}
+                </h2>
             </div>
-            @endif
 
             <!-- SECTION 1: MY RESERVATIONS & INQUIRIES -->
             <div class="bg-[#0f172a] overflow-hidden shadow-2xl sm:rounded-2xl border border-slate-800/80 p-6 sm:p-8">
@@ -183,12 +176,17 @@
                                     {{ \Carbon\Carbon::parse($req->created_at)->format('M d, Y') }}
                                 </td>
                                 <td class="p-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider border {{ $req->status?->badgeColor() ?? 'bg-[#1e293b] text-slate-300 border-slate-700' }}">
-                                        {{ $req->status?->label() ?? 'PENDING' }}
+                                    @php
+                                    $statusEnum = $req->status instanceof \App\Models\Enums\VehicleRequestStatus
+                                    ? $req->status
+                                    : \App\Models\Enums\VehicleRequestStatus::tryFrom($req->status);
+                                    @endphp
+                                    <span class="inline-flex items-center px-2.5 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider border {{ $statusEnum?->badgeColor() ?? 'bg-slate-800 text-slate-400 border-slate-700' }}">
+                                        {{ $statusEnum?->label() ?? strtoupper($req->status ?? 'PENDING') }}
                                     </span>
                                 </td>
                                 <td class="p-4 text-right whitespace-nowrap space-x-2">
-                                    @if(($req->status?->value ?? $req->status) === \App\Models\Enums\VehicleRequestStatus::PENDING->value || $req->status === \App\Models\Enums\VehicleRequestStatus::PENDING)
+                                    @if(($statusEnum?->value ?? $req->status) === \App\Models\Enums\VehicleRequestStatus::PENDING->value)
                                     <form id="cancel-vehicle-request-form-{{ $req->id }}" action="{{ route('user.vehicle-requests.cancel', $req) }}" method="POST" class="inline-block">
                                         @csrf
                                         @method('PATCH')

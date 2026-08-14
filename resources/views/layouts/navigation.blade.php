@@ -1,68 +1,57 @@
 <nav x-data="{ open: false }" class="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-50 shadow-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex items-center space-x-6">
-                <!-- LOGO BRAND -->
-                <div class="shrink-0 flex items-center">
-                    <!-- Logo & Branding -->
-                    <a href="{{ route('home') }}" class="flex items-center space-x-2">
-                        <x-application-logo class="h-8 w-auto" />
-                        <span class="font-bold text-white text-lg tracking-wide">
-                            405 GROUP
-                            {{-- Afficher "ADMIN" uniquement si l'utilisateur a le rôle admin --}}
-                            @role('admin')
-                            <span class="text-amber-500 text-xs uppercase font-extrabold ml-1">ADMIN</span>
-                            @endrole
-                        </span>
-                    </a>
-                </div>
+        <div class="flex items-center justify-between h-16">
 
-                <!-- DESKTOP MENU LINKS -->
-                <div class="hidden space-x-2 sm:-my-px sm:flex sm:items-center">
-
-                    <!-- Dashboard Link (Visible par tous les utilisateurs connectés) -->
-                    <a href="{{ route('dashboard') }}"
-                        class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('dashboard') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-slate-300 hover:text-white hover:bg-slate-800' }}">
-                        📊 {{ __('Dashboard') }}
-                    </a>
-
-                    {{-- Liens Backoffice réservés exclusivement aux administrateurs --}}
+            <!-- 1. GAUCHE : LOGO BRAND -->
+            <div class="flex items-center shrink-0">
+                <a href="{{ route('home') }}" class="flex items-center gap-2 py-2">
+                    <img src="{{ asset('images/logo2.jpeg') }}"
+                        alt="405 Auto Group Logo"
+                        class="h-9 md:h-10 w-auto object-contain">
                     @role('admin')
-                    <!-- Fleet Link -->
-                    <a href="{{ route('admin.vehicles.index') }}"
-                        class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('admin.vehicles.*') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800' }}">
-                        ⚙️ {{ __('Admin Fleet') }}
-                    </a>
-
-                    <!-- Test Drives Link -->
-                    <a href="{{ route('admin.test-drives.index') }}"
-                        class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('admin.test-drives.*') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800' }}">
-                        🏎️ {{ __('Test Drives') }}
-                    </a>
-
-                    <!-- Orders Link -->
-                    <a href="{{ route('admin.orders.index') }}"
-                        class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('admin.orders.*') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800' }}">
-                        📦 {{ __('Orders') }}
-                    </a>
-
-                    <!-- Requests Link -->
-                    <a href="{{ route('admin.vehicle-requests.index') }}"
-                        class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('admin.vehicle-requests.*') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800' }}">
-                        🚗 {{ __('Vehicle Requests') }}
-                    </a>
-
-                    <!-- Admins Link -->
-                    <a href="{{ route('admin.users.index') }}"
-                        class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('admin.users.*') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800' }}">
-                        👥 {{ __('Admins') }}
-                    </a>
+                    <span class="text-amber-500 text-xs uppercase font-extrabold ml-1">ADMIN</span>
                     @endrole
-                </div>
+                </a>
             </div>
 
-            <!-- PROFILE & USER DROPDOWN -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <!-- 2. CENTRE : DESKTOP MENU LINKS (Parfaitement centré) -->
+            <div class="hidden sm:flex items-center justify-center space-x-2">
+                @role('user')
+                <a href="{{ route('dashboard') }}"
+                    class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('dashboard') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-slate-300 hover:text-white hover:bg-slate-800' }}">
+                    📊 {{ __('Dashboard') }}
+                </a>
+                @endrole
+                @role('admin')
+                <a href="{{ route('admin.vehicles.index') }}"
+                    class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('admin.vehicles.*') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800' }}">
+                    ⚙️ {{ __('Admin Fleet') }}
+                </a>
+
+                <a href="{{ route('admin.test-drives.index') }}"
+                    class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('admin.test-drives.*') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800' }}">
+                    🏎️ {{ __('Test Drives') }}
+                </a>
+
+                <a href="{{ route('admin.orders.index') }}"
+                    class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('admin.orders.*') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800' }}">
+                    📦 {{ __('Orders') }}
+                </a>
+
+                <a href="{{ route('admin.vehicle-requests.index') }}"
+                    class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('admin.vehicle-requests.*') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800' }}">
+                    🚗 {{ __('Vehicle Requests') }}
+                </a>
+
+                <a href="{{ route('admin.users.index') }}"
+                    class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('admin.users.*') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800' }}">
+                    👥 {{ __('Admins') }}
+                </a>
+                @endrole
+            </div>
+
+            <!-- 3. DROITE : PROFILE & USER DROPDOWN -->
+            <div class="hidden sm:flex items-center shrink-0">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-slate-700 text-xs leading-4 font-semibold rounded-lg text-slate-200 bg-slate-800 hover:bg-slate-700 hover:text-white focus:outline-none transition ease-in-out duration-150 shadow-sm">
@@ -77,7 +66,7 @@
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('home')" class="text-xs font-semibold text-slate-700 hover:bg-slate-100">
-                            🌐 {{ __('Voir le site client') }}
+                            🌐 {{ __('Look for the website') }}
                         </x-dropdown-link>
 
                         <x-dropdown-link :href="route('profile.edit')" class="text-xs font-semibold">
@@ -87,8 +76,7 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <x-dropdown-link :href="route('logout')"
-                                onclick="event.preventDefault();
-                                            this.closest('form').submit();"
+                                onclick="event.preventDefault(); this.closest('form').submit();"
                                 class="text-xs font-semibold text-red-600 hover:bg-red-50">
                                 🚪 {{ __('Log Out') }}
                             </x-dropdown-link>
@@ -106,6 +94,7 @@
                     </svg>
                 </button>
             </div>
+
         </div>
     </div>
 

@@ -26,9 +26,29 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        $user = $request->user();
+
+        // Check if the user account is suspended/blocked
+        if ($user->is_blocked) {
+            Auth::guard('web')->logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()->withErrors([
+                'email' => 'Your account has been suspended. Please contact support.',
+            ]);
+        }
+
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Si l'utilisateur est un administrateur -> direction la partie admin (vehicles.index)
+        if ($user->hasRole('admin')) {
+            return redirect()->intended(route('admin.vehicles.index', absolute: false));
+        }
+
+        // Sinon utilisateur classique -> direction l'accueil (home)
+        return redirect()->intended(route('home', absolute: false));
     }
 
     /**

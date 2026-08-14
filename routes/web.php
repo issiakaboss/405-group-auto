@@ -19,7 +19,7 @@ Route::get('/', [VehicleController::class, 'index'])->name('home');
 Route::get('/vehicles/search', [VehicleController::class, 'search'])->name('vehicles.search');
 Route::get('/vehicles/filter', [VehicleController::class, 'filter'])->name('vehicles.filter');
 Route::get('/cars/{vehicle}', [VehicleController::class, 'show'])->name('vehicles.show');
-Route::post('/vehicles/request', [VehicleRequestController::class, 'store'])->name('vehicles.request');
+
 
 Route::middleware('geo.us')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -28,16 +28,15 @@ Route::middleware('geo.us')->group(function () {
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-    Route::post('/test-drive/schedule', [TestDriveController::class, 'store'])->name('testdrive.store');
-});
-
-Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
-Route::post('/favorites/toggle/{vehicle}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
-
-Route::view('/about', 'pages.about-contact')->name('about');
-Route::post('/about/contact', [VehicleController::class, 'storeContact'])->name('about.contact');
-
-Route::get('/dashboard', [DashboardController::class, 'index'])
+    });
+    
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/favorites/toggle/{vehicle}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+    
+    Route::view('/about', 'pages.about-contact')->name('about');
+    Route::post('/about/contact', [VehicleController::class, 'storeContact'])->name('about.contact');
+    
+    Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -50,6 +49,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/order', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 
+    Route::post('/vehicles/request', [VehicleRequestController::class, 'store'])->name('vehicles.request');
+    
+    Route::post('/test-drive/schedule', [TestDriveController::class, 'store'])->name('testdrive.store');
+    
     Route::patch('/my-test-drives/{testDrive}/cancel', [TestDriveController::class, 'cancel'])->name('user.test-drives.cancel');
     Route::patch('/my-vehicle-requests/{vehicleRequest}/cancel', [VehicleRequestController::class, 'cancel'])->name('user.vehicle-requests.cancel');
 
@@ -80,6 +83,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
     Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+    Route::patch('/users/{user}/toggle-block', [AdminUserController::class, 'toggleBlock'])->name('users.toggle-block');
 });
 
 require __DIR__ . '/auth.php';

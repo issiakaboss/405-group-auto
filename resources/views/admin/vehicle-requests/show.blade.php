@@ -1,14 +1,14 @@
 <x-app-layout>
-    <div class="min-h-screen bg-slate-950 text-slate-100 -m-6 p-6">
+    <div class="min-h-screen bg-slate-950 text-slate-100 py-8 px-4 sm:px-6 lg:px-8">
         <div class="container mx-auto max-w-7xl">
-            <!-- Header with Back Link -->
-            <div class="flex items-center justify-between mb-6">
+            <!-- Header avec espace suffisant sous le Navbar -->
+            <div class="flex items-center justify-between mb-8">
                 <div>
-                    <a href="{{ route('admin.vehicle-requests.index') }}" class="text-xs text-slate-400 hover:text-white transition flex items-center gap-1 mb-2">
+                    <a href="{{ route('admin.vehicle-requests.index') }}" class="text-xs text-slate-400 hover:text-white transition inline-flex items-center gap-1 mb-3">
                         ← Back to requests
                     </a>
                     <h1 class="text-2xl font-bold text-white">Request #{{ $vehicleRequest->id }}</h1>
-                    <p class="text-xs text-slate-400">Submitted on {{ $vehicleRequest->created_at->format('M d, Y \a\t H:i') }}</p>
+                    <p class="text-xs text-slate-400 mt-1">Submitted on {{ $vehicleRequest->created_at->format('M d, Y \a\t H:i') }}</p>
                 </div>
 
                 <!-- Status Badge -->
@@ -19,18 +19,53 @@
                 </div>
             </div>
 
-            @if(session('success'))
-            <div class="mb-6 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm">
-                {{ session('success') }}
-            </div>
-            @endif
+
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <!-- Left Column: Request Details & Customer Info -->
+                <!-- Left Column: Search Details & Applicant Info -->
                 <div class="lg:col-span-2 space-y-6">
 
-                    <!-- Customer Details -->
+                    <!-- Vehicle Search Criteria -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            🔍 Search Criteria / Vehicle Specifications
+                        </h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                                <span class="text-slate-400 block text-xs">Make (Marque):</span>
+                                <span class="text-white font-medium">{{ $vehicleRequest->make ?? 'Any' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-xs">Model (Modèle):</span>
+                                <span class="text-white font-medium">{{ $vehicleRequest->model ?? 'Any' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-xs">Body Style (Carrosserie):</span>
+                                <span class="text-white font-medium">{{ $vehicleRequest->body_style ?? 'N/A' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-xs">Year Range (Année):</span>
+                                <span class="text-white font-medium">
+                                    {{ $vehicleRequest->year_min ?? 'N/A' }} - {{ $vehicleRequest->year_max ?? 'N/A' }}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-xs">Max Budget:</span>
+                                <span class="text-emerald-400 font-bold">
+                                    {{ $vehicleRequest->max_budget ? number_format($vehicleRequest->max_budget, 2) . ' €' : 'N/A' }}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-xs">Desired Mileage:</span>
+                                <span class="text-white font-medium">
+                                    {{ $vehicleRequest->desired_mileage ? number_format($vehicleRequest->desired_mileage) . ' km' : 'N/A' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Applicant Information -->
                     <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
                         <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                             👤 Applicant Information
@@ -39,13 +74,13 @@
                             <div>
                                 <span class="text-slate-400 block text-xs">Customer Name:</span>
                                 <span class="text-white font-medium">
-                                    {{ $vehicleRequest->user->name ?? 'Guest User' }}
+                                    {{ $vehicleRequest->name ?? $vehicleRequest->user->name ?? 'Guest User' }}
                                 </span>
                             </div>
                             <div>
                                 <span class="text-slate-400 block text-xs">Email Address:</span>
                                 <span class="text-white font-medium">
-                                    {{ $vehicleRequest->user->email ?? 'N/A' }}
+                                    {{ $vehicleRequest->email ?? $vehicleRequest->user->email ?? 'N/A' }}
                                 </span>
                             </div>
                             <div>
@@ -53,51 +88,11 @@
                                 <span class="text-white font-medium">{{ $vehicleRequest->phone ?? 'N/A' }}</span>
                             </div>
                             <div>
-                                <span class="text-slate-400 block text-xs">Total Estimated Price:</span>
-                                <span class="text-emerald-400 font-bold">
-                                    {{ number_format($vehicleRequest->total_estimated_price, 2) }} €
-                                </span>
-                            </div>
-                            <div class="md:col-span-2">
-                                <span class="text-slate-400 block text-xs">Full Address:</span>
-                                <span class="text-white font-medium">
-                                    @php
-                                    $addressParts = array_filter([$vehicleRequest->address, $vehicleRequest->city, $vehicleRequest->country]);
-                                    @endphp
-                                    {{ !empty($addressParts) ? implode(', ', $addressParts) : 'Not provided' }}
-                                </span>
+                                <span class="text-slate-400 block text-xs">Zip Code:</span>
+                                <span class="text-white font-medium">{{ $vehicleRequest->zip_code ?? 'N/A' }}</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Requested Vehicles Section -->
-                    @if(isset($vehicleRequest->items) && $vehicleRequest->items->count() > 0)
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                            🚗 Requested Vehicles ({{ $vehicleRequest->items->count() }})
-                        </h2>
-                        <div class="divide-y divide-slate-800">
-                            @foreach($vehicleRequest->items as $item)
-                            <div class="py-3 flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    @if(optional($item->vehicle)->image_url)
-                                    <img src="{{ asset('storage/' . $item->vehicle->image_url) }}" class="w-12 h-12 object-cover rounded-lg border border-slate-700" alt="Vehicle image">
-                                    @endif
-                                    <div>
-                                        <h3 class="text-white font-medium text-sm">
-                                            {{ $item->vehicle->title ?? $item->vehicle_name ?? 'Vehicle #' . $item->vehicle_id }}
-                                        </h3>
-                                        <p class="text-xs text-slate-400">Vehicle ID: {{ $item->vehicle_id }}</p>
-                                    </div>
-                                </div>
-                                <span class="text-emerald-400 font-semibold text-sm">
-                                    {{ number_format($item->price ?? 0, 2) }} €
-                                </span>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    @endif
 
                     <!-- Notes & Instructions -->
                     @if($vehicleRequest->notes)
@@ -129,10 +124,11 @@
                                     Change Status
                                 </label>
                                 <select name="status" id="status" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
-                                    <option value="pending_review" {{ $currentStatus == 'pending_review' || $currentStatus == 'pending' ? 'selected' : '' }}>Pending Review</option>
-                                    <option value="contacted" {{ $currentStatus == 'contacted' ? 'selected' : '' }}>Customer Contacted</option>
-                                    <option value="scheduled" {{ $currentStatus == 'scheduled' ? 'selected' : '' }}>Scheduled / Confirmed</option>
-                                    <option value="cancelled" {{ $currentStatus == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                    @foreach(\App\Models\Enums\VehicleRequestStatus::cases() as $status)
+                                    <option value="{{ $status->value }}" {{ $currentStatus === $status->value ? 'selected' : '' }}>
+                                        {{ $status->label() }}
+                                    </option>
+                                    @endforeach
                                 </select>
                             </div>
 
