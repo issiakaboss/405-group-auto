@@ -83,7 +83,7 @@ class VehicleController extends Controller
             'money_still_owed' => $request->money_still_owed,
             'description' => $request->description,
             'location' => $request->location,
-            'status' => $request->status ?? 'available_usa',
+            'status' => $request->status ?? VehicleStatus::AVAILABLE,
             'is_featured' => $request->boolean('is_featured'),
             'images' => $uploadedImages,
         ]);

@@ -3,7 +3,8 @@
 use App\Http\Controllers\Admin\VehicleController as AdminVehicleController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Admin\VehicleRequestController as AdminVehicleRequestController ;
+use App\Http\Controllers\Admin\VehicleRequestController as AdminVehicleRequestController;
+use App\Http\Controllers\Admin\TestDriveController as AdminTestDriveController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\VehicleRequestController;
 use App\Http\Controllers\CheckoutController;
@@ -18,7 +19,7 @@ Route::get('/', [VehicleController::class, 'index'])->name('home');
 Route::get('/vehicles/search', [VehicleController::class, 'search'])->name('vehicles.search');
 Route::get('/vehicles/filter', [VehicleController::class, 'filter'])->name('vehicles.filter');
 Route::get('/cars/{vehicle}', [VehicleController::class, 'show'])->name('vehicles.show');
-Route::post('/vehicles/request', [VehicleRequestController::class, 'store'])->name('vehicles.request');
+
 
 Route::middleware('geo.us')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -27,16 +28,15 @@ Route::middleware('geo.us')->group(function () {
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-    Route::post('/test-drive/schedule', [TestDriveController::class, 'store'])->name('testdrive.store');
-});
-
-Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
-Route::post('/favorites/toggle/{vehicle}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
-
-Route::view('/about', 'pages.about-contact')->name('about');
-Route::post('/about/contact', [VehicleController::class, 'storeContact'])->name('about.contact');
-
-Route::get('/dashboard', [DashboardController::class, 'index'])
+    });
+    
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/favorites/toggle/{vehicle}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+    
+    Route::view('/about', 'pages.about-contact')->name('about');
+    Route::post('/about/contact', [VehicleController::class, 'storeContact'])->name('about.contact');
+    
+    Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -48,6 +48,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/order', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+
+    Route::post('/vehicles/request', [VehicleRequestController::class, 'store'])->name('vehicles.request');
+    
+    Route::post('/test-drive/schedule', [TestDriveController::class, 'store'])->name('testdrive.store');
+    
+    Route::patch('/my-test-drives/{testDrive}/cancel', [TestDriveController::class, 'cancel'])->name('user.test-drives.cancel');
+    Route::patch('/my-vehicle-requests/{vehicleRequest}/cancel', [VehicleRequestController::class, 'cancel'])->name('user.vehicle-requests.cancel');
+
+    Route::get('/my-orders/{order}', [CheckoutController::class, 'show'])->name('user.orders.show');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -59,13 +68,23 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/vehicles/{vehicle}/status', [AdminVehicleController::class, 'updateStatus'])->name('vehicles.update-status');
     Route::delete('/vehicles/{vehicle}', [AdminVehicleController::class, 'destroy'])->name('vehicles.destroy');
 
+    Route::get('/vehicle-requests/{vehicleRequest}', [AdminVehicleRequestController::class, 'show'])->name('vehicle-requests.show');
+    Route::patch('/vehicle-requests/{vehicleRequest}/status', [AdminVehicleRequestController::class, 'updateStatus'])->name('vehicle-requests.update-status');
+
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
 
     Route::get('/vehicle-requests', [AdminVehicleRequestController::class, 'index'])->name('vehicle-requests.index');
 
+    // Gestion des Test Drives
+    Route::get('/test-drives', [AdminTestDriveController::class, 'index'])->name('test-drives.index');
+    Route::get('/test-drives/{testDrive}', [AdminTestDriveController::class, 'show'])->name('test-drives.show');
+    Route::patch('/test-drives/{testDrive}/status', [AdminTestDriveController::class, 'updateStatus'])->name('test-drives.update-status');
+
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
     Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+    Route::patch('/users/{user}/toggle-block', [AdminUserController::class, 'toggleBlock'])->name('users.toggle-block');
 });
 
 require __DIR__ . '/auth.php';

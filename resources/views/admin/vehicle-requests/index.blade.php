@@ -1,13 +1,19 @@
 <x-app-layout>
     <div class="py-12 bg-slate-900 text-white min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
-            <div class="flex justify-between items-center mb-8">
+            <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-3xl font-extrabold text-white">Vehicle Requests</h2>
                     <p class="text-slate-400 text-sm mt-1">Custom vehicle finder submissions from site visitors.</p>
                 </div>
             </div>
+
+            @if(session('success'))
+                <div class="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium rounded-xl">
+                    {{ session('success') }}
+                </div>
+            @endif
 
             <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl overflow-hidden shadow-xl backdrop-blur-xl">
                 <div class="overflow-x-auto">
@@ -19,6 +25,7 @@
                                 <th class="px-6 py-4">Budget</th>
                                 <th class="px-6 py-4">Location</th>
                                 <th class="px-6 py-4">Submitted</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-700/50">
@@ -41,10 +48,15 @@
                                 <td class="px-6 py-4 text-xs text-slate-400">
                                     {{ $request->created_at->format('d/m/Y H:i') }}
                                 </td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="{{ route('admin.vehicle-requests.show', $request) }}" class="text-xs font-bold px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 transition">
+                                        View Details
+                                    </a>
+                                </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                                <td colspan="6" class="px-6 py-12 text-center text-slate-500">
                                     No custom vehicle requests yet.
                                 </td>
                             </tr>

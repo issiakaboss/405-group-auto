@@ -3,44 +3,74 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\Vehicle;
 use App\Models\Enums\OrderStatus;
 use App\Models\Enums\VehicleStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Enum;
 
 class OrderController extends Controller
 {
+    /**
+     * Liste les commandes paginées.
+     */
     public function index()
     {
-        $orders = DB::table('orders')
-            ->join('users', 'orders.user_id', '=', 'users.id')
-            ->select('orders.*', 'users.name as customer_name', 'users.email as customer_email')
-            ->orderBy('orders.created_at', 'desc')
+        // Eloquent charge la relation avec l'utilisateur
+        $orders = Order::with('user')
+            ->latest()
             ->paginate(15);
 
         return view('admin.orders.index', compact('orders'));
     }
 
-    public function updateStatus(Request $request, $id)
+    /**
+     * Affiche les détails d'une commande spécifique avec ses items et les véhicules associés.
+     */
+    public function show(Order $order)
+    {
+        // Chargement des relations du modèle
+        $order->load(['user', 'items.vehicle']);
+
+        return view('admin.orders.show', compact('order'));
+    }
+
+    /**
+     * Mettre à jour le statut d'une commande et ajuster le statut des véhicules.
+     */
+    public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|string|in:pending_review,confirmed,shipping,delivered,cancelled',
+            'status' => ['required', new Enum(OrderStatus::class)],
         ]);
 
-        DB::table('orders')
-            ->where('id', $id)
-            ->update([
-                'status'     => $request->status,
-                'updated_at' => now(),
+        $newStatus = $request->status;
+        $previousStatus = $order->status;
+
+        DB::transaction(function () use ($order, $newStatus, $previousStatus) {
+            // 1. Mise à jour du statut de la commande
+            $order->update([
+                'status' => $newStatus,
             ]);
 
-        // Si la commande est annulée, on remet le véhicule en vente
-        if ($request->status === OrderStatus::CANCELLED->value) {
-            $vehicleIds = DB::table('order_items')->where('order_id', $id)->pluck('vehicle_id');
-            DB::table('vehicles')->whereIn('id', $vehicleIds)->update([
-                'status' => VehicleStatus::AVAILABLE ->value // ou AVAILABLE_LOCAL selon le stock
-            ]);
-        }
+            // Récupération des IDs des véhicules liés à cette commande via les items
+            $vehicleIds = $order->items()->pluck('vehicle_id')->filter();
+
+            // 2. Si la commande est annulée, on libère les véhicules
+            if ($newStatus === OrderStatus::CANCELLED->value || $newStatus === OrderStatus::CANCELLED) {
+                Vehicle::whereIn('id', $vehicleIds)->update([
+                    'status' => VehicleStatus::AVAILABLE->value ?? VehicleStatus::AVAILABLE,
+                ]);
+            }
+            // 3. Si la commande était précédemment annulée et repasse à un statut actif
+            elseif ($previousStatus === OrderStatus::CANCELLED->value || $previousStatus === OrderStatus::CANCELLED) {
+                Vehicle::whereIn('id', $vehicleIds)->update([
+                    'status' => VehicleStatus::SOLD->value ?? VehicleStatus::SOLD,
+                ]);
+            }
+        });
 
         return back()->with('success', 'Order status updated successfully!');
     }
