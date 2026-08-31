@@ -1,0 +1,62 @@
+<?php
+
+return [
+    // Hero Banner
+    'hero_title' => 'Drive Your Dreams',
+    'hero_subtitle' => 'Discover the finest collection of luxury and performance vehicles.',
+
+    // Section Title & Inventory Badge
+    'live_inventory' => 'Live Inventory',
+    'complete_collection' => 'Complete Collection',
+    'showing' => 'Showing',
+    'available_vehicles' => 'Available Vehicles',
+
+    // Filter Bar
+    'search_keywords' => 'Search Keywords',
+    'search_placeholder' => 'Make, model, or keyword...',
+    'make' => 'Make',
+    'all_makes' => 'All Makes',
+    'body_style' => 'Body Style',
+    'all_body_styles' => 'All Body Styles',
+    'vehicle_type' => 'Vehicle Type',
+    'all_vehicle_types' => 'All Vehicle Types',
+    'sort_by' => 'Sort By',
+    'sort_latest' => 'Newest Arrivals',
+    'sort_price_asc' => 'Price: Low to High',
+    'sort_price_desc' => 'Price: High to Low',
+    'sort_year_desc' => 'Year: Newest',
+    'sort_mileage_asc' => 'Mileage: Lowest',
+    'fuel_type' => 'Fuel Type',
+    'all_fuel_types' => 'All Fuel Types',
+    'transmission' => 'Transmission',
+    'all_transmissions' => 'All Transmissions',
+    'reset_filters' => 'Reset Filters',
+
+    // Recently Sold & Delivered Section
+    'proven_track_record' => 'Proven Track Record',
+    'recently_sold' => 'Recently Sold & Delivered',
+    'browse_available' => 'Browse Available Inventory',
+    'unit_miles' => 'mi',
+    'view_details' => 'View Details',
+    'reserve_similar' => 'Reserve Similar',
+
+    // Vehicle Finder Request Form
+    'finder_badge' => 'Vehicle Finder Service',
+    'finder_title' => "Can't Find What You're Looking For?",
+    'finder_subtitle' => 'Let our concierge team source your exact dream car directly from our nationwide US dealer auctions & private network.',
+    'form_make' => 'Make (Brand)',
+    'placeholder_make' => 'e.g. Porsche, BMW',
+    'form_model' => 'Model',
+    'placeholder_model' => 'e.g. 911 Carrera, X5',
+    'form_year_min' => 'Year Min',
+    'form_year_max' => 'Year Max',
+    'form_max_budget' => 'Max Budget ($ USD)',
+    'form_max_mileage' => 'Max Mileage',
+    'form_full_name' => 'Full Name',
+    'form_email' => 'Email Address',
+    'form_phone' => 'Phone Number',
+    'form_zip' => 'ZIP Code',
+    'form_notes' => 'Additional Preferences & Details',
+    'placeholder_notes' => 'Specify color preferences, trim levels, or special options...',
+    'submit_sourcing' => 'Submit Sourcing Request',
+];

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Enums;
 
 enum VehicleLocation: string
@@ -10,11 +11,6 @@ enum VehicleLocation: string
 
     public function label(): string
     {
-        return match($this) {
-            self::USA_OKLAHOMA => 'Oklahoma (USA)',
-            self::USA_TEXAS    => 'Texas (USA)',
-            self::USA_FLORIDA  => 'Florida (USA)',
-            self::USA_GEORGIA  => 'Georgia (USA)',
-        };
+        return __("enums.vehicle_location.{$this->value}");
     }
 }

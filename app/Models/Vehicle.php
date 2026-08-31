@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\Enums\BodyStyle;
 use App\Models\Enums\FuelType;
-use App\Models\Enums\MoneyOwedStatus;
 use App\Models\Enums\Transmission;
 use App\Models\Enums\VehicleColor;
 use App\Models\Enums\VehicleLocation;
@@ -34,7 +33,6 @@ class Vehicle extends Model
         'fuel_type',
         'transmission',
         'has_clean_title',
-        'money_still_owed',
         'location',
         'price',
         'description',
@@ -51,7 +49,6 @@ class Vehicle extends Model
         'fuel_type' => FuelType::class,
         'transmission' => Transmission::class,
         'has_clean_title' => 'boolean',
-        'money_still_owed' => MoneyOwedStatus::class,
         'status' => VehicleStatus::class,
         'location' => VehicleLocation::class,
         'images' => 'array',

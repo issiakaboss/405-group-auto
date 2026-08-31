@@ -12,18 +12,12 @@ enum OrderStatus: string
 
     public function label(): string
     {
-        return match($this) {
-            self::PENDING_REVIEW => 'En attente de revue',
-            self::CONFIRMED      => 'Confirmée',
-            self::SHIPPING       => 'En cours d\'expédition',
-            self::DELIVERED      => 'Livrée',
-            self::CANCELLED      => 'Annulée',
-        };
+        return __("enums.order_status.{$this->value}");
     }
 
     public function badgeColor(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING_REVIEW => 'bg-amber-100 text-amber-800 border-amber-200',
             self::CONFIRMED      => 'bg-blue-100 text-blue-800 border-blue-200',
             self::SHIPPING       => 'bg-purple-100 text-purple-800 border-purple-200',

@@ -4,28 +4,18 @@ namespace App\Models\Enums;
 
 enum VehicleColor: string
 {
-    case WHITE = 'White';
-    case BLACK = 'Black';
-    case SILVER = 'Silver';
-    case GRAY = 'Gray';
-    case RED = 'Red';
-    case BLUE = 'Blue';
-    case BROWN = 'Brown';
-    case GREEN = 'Green';
-    case CUSTOM = 'Custom';
+    case WHITE = 'white';
+    case BLACK = 'black';
+    case SILVER = 'silver';
+    case GRAY = 'gray';
+    case RED = 'red';
+    case BLUE = 'blue';
+    case BROWN = 'brown';
+    case GREEN = 'green';
+    case CUSTOM = 'custom';
 
     public function label(): string
     {
-        return match ($this) {
-            self::WHITE => 'White',
-            self::BLACK => 'Black',
-            self::SILVER => 'Silver',
-            self::GRAY => 'Gray',
-            self::RED => 'Red',
-            self::BLUE => 'Blue',
-            self::BROWN => 'Brown',
-            self::GREEN => 'Green',
-            self::CUSTOM => 'Custom',
-        };
+        return __("enums.vehicle_color.{$this->value}");
     }
 }

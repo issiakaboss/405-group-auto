@@ -4,19 +4,14 @@ namespace App\Models\Enums;
 
 enum TitleStatus: string
 {
-    case CLEAN_TITLE = 'Clean Title';
-    case SALVAGE = 'Salvage';
-    case REBUILT = 'Rebuilt';
-    case LEMON = 'Lemon';
+    case CLEAN_TITLE = 'clean_title';
+    case SALVAGE = 'salvage';
+    case REBUILT = 'rebuilt';
+    case LEMON = 'lemon';
 
     public function label(): string
     {
-        return match ($this) {
-            self::CLEAN_TITLE => 'Clean Title',
-            self::SALVAGE => 'Salvage',
-            self::REBUILT => 'Rebuilt',
-            self::LEMON => 'Lemon',
-        };
+        return __("enums.title_status.{$this->value}");
     }
 
     public function badgeColor(): string

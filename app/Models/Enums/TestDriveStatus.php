@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models\Enums;
+
 enum TestDriveStatus: string
 {
     case PENDING   = 'pending';
@@ -11,18 +12,12 @@ enum TestDriveStatus: string
 
     public function label(): string
     {
-        return match($this) {
-            self::PENDING   => 'Pending',
-            self::CONFIRMED => 'Confirmed',
-            self::COMPLETED => 'Completed',
-            self::CANCELLED => 'Cancelled',
-            self::CLOSED    => 'Closed',
-        };
+        return __("enums.test_drive_status.{$this->value}");
     }
 
     public function badgeColor(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING   => 'bg-amber-500/10 text-amber-400 border-amber-500/20',
             self::CONFIRMED => 'bg-blue-500/10 text-blue-400 border-blue-500/20',
             self::COMPLETED => 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',

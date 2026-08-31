@@ -4,20 +4,14 @@ namespace App\Models\Enums;
 
 enum FuelType: string
 {
-    case GASOLINE = 'Gasoline';
-    case DIESEL = 'Diesel';
-    case ELECTRIC = 'Electric';
-    case HYBRID = 'Hybrid';
-    case PLUG_IN_HYBRID = 'Plug-in Hybrid';
+    case GASOLINE = 'gasoline';
+    case DIESEL = 'diesel';
+    case ELECTRIC = 'electric';
+    case HYBRID = 'hybrid';
+    case PLUG_IN_HYBRID = 'plug_in_hybrid';
 
     public function label(): string
     {
-        return match ($this) {
-            self::GASOLINE => 'Gasoline',
-            self::DIESEL => 'Diesel',
-            self::ELECTRIC => 'Electric',
-            self::HYBRID => 'Hybrid',
-            self::PLUG_IN_HYBRID => 'Plug-in Hybrid',
-        };
+        return __("enums.fuel_type.{$this->value}");
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Enums;
 
 enum VehicleStatus: string
@@ -7,15 +8,10 @@ enum VehicleStatus: string
     case IN_TRANSIT = 'in_transit';  // En cours d'expédition maritime / douane
     case RESERVED   = 'reserved';    // Acompte versé par un client
     case SOLD       = 'sold';        // Vendu et livré
-
+    
     public function label(): string
     {
-        return match ($this) {
-            self::AVAILABLE  => 'Disponible (USA)',
-            self::IN_TRANSIT => 'En Transit',
-            self::RESERVED   => 'Réservé',
-            self::SOLD       => 'Vendu',
-        };
+        return __("enums.vehicle_status.{$this->value}");
     }
 
     public function badgeColor(): string

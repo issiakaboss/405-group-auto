@@ -4,20 +4,14 @@ namespace App\Models\Enums;
 
 enum VehicleType: string
 {
-    case CARS_AND_TRUCKS = 'Cars & Trucks';
-    case SUVs = 'SUVs';
-    case VANS_MINIVANS = 'Vans/Minivans';
-    case COMMERCIAL = 'Commercial';
-    case LUXURY = 'Luxury';
+    case CARS_AND_TRUCKS = 'cars_and_trucks';
+    case SUVs = 'suvs';
+    case VANS_MINIVANS = 'vans_minivans';
+    case COMMERCIAL = 'commercial';
+    case LUXURY = 'luxury';
 
     public function label(): string
     {
-        return match ($this) {
-            self::CARS_AND_TRUCKS => 'Cars & Trucks',
-            self::SUVs => 'SUVs',
-            self::VANS_MINIVANS => 'Vans / Minivans',
-            self::COMMERCIAL => 'Commercial',
-            self::LUXURY => 'Luxury',
-        };
+        return __("enums.vehicle_type.{$this->value}");
     }
 }

@@ -28,7 +28,6 @@ return new class extends Migration
             $table->string('fuel_type');
             $table->string('transmission');
             $table->boolean('has_clean_title')->default(false);
-            $table->string('money_still_owed')->nullable();
             $table->text('description')->nullable();
             $table->decimal('price', 12, 2);
             $table->json('images');

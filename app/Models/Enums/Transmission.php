@@ -4,18 +4,13 @@ namespace App\Models\Enums;
 
 enum Transmission: string
 {
-    case AUTOMATIC = 'Automatic transmission';
-    case MANUAL = 'Manual transmission';
-    case CVT = 'CVT';
-    case DUAL_CLUTCH = 'Dual-Clutch';
+    case AUTOMATIC = 'automatic';
+    case MANUAL = 'manual';
+    case CVT = 'cvt';
+    case DUAL_CLUTCH = 'dual_clutch';
 
     public function label(): string
     {
-        return match ($this) {
-            self::AUTOMATIC => 'Automatic',
-            self::MANUAL => 'Manual',
-            self::CVT => 'CVT',
-            self::DUAL_CLUTCH => 'Dual-Clutch',
-        };
+        return __("enums.transmission.{$this->value}");
     }
 }
