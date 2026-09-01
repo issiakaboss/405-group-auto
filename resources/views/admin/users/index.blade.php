@@ -5,17 +5,16 @@
             <!-- Page Header -->
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800/80 pb-6">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight text-white uppercase">Administrator Management</h1>
-                    <p class="text-xs text-slate-400 mt-1">Manage team access, edit administrative permissions, and control security status.</p>
+                    <h1 class="text-2xl font-bold tracking-tight text-white uppercase">{{ __('admin/users.title') }}</h1>
+                    <p class="text-xs text-slate-400 mt-1">{{ __('admin/users.subtitle') }}</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300">
                         <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Total Admins: <strong class="text-white">{{ $admins->count() }}</strong>
+                        {{ __('admin/users.total_admins') }} <strong class="text-white">{{ $admins->count() }}</strong>
                     </span>
                 </div>
             </div>
-
 
             <!-- Quick Create Administrator Form -->
             <div class="bg-[#0f172a] border border-slate-800/80 p-6 rounded-2xl shadow-2xl">
@@ -23,23 +22,23 @@
                     <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
-                    <h2 class="text-sm font-bold text-white uppercase tracking-wider">Add New Administrator</h2>
+                    <h2 class="text-sm font-bold text-white uppercase tracking-wider">{{ __('admin/users.add_new') }}</h2>
                 </div>
 
                 <form action="{{ route('admin.users.store') }}" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     @csrf
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Full Name</label>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">{{ __('admin/users.full_name') }}</label>
                         <input type="text" name="name" required
                             class="w-full text-xs bg-slate-800/80 border border-slate-700 rounded-lg px-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
-                            placeholder="e.g. Marc Dubois">
+                            placeholder="{{ __('admin/users.full_name_placeholder') }}">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Email Address</label>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">{{ __('admin/users.email') }}</label>
                         <input type="email" name="email" required
                             class="w-full text-xs bg-slate-800/80 border border-slate-700 rounded-lg px-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
-                            placeholder="admin@405groupauto.com">
+                            placeholder="{{ __('admin/users.email_placeholder') }}">
                     </div>
 
                     <div class="flex items-end">
@@ -47,7 +46,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
-                            <span>Create & Send Invitation</span>
+                            <span>{{ __('admin/users.create_and_send_invitation') }}</span>
                         </button>
                     </div>
                 </form>
@@ -56,18 +55,18 @@
             <!-- Administrator Table -->
             <div class="bg-[#0f172a] border border-slate-800/80 rounded-2xl shadow-2xl overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-800/80 flex items-center justify-between">
-                    <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Active Administrative Accounts</h3>
+                    <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">{{ __('admin/users.active_accounts') }}</h3>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-slate-300">
                         <thead class="bg-slate-900/60 text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">
                             <tr>
-                                <th class="px-6 py-3.5 font-semibold">User</th>
-                                <th class="px-6 py-3.5 font-semibold">Role</th>
-                                <th class="px-6 py-3.5 font-semibold">Status</th>
-                                <th class="px-6 py-3.5 font-semibold">Added On</th>
-                                <th class="px-6 py-3.5 font-semibold text-right">Actions</th>
+                                <th class="px-6 py-3.5 font-semibold">{{ __('admin/users.col_user') }}</th>
+                                <th class="px-6 py-3.5 font-semibold">{{ __('admin/users.col_role') }}</th>
+                                <th class="px-6 py-3.5 font-semibold">{{ __('admin/users.col_status') }}</th>
+                                <th class="px-6 py-3.5 font-semibold">{{ __('admin/users.col_added_on') }}</th>
+                                <th class="px-6 py-3.5 font-semibold text-right">{{ __('admin/users.col_actions') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800/60">
@@ -86,19 +85,19 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                                        Admin
+                                        {{ __('admin/users.role_admin') }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">
                                     @if(isset($admin->is_blocked) && $admin->is_blocked)
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
                                         <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>
-                                        Suspended
+                                        {{ __('admin/users.status_suspended') }}
                                     </span>
                                     @else
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                                         <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                                        Active
+                                        {{ __('admin/users.status_active') }}
                                     </span>
                                     @endif
                                 </td>
@@ -115,7 +114,7 @@
                                             <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
-                                            Edit
+                                            {{ __('admin/users.btn_edit') }}
                                         </button>
 
                                         <!-- Block / Unblock Form Button -->
@@ -131,7 +130,7 @@
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
                                                 </svg>
-                                                Unblock
+                                                {{ __('admin/users.btn_unblock') }}
                                             </button>
                                             @else
                                             <button type="button"
@@ -140,12 +139,12 @@
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zM12 9a3 3 0 100-6 3 3 0 000 6z" />
                                                 </svg>
-                                                Block
+                                                {{ __('admin/users.btn_block') }}
                                             </button>
                                             @endif
                                         </form>
                                         @else
-                                        <span class="text-[11px] text-slate-500 italic px-2">You</span>
+                                        <span class="text-[11px] text-slate-500 italic px-2">{{ __('admin/users.you') }}</span>
                                         @endif
                                     </div>
                                 </td>
@@ -171,7 +170,7 @@
 
             <div @click.away="editModalOpen = false" class="bg-[#0f172a] border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl text-slate-100 space-y-5">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                    <h3 class="text-sm font-bold text-white uppercase tracking-wider">Edit Administrator</h3>
+                    <h3 class="text-sm font-bold text-white uppercase tracking-wider">{{ __('admin/users.edit_title') }}</h3>
                     <button @click="editModalOpen = false" class="text-slate-400 hover:text-white transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -184,23 +183,23 @@
                     @method('PUT')
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Full Name</label>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">{{ __('admin/users.full_name') }}</label>
                         <input type="text" name="name" x-model="activeUser.name" required
                             class="w-full text-xs bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Email Address</label>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">{{ __('admin/users.email') }}</label>
                         <input type="email" name="email" x-model="activeUser.email" required
                             class="w-full text-xs bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition">
                     </div>
 
                     <div class="pt-4 flex justify-end gap-3 border-t border-slate-800">
                         <button type="button" @click="editModalOpen = false" class="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition border border-slate-700">
-                            Cancel
+                            {{ __('admin/users.cancel') }}
                         </button>
                         <button type="submit" class="px-4 py-2 text-xs font-bold text-slate-950 bg-amber-500 hover:bg-amber-400 rounded-lg transition shadow-sm">
-                            Save Changes
+                            {{ __('admin/users.save_changes') }}
                         </button>
                     </div>
                 </form>
@@ -212,19 +211,19 @@
     <!-- Modal de confirmation pour bloquer -->
     <x-confirm-modal
         name="block-admin-modal"
-        title="Suspend Administrator?"
-        message="Are you sure you want to suspend this administrator account? They will lose access immediately."
-        confirmText="Yes, Suspend"
-        cancelText="Cancel"
+        :title="__('admin/users.modal_block_title')"
+        :message="__('admin/users.modal_block_message')"
+        :confirmText="__('admin/users.modal_block_confirm')"
+        :cancelText="__('admin/users.cancel')"
         type="danger" />
 
     <!-- Modal de confirmation pour débloquer -->
     <x-confirm-modal
         name="unblock-admin-modal"
-        title="Unblock Administrator?"
-        message="Are you sure you want to reactivate this administrator account?"
-        confirmText="Yes, Reactivate"
-        cancelText="Cancel"
+        :title="__('admin/users.modal_unblock_title')"
+        :message="__('admin/users.modal_unblock_message')"
+        :confirmText="__('admin/users.modal_unblock_confirm')"
+        :cancelText="__('admin/users.cancel')"
         type="info" />
 
     <script>

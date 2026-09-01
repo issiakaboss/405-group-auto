@@ -5,7 +5,7 @@
         <div class="max-w-4xl mx-auto flex flex-col items-center text-center">
 
             <!-- Petit badge élégant à la place du logo -->
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20 mb-6">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-md font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20 mb-6">
                 405 AUTO GROUP LLC
             </span>
 

@@ -9,9 +9,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                     </svg>
                 </div>
-                <h2 class="text-xl font-bold text-gray-900 tracking-tight">Confirm Password</h2>
+                <h2 class="text-xl font-bold text-gray-900 tracking-tight">{{ __('public/auth.confirm_title') }}</h2>
                 <p class="text-xs text-gray-400 mt-2 leading-relaxed">
-                    This is a secure area of the application. Please confirm your password before continuing.
+                    {{ __('public/auth.confirm_subtitle') }}
                 </p>
             </div>
 
@@ -19,7 +19,7 @@
                 @csrf
 
                 <div>
-                    <label for="password" class="block text-xs font-semibold text-gray-700 mb-1">Password</label>
+                    <label for="password" class="block text-xs font-semibold text-gray-700 mb-1">{{ __('public/auth.password') }}</label>
                     <input 
                         id="password" 
                         type="password" 
@@ -33,7 +33,7 @@
 
                 <div class="pt-2">
                     <button type="submit" class="w-full py-3 bg-[#0F172A] hover:bg-gray-800 text-white font-semibold text-xs rounded-xl shadow-sm transition tracking-wide uppercase">
-                        {{ __('Confirm') }}
+                        {{ __('public/auth.confirm_btn') }}
                     </button>
                 </div>
             </form>

@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'nav_home' => 'Accueil',
+    'nav_about' => 'À propos',
+    'search_placeholder' => 'Rechercher un véhicule...',
+    'admin_fleet' => 'Gestion de la Flotte',
+    'admin_orders' => 'Gérer les Commandes',
+    'admin_requests' => 'Demandes de Véhicules',
+    'user_dashboard' => 'Mes Commandes & Essais',
+    'logout' => 'Déconnexion',
+    'footer_description' => 'Votre destination privilégiée pour les véhicules de luxe et de performance. Approvisionnement de premier ordre directement auprès des enchères et réseaux privés aux États-Unis.',
+    'footer_quick_nav' => 'Navigation Rapide',
+    'footer_catalog' => 'Catalogue d\'Inventaire',
+    'footer_cart' => 'Panier',
+    'footer_services' => 'Services',
+    'service_finder' => 'Service de Recherche de Véhicule',
+    'service_custom_order' => 'Sur Mesure',
+    'service_shipping' => 'Transport Automobile US',
+    'service_history' => 'Vérification d\'Historique',
+    'footer_contact' => 'Contactez-nous',
+    'footer_phone_val' => '(+1) 405-417-3665',
+    'footer_rights' => 'Tous droits réservés.',
+    'footer_privacy' => 'Politique de Confidentialité',
+    'footer_terms' => 'Conditions d\'Utilisation',
+];

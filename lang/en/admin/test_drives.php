@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'title' => 'Test Drive Appointments',
+    'subtitle' => 'Manage scheduled vehicle test drive requests.',
+    'vehicle' => 'Vehicle',
+    'customer' => 'Customer',
+    'date_time' => 'Date & Time',
+    'status' => 'Status',
+    'action' => 'Action',
+    'guest_user' => 'Guest User',
+    'view_details' => 'View Details',
+    'no_appointments' => 'No test drive appointments scheduled yet.',
+    'details_title' => 'Test Drive Details',
+    'back_to_list' => 'Back to List',
+    'vehicle_info' => 'Vehicle Information',
+    'vehicle_unavailable' => 'Vehicle Unavailable',
+    'appointment_schedule' => 'Appointment Schedule',
+    'date' => 'Date',
+    'visit_time' => 'Visit Time',
+    'customer_notes' => 'Customer Notes:',
+    'customer_details' => 'Customer Details',
+    'name' => 'Name',
+    'email' => 'Email',
+    'update_status' => 'Update Status',
+    'save_status' => 'Save Status',
+    'statuses' => [
+        'pending' => 'Pending',
+        'confirmed' => 'Confirmed',
+        'completed' => 'Completed',
+        'cancelled' => 'Cancelled',
+    ],
+];

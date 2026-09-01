@@ -6,7 +6,7 @@
 
     $locationLabel = $vehicle->location instanceof \App\Models\Enums\VehicleLocation
         ? $vehicle->location->label()
-        : (\App\Models\Enums\VehicleLocation::tryFrom($vehicle->location)?->label() ?? 'USA Warehouse');
+        : (\App\Models\Enums\VehicleLocation::tryFrom($vehicle->location)?->label() ?? __('public/vehicule_show.usa_warehouse'));
 
     $fuelLabel = $vehicle->fuel_type instanceof \BackedEnum ? $vehicle->fuel_type->value : $vehicle->fuel_type;
     $transLabel = $vehicle->transmission instanceof \BackedEnum ? $vehicle->transmission->value : $vehicle->transmission;
@@ -35,13 +35,13 @@
                 @if($vehicle->has_clean_title)
                     <span class="bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-md flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>
-                        Clean Title
+                        {{ __('public/vehicule_show.clean_title') }}
                     </span>
                 @endif
 
                 @if($vehicle->is_featured)
                     <span class="bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-md">
-                        Featured
+                        {{ __('public/vehicule_show.featured') }}
                     </span>
                 @endif
             </div>
@@ -78,7 +78,7 @@
                     {{ $vehicle->title }}
                 </h4>
                 @if($vehicle->trim)
-                    <p class="text-[11px] font-semibold text-amber-600 truncate uppercase tracking-wider">{{ $vehicle->trim }} Trim</p>
+                    <p class="text-[11px] font-semibold text-amber-600 truncate uppercase tracking-wider">{{ $vehicle->trim }} {{ __('public/vehicule_show.trim') }}</p>
                 @endif
             </div>
 
@@ -113,13 +113,13 @@
             {{-- Affichage du Prix & Type --}}
             <div class="flex justify-between items-baseline gap-2">
                 <div>
-                    <span class="text-xs text-gray-400 uppercase font-bold block leading-none mb-0.5">Price</span>
+                    <span class="text-xs text-gray-400 uppercase font-bold block leading-none mb-0.5">{{ __('public/vehicule_show.price') }}</span>
                     <span class="text-xl font-black text-slate-950 tracking-tight">${{ number_format($vehicle->price) }}</span>
                 </div>
                 
                 @if($vehicle->money_still_owed && $vehicle->money_still_owed->value !== 'none')
                     <span class="bg-amber-50 text-amber-700 text-[10px] font-bold px-2 py-1 rounded-md border border-amber-200/60">
-                        Balance Owed
+                        {{ __('public/vehicule_show.balance_owed') }}
                     </span>
                 @endif
             </div>
@@ -130,20 +130,20 @@
     <div class="p-4 pt-0 grid grid-cols-2 gap-2">
         <a href="{{ route('vehicles.show', $vehicle->id) }}" 
            class="w-full text-center py-2.5 px-2 text-xs font-bold text-slate-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
-            Details
+            {{ __('public/vehicule_show.details') }}
         </a>
 
         @if($vehicle->hasBeenSold() || $vehicle->isCurrentlyReserved())
             <a href="{{ route('vehicles.show', ['vehicle' => $vehicle->id, 'action' => 'order_similar']) }}"
                class="w-full text-center py-2.5 px-2 text-xs font-bold text-slate-900 bg-amber-400 hover:bg-amber-500 rounded-xl transition shadow-sm">
-                Reserve Similar
+                {{ __('public/vehicule_show.reserve_similar') }}
             </a>
         @else
             <form action="{{ route('cart.add', $vehicle->id) }}" method="POST" class="w-full">
                 @csrf
                 <button type="submit" 
                         class="w-full text-center py-2.5 px-2 text-xs font-bold text-white bg-slate-950 hover:bg-slate-800 rounded-xl transition shadow-sm">
-                    Reserve
+                    {{ __('public/vehicule_show.reserve') }}
                 </button>
             </form>
         @endif

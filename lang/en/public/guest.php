@@ -1,5 +1,26 @@
 <?php
 
 return [
-    
+    'nav_home' => 'Home',
+    'nav_about' => 'About us',
+    'search_placeholder' => 'Search cars...',
+    'admin_fleet' => 'Fleet Administration',
+    'admin_orders' => 'Manage Orders',
+    'admin_requests' => 'Vehicle Requests',
+    'user_dashboard' => 'My Orders & Drives',
+    'logout' => 'Log Out',
+    'footer_description' => 'Your premier destination for luxury and performance vehicles. Sourcing top-tier inventory directly from nationwide US dealer auctions and private networks.',
+    'footer_quick_nav' => 'Quick Navigation',
+    'footer_catalog' => 'Inventory Catalog',
+    'footer_cart' => 'Cart',
+    'footer_services' => 'Services',
+    'service_finder' => 'Vehicle Finder Service',
+    'service_custom_order' => 'Custom Order',
+    'service_shipping' => 'US Auto Shipping',
+    'service_history' => 'Vehicle History Verification',
+    'footer_contact' => 'Contact Us',
+    'footer_phone_val' => '(+1) 405-417-3665',
+    'footer_rights' => 'All rights reserved.',
+    'footer_privacy' => 'Privacy Policy',
+    'footer_terms' => 'Terms of Service',
 ];

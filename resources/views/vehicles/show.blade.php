@@ -6,7 +6,7 @@
     : \App\Models\Enums\VehicleStatus::tryFrom($vehicle->status);
     $locationLabel = $vehicle->location instanceof \App\Models\Enums\VehicleLocation
     ? $vehicle->location->label()
-    : (\App\Models\Enums\VehicleLocation::tryFrom($vehicle->location)?->label() ?? 'USA Warehouse');
+    : (\App\Models\Enums\VehicleLocation::tryFrom($vehicle->location)?->label() ?? __('public/vehicule_show.usa_warehouse'));
     @endphp
 
     <!-- Container Principal avec État Alpine Global -->
@@ -30,7 +30,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
-                <span>Back to Inventory</span>
+                <span>{{ __('public/vehicule_show.back_to_inventory') }}</span>
             </a>
         </div>
 
@@ -53,7 +53,7 @@
                             <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                             </svg>
-                            Click to Expand View
+                            {{ __('public/vehicule_show.click_to_expand') }}
                         </span>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                         @click="activeImage = '{{ $imageUrl }}'"
                         class="bg-slate-100 rounded-xl overflow-hidden aspect-video border-2 transition cursor-pointer focus:outline-none"
                         :class="activeImage === '{{ $imageUrl }}' ? 'border-amber-500 ring-2 ring-amber-500/20 opacity-100 scale-[0.98]' : 'border-transparent opacity-70 hover:opacity-100'">
-                        <img src="{{ $imageUrl }}" alt="Thumbnail {{ $loop->iteration }}" class="w-full h-full object-cover">
+                        <img src="{{ $imageUrl }}" alt="{{ __('public/vehicule_show.thumbnail') }} {{ $loop->iteration }}" class="w-full h-full object-cover">
                     </button>
                     @endforeach
                 </div>
@@ -79,11 +79,11 @@
                     <!-- Badges Logistiques -->
                     <div class="mb-3 flex items-center gap-2 flex-wrap">
                         <span class="bg-amber-50 text-amber-800 text-[11px] font-extrabold px-3 py-1 rounded-md border border-amber-200/60 uppercase tracking-wide">
-                            {{ $vehicle->vehicle_type?->label() ?? $vehicle->vehicle_type?->value ?? $vehicle->vehicle_type ?? $vehicle->category ?? 'Vehicle' }}
+                            {{ $vehicle->vehicle_type?->label() ?? $vehicle->vehicle_type?->value ?? $vehicle->vehicle_type ?? $vehicle->category ?? __('public/vehicule_show.vehicle') }}
                         </span>
 
                         @if($vehicle->hasBeenSold())
-                        <span class="bg-rose-100 text-rose-800 text-[11px] uppercase font-bold px-3 py-1 rounded-md border border-rose-200">Vendu / Sold</span>
+                        <span class="bg-rose-100 text-rose-800 text-[11px] uppercase font-bold px-3 py-1 rounded-md border border-rose-200">{{ __('public/vehicule_show.sold') }}</span>
                         @elseif($statusEnum)
                         <span class="{{ $statusEnum->badgeColor() }} text-[11px] uppercase font-bold px-3 py-1 rounded-md shadow-sm">
                             {{ $statusEnum->label() }}
@@ -94,27 +94,27 @@
                     <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight mb-2">{{ $vehicle->title }}</h1>
                     <div class="flex items-baseline gap-2">
                         <span class="text-3xl font-black text-slate-900">${{ number_format($vehicle->price) }}</span>
-                        <span class="text-xs text-slate-600 font-medium">+ applicable taxes & fees</span>
+                        <span class="text-xs text-slate-600 font-medium">{{ __('public/vehicule_show.plus_taxes') }}</span>
                     </div>
                 </div>
 
                 <!-- Grille des caractéristiques clés -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
-                        <span class="block text-[10px] text-slate-600 uppercase font-bold tracking-wider">Year</span>
+                        <span class="block text-[10px] text-slate-600 uppercase font-bold tracking-wider">{{ __('public/vehicule_show.year') }}</span>
                         <span class="font-bold text-slate-900 text-sm">{{ $vehicle->year }}</span>
                     </div>
                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
-                        <span class="block text-[10px] text-slate-600 uppercase font-bold tracking-wider">Mileage</span>
+                        <span class="block text-[10px] text-slate-600 uppercase font-bold tracking-wider">{{ __('public/vehicule_show.mileage') }}</span>
                         <span class="font-bold text-slate-900 text-sm">{{ number_format($vehicle->mileage) }} mi</span>
                     </div>
                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
-                        <span class="block text-[10px] text-slate-600 uppercase font-bold tracking-wider">Transmission</span>
-                        <span class="font-bold text-slate-900 text-sm truncate block" title="{{ $vehicle->transmission ?? 'N/A' }}">{{ $vehicle->transmission ?? 'N/A' }}</span>
+                        <span class="block text-[10px] text-slate-600 uppercase font-bold tracking-wider">{{ __('public/vehicule_show.transmission') }}</span>
+                        <span class="font-bold text-slate-900 text-sm truncate block" title="{{ $vehicle->transmission ?? __('public/vehicule_show.not_available') }}">{{ $vehicle->transmission ?? __('public/vehicule_show.not_available') }}</span>
                     </div>
                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
-                        <span class="block text-[10px] text-slate-600 uppercase font-bold tracking-wider">Fuel Type</span>
-                        <span class="font-bold text-slate-900 text-sm">{{ $vehicle->fuel_type ?? 'N/A' }}</span>
+                        <span class="block text-[10px] text-slate-600 uppercase font-bold tracking-wider">{{ __('public/vehicule_show.fuel_type') }}</span>
+                        <span class="font-bold text-slate-900 text-sm">{{ $vehicle->fuel_type ?? __('public/vehicule_show.not_available') }}</span>
                     </div>
                 </div>
 
@@ -127,7 +127,7 @@
                         </svg>
                     </div>
                     <div>
-                        <span class="block text-[10px] uppercase tracking-wider text-slate-600 font-bold">Showroom Location</span>
+                        <span class="block text-[10px] uppercase tracking-wider text-slate-600 font-bold">{{ __('public/vehicule_show.showroom_location') }}</span>
                         <span class="text-xs font-bold text-slate-900">{{ $locationLabel }}</span>
                     </div>
                 </div>
@@ -138,7 +138,7 @@
                         <form action="{{ route('cart.add', $vehicle->id) }}" method="POST" class="flex-1">
                             @csrf
                             <button type="submit" class="w-full py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl text-xs uppercase tracking-wider transition">
-                                Add to Selection
+                                {{ __('public/vehicule_show.add_to_selection') }}
                             </button>
                         </form>
 
@@ -160,19 +160,19 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5" />
                             </svg>
-                            Schedule Showroom Visit
+                            {{ __('public/vehicule_show.schedule_visit') }}
                         </h3>
-                        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-semibold px-2 py-0.5 rounded border border-emerald-500/30">Free Appointment</span>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-semibold px-2 py-0.5 rounded border border-emerald-500/30">{{ __('public/vehicule_show.free_appointment') }}</span>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Preferred Date</label>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">{{ __('public/vehicule_show.preferred_date') }}</label>
                             <input type="date" x-model="visitDate" min="{{ date('Y-m-d', strtotime('+1 day')) }}"
                                 class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Time Slot</label>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">{{ __('public/vehicule_show.time_slot') }}</label>
                             <select x-model="visitTime"
                                 class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
                                 @foreach(\App\Models\Enums\VisitTimeSlot::cases() as $slot)
@@ -190,60 +190,60 @@
                             testDriveModal = true;
                         "
                         class="w-full py-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl text-xs uppercase tracking-wider transition">
-                        Book Appointment
+                        {{ __('public/vehicule_show.book_appointment') }}
                     </button>
                 </div>
 
                 <!-- DÉTAILS COMPLÉMENTAIRES -->
                 <div class="border-t border-slate-200 pt-5 space-y-4">
-                    <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Detailed Specifications</h3>
+                    <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">{{ __('public/vehicule_show.detailed_specifications') }}</h3>
 
                     <div class="grid grid-cols-2 gap-y-2.5 gap-x-4 text-xs">
                         @if($vehicle->make)
                         <div class="flex justify-between border-b border-slate-100 pb-1.5">
-                            <span class="text-slate-600 font-semibold">Make</span>
+                            <span class="text-slate-600 font-semibold">{{ __('public/vehicule_show.make') }}</span>
                             <span class="font-bold text-slate-900">{{ $vehicle->make }}</span>
                         </div>
                         @endif
 
                         @if($vehicle->model)
                         <div class="flex justify-between border-b border-slate-100 pb-1.5">
-                            <span class="text-slate-600 font-semibold">Model</span>
+                            <span class="text-slate-600 font-semibold">{{ __('public/vehicule_show.model') }}</span>
                             <span class="font-bold text-slate-900">{{ $vehicle->model }}</span>
                         </div>
                         @endif
 
                         @if($vehicle->engine)
                         <div class="flex justify-between border-b border-slate-100 pb-1.5">
-                            <span class="text-slate-600 font-semibold">Engine</span>
+                            <span class="text-slate-600 font-semibold">{{ __('public/vehicule_show.engine') }}</span>
                             <span class="font-bold text-slate-900">{{ $vehicle->engine }}</span>
                         </div>
                         @endif
 
                         @if($vehicle->drive_train)
                         <div class="flex justify-between border-b border-slate-100 pb-1.5">
-                            <span class="text-slate-600 font-semibold">Drivetrain</span>
+                            <span class="text-slate-600 font-semibold">{{ __('public/vehicule_show.drivetrain') }}</span>
                             <span class="font-bold text-slate-900">{{ $vehicle->drive_train }}</span>
                         </div>
                         @endif
 
                         @if($vehicle->exterior_color)
                         <div class="flex justify-between border-b border-slate-100 pb-1.5">
-                            <span class="text-slate-600 font-semibold">Exterior Color</span>
+                            <span class="text-slate-600 font-semibold">{{ __('public/vehicule_show.exterior_color') }}</span>
                             <span class="font-bold text-slate-900">{{ $vehicle->exterior_color }}</span>
                         </div>
                         @endif
 
                         @if($vehicle->interior_color)
                         <div class="flex justify-between border-b border-slate-100 pb-1.5">
-                            <span class="text-slate-600 font-semibold">Interior Color</span>
+                            <span class="text-slate-600 font-semibold">{{ __('public/vehicule_show.interior_color') }}</span>
                             <span class="font-bold text-slate-900">{{ $vehicle->interior_color }}</span>
                         </div>
                         @endif
 
                         @if($vehicle->vin)
                         <div class="flex justify-between border-b border-slate-100 pb-1.5 col-span-2">
-                            <span class="text-slate-600 font-semibold">VIN</span>
+                            <span class="text-slate-600 font-semibold">{{ __('public/vehicule_show.vin') }}</span>
                             <span class="font-mono font-bold text-slate-900">{{ $vehicle->vin }}</span>
                         </div>
                         @endif
@@ -251,7 +251,7 @@
 
                     @if($vehicle->description)
                     <div class="pt-2">
-                        <span class="block text-xs font-bold text-slate-900 mb-1">Vehicle Notes</span>
+                        <span class="block text-xs font-bold text-slate-900 mb-1">{{ __('public/vehicule_show.vehicle_notes') }}</span>
                         <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200/60">
                             {{ $vehicle->description }}
                         </p>
@@ -282,7 +282,7 @@
             </button>
 
             <div class="max-w-5xl max-h-[90vh] overflow-hidden" @click.away="isZoomOpen = false">
-                <img :src="activeImage" alt="Zoomed view" class="w-full h-full object-contain rounded-xl shadow-2xl">
+                <img :src="activeImage" alt="{{ __('public/vehicule_show.zoomed_view') }}" class="w-full h-full object-contain rounded-xl shadow-2xl">
             </div>
         </div>
 
@@ -299,12 +299,12 @@
 
             <div @click.away="testDriveModal = false" class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-100 space-y-4">
                 <div class="flex justify-between items-center border-b border-gray-100 pb-3">
-                    <h3 class="font-bold text-gray-900 text-base">Schedule a Test Drive</h3>
+                    <h3 class="font-bold text-gray-900 text-base">{{ __('public/vehicule_show.schedule_test_drive') }}</h3>
                     <button type="button" @click="testDriveModal = false" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
                 </div>
                 
                 <p class="text-xs text-gray-500 leading-relaxed">
-                    Book a private slot to inspect and test drive the <span class="font-bold text-gray-900" x-text="selectedVehicleTitle"></span>.
+                    {{ __('public/vehicule_show.book_private_slot') }} <span class="font-bold text-gray-900" x-text="selectedVehicleTitle"></span>.
                 </p>
 
                 <form action="{{ route('testdrive.store') }}" method="POST" class="space-y-4 text-xs">
@@ -312,12 +312,12 @@
                     <input type="hidden" name="vehicle_id" :value="selectedVehicleId">
 
                     <div>
-                        <label class="block font-semibold text-gray-700 mb-1">Preferred Date</label>
+                        <label class="block font-semibold text-gray-700 mb-1">{{ __('public/vehicule_show.preferred_date') }}</label>
                         <input type="date" name="date" x-model="selectedDate" required min="{{ date('Y-m-d', strtotime('+1 day')) }}" class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 bg-gray-50 focus:bg-white focus:border-amber-400 transition outline-none">
                     </div>
 
                     <div>
-                        <label class="block font-semibold text-gray-700 mb-1">Preferred Time Slot</label>
+                        <label class="block font-semibold text-gray-700 mb-1">{{ __('public/vehicule_show.preferred_time_slot') }}</label>
                         <select name="visit_time" x-model="selectedTime" class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 bg-gray-50 focus:bg-white focus:border-amber-400 transition outline-none text-gray-800">
                             @foreach(\App\Models\Enums\VisitTimeSlot::cases() as $slot)
                             <option value="{{ $slot->value }}">{{ $slot->label() }}</option>
@@ -326,12 +326,12 @@
                     </div>
 
                     <div>
-                        <label class="block font-semibold text-gray-700 mb-1">Special Requirements (Optional)</label>
-                        <textarea name="notes" placeholder="Specify if you require delivery to a specific venue or features review..." class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 bg-gray-50 focus:bg-white focus:border-amber-400 transition h-20 resize-none outline-none"></textarea>
+                        <label class="block font-semibold text-gray-700 mb-1">{{ __('public/vehicule_show.special_requirements') }}</label>
+                        <textarea name="notes" placeholder="{{ __('public/vehicule_show.special_requirements_placeholder') }}" class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 bg-gray-50 focus:bg-white focus:border-amber-400 transition h-20 resize-none outline-none"></textarea>
                     </div>
 
                     <button type="submit" class="w-full py-3 bg-[#0F172A] hover:bg-slate-800 text-white font-semibold rounded-xl transition mt-2 shadow tracking-wide uppercase text-xs">
-                        Confirm Appointment
+                        {{ __('public/vehicule_show.confirm_appointment') }}
                     </button>
                 </form>
             </div>

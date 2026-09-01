@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'title' => 'Rendez-vous d\'essai routier',
+    'subtitle' => 'Gérer les demandes d\'essais routiers programmées.',
+    'vehicle' => 'Véhicule',
+    'customer' => 'Client',
+    'date_time' => 'Date & Heure',
+    'status' => 'Statut',
+    'action' => 'Action',
+    'guest_user' => 'Utilisateur invité',
+    'view_details' => 'Voir les détails',
+    'no_appointments' => 'Aucun rendez-vous d\'essai routier programmé pour le moment.',
+    'details_title' => 'Détails du rendez-vous d\'essai',
+    'back_to_list' => 'Retour à la liste',
+    'vehicle_info' => 'Informations du véhicule',
+    'vehicle_unavailable' => 'Véhicule non disponible',
+    'appointment_schedule' => 'Planning du rendez-vous',
+    'date' => 'Date',
+    'visit_time' => 'Heure de visite',
+    'customer_notes' => 'Notes du client :',
+    'customer_details' => 'Détails du client',
+    'name' => 'Nom',
+    'email' => 'E-mail',
+    'update_status' => 'Mettre à jour le statut',
+    'save_status' => 'Enregistrer le statut',
+    'statuses' => [
+        'pending' => 'En attente',
+        'confirmed' => 'Confirmé',
+        'completed' => 'Terminé',
+        'cancelled' => 'Annulé',
+    ],
+];

@@ -5,7 +5,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             <div>
                 <h2 class="font-bold text-2xl text-white leading-tight">
-                    {{ __('My Account Dashboard') }}
+                    {{ __('admin/dashboard.title') }}
                 </h2>
             </div>
 
@@ -13,26 +13,26 @@
             <div class="bg-[#0f172a] overflow-hidden shadow-2xl sm:rounded-2xl border border-slate-800/80 p-6 sm:p-8">
                 <div class="mb-6 flex justify-between items-center">
                     <div>
-                        <h3 class="text-base font-bold text-white uppercase tracking-tight">My Vehicle Reservations & Inquiries</h3>
-                        <p class="text-xs text-slate-400 mt-0.5">Vehicles you have requested or reserved via checkout.</p>
+                        <h3 class="text-base font-bold text-white uppercase tracking-tight">{{ __('admin/dashboard.reservations.title') }}</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">{{ __('admin/dashboard.reservations.subtitle') }}</p>
                     </div>
                 </div>
 
                 @if(!isset($orders) || $orders->isEmpty())
                 <div class="text-center py-8 border border-dashed border-slate-700/60 rounded-2xl bg-[#182234]">
-                    <p class="text-xs font-semibold text-slate-400">No vehicle reservations placed yet</p>
+                    <p class="text-xs font-semibold text-slate-400">{{ __('admin/dashboard.reservations.empty') }}</p>
                 </div>
                 @else
                 <div class="overflow-x-auto rounded-xl border border-slate-800/80 shadow-sm bg-[#0f172a]">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
                             <tr class="bg-[#1e293b] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
-                                <th class="p-4">Order ID</th>
-                                <th class="p-4">Vehicles Requested</th>
-                                <th class="p-4">Total Price</th>
-                                <th class="p-4">Date</th>
-                                <th class="p-4">Status</th>
-                                <th class="p-4 text-right">Actions</th>
+                                <th class="p-4">{{ __('admin/dashboard.reservations.order_id') }}</th>
+                                <th class="p-4">{{ __('admin/dashboard.reservations.vehicles_requested') }}</th>
+                                <th class="p-4">{{ __('admin/dashboard.reservations.total_price') }}</th>
+                                <th class="p-4">{{ __('admin/dashboard.reservations.date') }}</th>
+                                <th class="p-4">{{ __('admin/dashboard.reservations.status') }}</th>
+                                <th class="p-4 text-right">{{ __('admin/dashboard.reservations.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800 text-slate-300">
@@ -55,7 +55,7 @@
                                     ${{ number_format($order->total_estimated_price, 2) }}
                                 </td>
                                 <td class="p-4 text-slate-400 whitespace-nowrap">
-                                    {{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}
+                                    {{ \Carbon\Carbon::parse($order->created_at)->translatedFormat('d M Y') }}
                                 </td>
                                 <td class="p-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider bg-[#1e293b] text-slate-300 border border-slate-700">
@@ -70,7 +70,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                         </svg>
-                                        <span>Details</span>
+                                        <span>{{ __('admin/dashboard.reservations.details') }}</span>
                                     </a>
                                 </td>
                             </tr>
@@ -84,33 +84,33 @@
             <!-- SECTION 2: MY TEST DRIVE APPOINTMENTS -->
             <div class="bg-[#0f172a] overflow-hidden shadow-2xl sm:rounded-2xl border border-slate-800/80 p-6 sm:p-8">
                 <div class="mb-6">
-                    <h3 class="text-base font-bold text-white uppercase tracking-tight">My Test Drive Appointments</h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Scheduled test drives at our dealership.</p>
+                    <h3 class="text-base font-bold text-white uppercase tracking-tight">{{ __('admin/dashboard.test_drives.title') }}</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">{{ __('admin/dashboard.test_drives.subtitle') }}</p>
                 </div>
 
                 @if($testDrives->isEmpty())
                 <div class="text-center py-8 border border-dashed border-slate-700/60 rounded-2xl bg-[#182234]">
-                    <p class="text-xs font-semibold text-slate-400">No test drive appointments scheduled</p>
+                    <p class="text-xs font-semibold text-slate-400">{{ __('admin/dashboard.test_drives.empty') }}</p>
                 </div>
                 @else
                 <div class="overflow-x-auto rounded-xl border border-slate-800/80 shadow-sm bg-[#0f172a]">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
                             <tr class="bg-[#1e293b] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
-                                <th class="p-4">Vehicle</th>
-                                <th class="p-4">Date & Time</th>
-                                <th class="p-4">Status</th>
-                                <th class="p-4 text-right">Actions</th>
+                                <th class="p-4">{{ __('admin/dashboard.test_drives.vehicle') }}</th>
+                                <th class="p-4">{{ __('admin/dashboard.test_drives.date_time') }}</th>
+                                <th class="p-4">{{ __('admin/dashboard.test_drives.status') }}</th>
+                                <th class="p-4 text-right">{{ __('admin/dashboard.test_drives.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800 text-slate-300">
                             @foreach($testDrives as $drive)
                             <tr class="hover:bg-[#1e293b]/50 transition">
                                 <td class="p-4 font-bold text-white">
-                                    {{ $drive->vehicle->title ?? 'Vehicle Unavailable' }}
+                                    {{ $drive->vehicle->title ?? __('admin/dashboard.test_drives.vehicle_unavailable') }}
                                 </td>
                                 <td class="p-4 text-slate-300 whitespace-nowrap">
-                                    {{ \Carbon\Carbon::parse($drive->date)->format('M d, Y') }} at <span class="font-bold text-white">{{ $drive->visit_time }}</span>
+                                    {{ \Carbon\Carbon::parse($drive->date)->translatedFormat('d M Y') }} {{ __('admin/dashboard.test_drives.at') }} <span class="font-bold text-white">{{ $drive->visit_time }}</span>
                                 </td>
                                 <td class="p-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider border {{ $drive->status?->badgeColor() ?? 'bg-[#1e293b] text-slate-300 border-slate-700' }}">
@@ -125,11 +125,11 @@
                                         <button type="button"
                                             onclick="requestTestDriveCancellation('{{ $drive->id }}')"
                                             class="px-3 py-1.5 text-xs font-semibold text-rose-400 hover:text-rose-300 bg-rose-950/40 hover:bg-rose-900/60 rounded-lg border border-rose-800/80 transition">
-                                            Cancel Appointment
+                                            {{ __('admin/dashboard.test_drives.cancel') }}
                                         </button>
                                     </form>
                                     @else
-                                    <span class="text-slate-500 text-[11px] italic">No actions</span>
+                                    <span class="text-slate-500 text-[11px] italic">{{ __('admin/dashboard.test_drives.no_actions') }}</span>
                                     @endif
                                 </td>
                             </tr>
@@ -143,24 +143,24 @@
             <!-- SECTION 3: MY CUSTOM VEHICLE REQUESTS -->
             <div class="bg-[#0f172a] overflow-hidden shadow-2xl sm:rounded-2xl border border-slate-800/80 p-6 sm:p-8">
                 <div class="mb-6">
-                    <h3 class="text-base font-bold text-white uppercase tracking-tight">My Custom Vehicle Requests</h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Specific car sourcing requests submitted to our team.</p>
+                    <h3 class="text-base font-bold text-white uppercase tracking-tight">{{ __('admin/dashboard.custom_requests.title') }}</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">{{ __('admin/dashboard.custom_requests.subtitle') }}</p>
                 </div>
 
                 @if($vehicleRequests->isEmpty())
                 <div class="text-center py-8 border border-dashed border-slate-700/60 rounded-2xl bg-[#182234]">
-                    <p class="text-xs font-semibold text-slate-400">No custom requests submitted</p>
+                    <p class="text-xs font-semibold text-slate-400">{{ __('admin/dashboard.custom_requests.empty') }}</p>
                 </div>
                 @else
                 <div class="overflow-x-auto rounded-xl border border-slate-800/80 shadow-sm bg-[#0f172a]">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
                             <tr class="bg-[#1e293b] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
-                                <th class="p-4">Requested Vehicle</th>
-                                <th class="p-4">Budget / Year</th>
-                                <th class="p-4">Date</th>
-                                <th class="p-4">Status</th>
-                                <th class="p-4 text-right">Actions</th>
+                                <th class="p-4">{{ __('admin/dashboard.custom_requests.requested_vehicle') }}</th>
+                                <th class="p-4">{{ __('admin/dashboard.custom_requests.budget_year') }}</th>
+                                <th class="p-4">{{ __('admin/dashboard.custom_requests.date') }}</th>
+                                <th class="p-4">{{ __('admin/dashboard.custom_requests.status') }}</th>
+                                <th class="p-4 text-right">{{ __('admin/dashboard.custom_requests.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800 text-slate-300">
@@ -170,10 +170,10 @@
                                     {{ $req->make }} {{ $req->model }}
                                 </td>
                                 <td class="p-4 text-slate-300 whitespace-nowrap">
-                                    Max <span class="font-semibold text-emerald-400">${{ number_format($req->max_budget ?? $req->budget ?? 0) }}</span> (Year: {{ $req->year_min ?? $req->year ?? 'Any' }})
+                                    {{ __('admin/dashboard.custom_requests.max') }} <span class="font-semibold text-emerald-400">${{ number_format($req->max_budget ?? $req->budget ?? 0) }}</span> ({{ __('admin/dashboard.custom_requests.year') }}: {{ $req->year_min ?? $req->year ?? __('admin/dashboard.custom_requests.any') }})
                                 </td>
                                 <td class="p-4 text-slate-400 whitespace-nowrap">
-                                    {{ \Carbon\Carbon::parse($req->created_at)->format('M d, Y') }}
+                                    {{ \Carbon\Carbon::parse($req->created_at)->translatedFormat('d M Y') }}
                                 </td>
                                 <td class="p-4 whitespace-nowrap">
                                     @php
@@ -193,11 +193,11 @@
                                         <button type="button"
                                             onclick="requestVehicleRequestCancellation('{{ $req->id }}')"
                                             class="px-3 py-1.5 text-xs font-semibold text-rose-400 hover:text-rose-300 bg-rose-950/40 hover:bg-rose-900/60 rounded-lg border border-rose-800/80 transition">
-                                            Cancel Request
+                                            {{ __('admin/dashboard.custom_requests.cancel') }}
                                         </button>
                                     </form>
                                     @else
-                                    <span class="text-slate-500 text-[11px] italic">No actions</span>
+                                    <span class="text-slate-500 text-[11px] italic">{{ __('admin/dashboard.custom_requests.no_actions') }}</span>
                                     @endif
                                 </td>
                             </tr>
@@ -214,18 +214,18 @@
     <!-- Modal confirmation -->
     <x-confirm-modal
         name="cancel-test-drive-modal"
-        title="Cancel Test Drive Appointment?"
-        message="Are you sure you want to cancel this appointment? This action cannot be undone."
-        confirmText="Yes, Cancel"
-        cancelText="Keep Appointment"
+        :title="__('admin/dashboard.modals.cancel_test_drive.title')"
+        :message="__('admin/dashboard.modals.cancel_test_drive.message')"
+        :confirmText="__('admin/dashboard.modals.cancel_test_drive.confirm')"
+        :cancelText="__('admin/dashboard.modals.cancel_test_drive.cancel')"
         type="danger" />
 
     <x-confirm-modal
         name="cancel-vehicle-request-modal"
-        title="Cancel Custom Vehicle Request?"
-        message="Are you sure you want to cancel this custom sourcing request?"
-        confirmText="Yes, Cancel Request"
-        cancelText="Keep Request"
+        :title="__('admin/dashboard.modals.cancel_vehicle_request.title')"
+        :message="__('admin/dashboard.modals.cancel_vehicle_request.message')"
+        :confirmText="__('admin/dashboard.modals.cancel_vehicle_request.confirm')"
+        :cancelText="__('admin/dashboard.modals.cancel_vehicle_request.cancel')"
         type="danger" />
 
     <script>

@@ -27,19 +27,16 @@
                     </a>
                 </div>
 
-                <!-- NAVIGATION LINKS (Simples et épurés) -->
+                <!-- NAVIGATION LINKS -->
                 <div class="hidden md:flex space-x-8 text-sm font-medium">
-
-                    <!-- Home Link -->
                     <a href="{{ route('home') }}"
                         class="py-2 transition {{ request()->routeIs('home') ? 'text-amber-500 font-bold border-b-2 border-amber-500' : 'text-gray-600 hover:text-amber-500' }}">
-                        Home
+                        {{ __('public/guest.nav_home') }}
                     </a>
 
-                    <!-- About Link -->
                     <a href="{{ route('about') }}"
                         class="py-2 transition {{ request()->routeIs('about') ? 'text-amber-500 font-bold border-b-2 border-amber-500' : 'text-gray-600 hover:text-amber-500' }}">
-                        About us
+                        {{ __('public/guest.nav_about') }}
                     </a>
                 </div>
 
@@ -53,7 +50,7 @@
                         </span>
                         <input
                             type="text"
-                            placeholder="Search cars..."
+                            placeholder="{{ __('public/guest.search_placeholder') }}"
                             @focus="searchFocused = true"
                             @input.debounce.300ms="
                             fetch(`/vehicles/search?q=${$event.target.value}`)
@@ -79,8 +76,27 @@
                     </div>
                 </div>
 
-                <!-- ICONS & PROFILE -->
+                <!-- ICONS, LANGUAGE SWITCHER & PROFILE -->
                 <div class="flex items-center space-x-4 text-gray-700">
+
+                    <!-- LANGUAGE SWITCHER -->
+                    <div class="relative" x-data="{ langOpen: false }">
+                        <button @click="langOpen = !langOpen" class="p-2 transition hover:text-amber-500 flex items-center space-x-1 focus:outline-none">
+                            <svg class="w-5 h-5 text-gray-700 hover:text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m-15.432-6.83A8.959 8.959 0 003 12c0 .778.099 1.533.284 2.253" />
+                            </svg>
+                            <span class="text-xs font-bold uppercase">{{ app()->getLocale() }}</span>
+                        </button>
+
+                        <div x-show="langOpen" @click.away="langOpen = false" class="absolute right-0 mt-2 w-32 bg-white border border-gray-100 rounded-xl shadow-xl py-1 z-50 text-xs font-medium" x-cloak>
+                            <a href="{{ route('lang.switch', 'en') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition {{ app()->getLocale() == 'en' ? 'font-bold text-amber-600' : '' }}">
+                                🇺🇸 English
+                            </a>
+                            <a href="{{ route('lang.switch', 'fr') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition {{ app()->getLocale() == 'fr' ? 'font-bold text-amber-600' : '' }}">
+                                🇫🇷 Français
+                            </a>
+                        </div>
+                    </div>
 
                     <!-- FAVORITES LINK -->
                     <a href="{{ route('favorites.index') }}"
@@ -119,24 +135,24 @@
                         <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-xl py-1 z-50 text-xs font-medium" x-cloak>
                             @role('admin')
                             <a href="{{ route('admin.vehicles.index') }}" class="block px-4 py-2 font-bold text-amber-600 hover:bg-amber-50 transition uppercase tracking-wider text-[10px]">
-                                ⚙️ Fleet Administration
+                                ⚙️ {{ __('public/guest.admin_fleet') }}
                             </a>
                             <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2 font-bold text-amber-600 hover:bg-amber-50 transition uppercase tracking-wider text-[10px]">
-                                📦 Manage Orders
+                                📦 {{ __('public/guest.admin_orders') }}
                             </a>
                             <a href="{{ route('admin.vehicle-requests.index') }}" class="block px-4 py-2 font-bold text-amber-600 hover:bg-amber-50 transition uppercase tracking-wider text-[10px]">
-                                🚗 Vehicle Requests
+                                🚗 {{ __('public/guest.admin_requests') }}
                             </a>
                             <hr class="border-gray-100 my-1">
                             @endrole
                             @role('user')
-                            <a href="{{ url('/dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-50">My Orders & Drives</a>
+                            <a href="{{ url('/dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-50">{{ __('public/guest.user_dashboard') }}</a>
                             @endrole
                             <hr class="border-gray-100">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">
-                                    Log Out
+                                    {{ __('public/guest.logout') }}
                                 </button>
                             </form>
                         </div>
@@ -163,28 +179,27 @@
 
     <footer class="bg-slate-950 text-slate-400 pt-16 pb-8 border-t border-slate-800/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {{-- Grille Principale (4 Colonnes) --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-slate-800/80">
 
-                {{-- Col 1: Marque & Description avec Logo2 --}}
+                <!-- Col 1: Description -->
                 <div class="space-y-4">
                     <div class="flex items-center mb-4">
                         <img src="{{ asset('images/logo2.jpeg') }}" alt="405 Auto Group LLC" class="h-12 w-auto object-contain">
                     </div>
                     <p class="text-xs text-slate-400 leading-relaxed">
-                        Your premier destination for luxury and performance vehicles. Sourcing top-tier inventory directly from nationwide US dealer auctions and private networks.
+                        {{ __('public/guest.footer_description') }}
                     </p>
                 </div>
 
-                {{-- Col 2: Navigation Rapide --}}
+                <!-- Col 2: Navigation Rapide -->
                 <div>
-                    <h3 class="text-white font-bold text-xs tracking-wider uppercase mb-4">Quick Navigation</h3>
+                    <h3 class="text-white font-bold text-xs tracking-wider uppercase mb-4">{{ __('public/guest.footer_quick_nav') }}</h3>
                     <ul class="space-y-2.5 text-xs">
-                        <li><a href="{{ route('home') }}" class="hover:text-amber-400 transition-colors">Home</a></li>
-                        <li><a href="{{ route('home') }}#catalog" class="hover:text-amber-400 transition-colors">Inventory Catalog</a></li>
-                        <li><a href="{{ route('about') }}" class="hover:text-amber-400 transition-colors">About Us</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-amber-400 transition-colors">{{ __('public/guest.nav_home') }}</a></li>
+                        <li><a href="{{ route('home') }}#catalog" class="hover:text-amber-400 transition-colors">{{ __('public/guest.footer_catalog') }}</a></li>
+                        <li><a href="{{ route('about') }}" class="hover:text-amber-400 transition-colors">{{ __('public/guest.nav_about') }}</a></li>
                         <li><a href="{{ route('cart.index') }}" class="hover:text-amber-400 transition-colors flex items-center gap-1.5">
-                                <span>Cart</span>
+                                <span>{{ __('public/guest.footer_cart') }}</span>
                                 @if(count(session()->get('cart', [])) > 0)
                                 <span class="bg-amber-500 text-slate-950 font-bold text-[10px] px-1.5 py-0.5 rounded-full">
                                     {{ count(session()->get('cart', [])) }}
@@ -194,24 +209,24 @@
                     </ul>
                 </div>
 
-                {{-- Col 3: Service Finder --}}
+                <!-- Col 3: Services -->
                 <div>
-                    <h3 class="text-white font-bold text-xs tracking-wider uppercase mb-4">Services</h3>
+                    <h3 class="text-white font-bold text-xs tracking-wider uppercase mb-4">{{ __('public/guest.footer_services') }}</h3>
                     <ul class="space-y-2.5 text-xs">
                         <li>
                             <a href="{{route('home')}}#vehicle-request" class="hover:text-amber-400 transition-colors inline-flex items-center gap-1">
-                                <span>Vehicle Finder Service</span>
-                                <span class="text-[9px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded font-semibold border border-amber-500/20">Custom Order</span>
+                                <span>{{ __('public/guest.service_finder') }}</span>
+                                <span class="text-[9px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded font-semibold border border-amber-500/20">{{ __('public/guest.service_custom_order') }}</span>
                             </a>
                         </li>
-                        <li><a href="#" class="hover:text-amber-400 transition-colors">US Auto Shipping</a></li>
-                        <li><a href="#" class="hover:text-amber-400 transition-colors">Vehicle History Verification</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition-colors">{{ __('public/guest.service_shipping') }}</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition-colors">{{ __('public/guest.service_history') }}</a></li>
                     </ul>
                 </div>
 
-                {{-- Col 4: Contact & Adresse --}}
+                <!-- Col 4: Contact -->
                 <div>
-                    <h3 class="text-white font-bold text-xs tracking-wider uppercase mb-4">Contact Us</h3>
+                    <h3 class="text-white font-bold text-xs tracking-wider uppercase mb-4">{{ __('public/guest.footer_contact') }}</h3>
                     <ul class="space-y-3 text-xs">
                         <li class="flex items-start gap-2.5">
                             <svg class="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -225,7 +240,7 @@
                                 <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.824-1.435-5.161-3.772-6.596-6.596l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.75Z" />
                                 </svg>
-                                <span>(+1) 405-417-3665</span>
+                                <span>{{ __('public/guest.footer_phone_val') }}</span>
                             </a>
                         </li>
                         <li>
@@ -240,12 +255,12 @@
                 </div>
             </div>
 
-            {{-- Bas du Footer : Copyright & Mentions --}}
+            <!-- Footer Copyright -->
             <div class="mt-8 pt-4 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-4">
-                <p>&copy; {{ date('Y') }} 405 Auto Group LLC. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} 405 Auto Group LLC. {{ __('public/guest.footer_rights') }}</p>
                 <div class="flex items-center space-x-6">
-                    <a href="#" class="hover:text-slate-400 transition">Privacy Policy</a>
-                    <a href="#" class="hover:text-slate-400 transition">Terms of Service</a>
+                    <a href="#" class="hover:text-slate-400 transition">{{ __('public/guest.footer_privacy') }}</a>
+                    <a href="#" class="hover:text-slate-400 transition">{{ __('public/guest.footer_terms') }}</a>
                 </div>
             </div>
         </div>

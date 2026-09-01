@@ -4,8 +4,8 @@
             
             <div class="flex justify-between items-center">
                 <div>
-                    <h2 class="text-3xl font-extrabold text-white">Vehicle Requests</h2>
-                    <p class="text-slate-400 text-sm mt-1">Custom vehicle finder submissions from site visitors.</p>
+                    <h2 class="text-3xl font-extrabold text-white">{{ __('admin/vehicle_requests.title') }}</h2>
+                    <p class="text-slate-400 text-sm mt-1">{{ __('admin/vehicle_requests.subtitle') }}</p>
                 </div>
             </div>
 
@@ -20,12 +20,12 @@
                     <table class="w-full text-left text-sm text-slate-300">
                         <thead class="bg-slate-900/60 uppercase text-xs font-semibold tracking-wider text-slate-400">
                             <tr>
-                                <th class="px-6 py-4">Customer</th>
-                                <th class="px-6 py-4">Desired Vehicle</th>
-                                <th class="px-6 py-4">Budget</th>
-                                <th class="px-6 py-4">Location</th>
-                                <th class="px-6 py-4">Submitted</th>
-                                <th class="px-6 py-4 text-right">Actions</th>
+                                <th class="px-6 py-4">{{ __('admin/vehicle_requests.customer') }}</th>
+                                <th class="px-6 py-4">{{ __('admin/vehicle_requests.desired_vehicle') }}</th>
+                                <th class="px-6 py-4">{{ __('admin/vehicle_requests.budget') }}</th>
+                                <th class="px-6 py-4">{{ __('admin/vehicle_requests.location') }}</th>
+                                <th class="px-6 py-4">{{ __('admin/vehicle_requests.submitted') }}</th>
+                                <th class="px-6 py-4 text-right">{{ __('admin/vehicle_requests.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-700/50">
@@ -50,14 +50,14 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <a href="{{ route('admin.vehicle-requests.show', $request) }}" class="text-xs font-bold px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 transition">
-                                        View Details
+                                        {{ __('admin/vehicle_requests.view_details') }}
                                     </a>
                                 </td>
                             </tr>
                             @empty
                             <tr>
                                 <td colspan="6" class="px-6 py-12 text-center text-slate-500">
-                                    No custom vehicle requests yet.
+                                    {{ __('admin/vehicle_requests.no_requests') }}
                                 </td>
                             </tr>
                             @endforelse

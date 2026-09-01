@@ -4,8 +4,8 @@
         <div class="w-full sm:max-w-md mt-6 px-8 py-8 bg-white border border-gray-100 shadow-sm rounded-2xl">
             
             <div class="mb-6 text-center">
-                <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Reset Password</h2>
-                <p class="text-xs text-gray-400 mt-1">Please secure your new password below</p>
+                <h2 class="text-2xl font-bold text-gray-900 tracking-tight">{{ __('public/auth.reset_title') }}</h2>
+                <p class="text-xs text-gray-400 mt-1">{{ __('public/auth.reset_subtitle') }}</p>
             </div>
 
             <form method="POST" action="{{ route('password.store') }}" class="space-y-4">
@@ -14,7 +14,7 @@
                 <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
                 <div>
-                    <label for="email" class="block text-xs font-semibold text-gray-700 mb-1">Email Address</label>
+                    <label for="email" class="block text-xs font-semibold text-gray-700 mb-1">{{ __('public/auth.email') }}</label>
                     <input 
                         id="email" 
                         type="email" 
@@ -28,7 +28,7 @@
                 </div>
 
                 <div>
-                    <label for="password" class="block text-xs font-semibold text-gray-700 mb-1">New Password</label>
+                    <label for="password" class="block text-xs font-semibold text-gray-700 mb-1">{{ __('public/auth.new_password') }}</label>
                     <input 
                         id="password" 
                         type="password" 
@@ -41,7 +41,7 @@
                 </div>
 
                 <div>
-                    <label for="password_confirmation" class="block text-xs font-semibold text-gray-700 mb-1">Confirm New Password</label>
+                    <label for="password_confirmation" class="block text-xs font-semibold text-gray-700 mb-1">{{ __('public/auth.confirm_new_password') }}</label>
                     <input 
                         id="password_confirmation" 
                         type="password" 
@@ -55,7 +55,7 @@
 
                 <div class="pt-2">
                     <button type="submit" class="w-full py-3 bg-[#0F172A] hover:bg-gray-800 text-white font-semibold text-xs rounded-xl shadow-sm transition tracking-wide uppercase">
-                        {{ __('Reset Password') }}
+                        {{ __('public/auth.reset_btn') }}
                     </button>
                 </div>
             </form>

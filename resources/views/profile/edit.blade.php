@@ -3,12 +3,14 @@
     <div class="py-12 bg-[#080d1a] min-h-[80vh] text-slate-100">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Titre de la page (intégré sans bande blanche) -->
+            <!-- Titre de la page -->
             <div class="px-4 sm:px-0">
                 <h2 class="font-bold text-2xl text-white leading-tight">
-                    {{ __('Profile') }}
+                    {{ __('profile.title') }}
                 </h2>
-                <p class="text-xs text-slate-400 mt-1">Manage your account settings and security preferences.</p>
+                <p class="text-xs text-slate-400 mt-1">
+                    {{ __('profile.subtitle') }}
+                </p>
             </div>
 
             <!-- Bloc 1: Informations du profil -->

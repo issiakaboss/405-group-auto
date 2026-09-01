@@ -15,6 +15,14 @@ use App\Http\Controllers\TestDriveController;
 use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Route;
 
+
+Route::get('/lang/{lang}', function ($lang) {
+    if (in_array($lang, ['en', 'fr'])) {
+        session(['locale' => $lang]);
+    }
+    return redirect()->back();
+})->name('lang.switch');
+
 Route::get('/', [VehicleController::class, 'index'])->name('home');
 Route::get('/vehicles/search', [VehicleController::class, 'search'])->name('vehicles.search');
 Route::get('/vehicles/filter', [VehicleController::class, 'filter'])->name('vehicles.filter');
@@ -28,15 +36,15 @@ Route::middleware('geo.us')->group(function () {
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-    });
-    
-    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
-    Route::post('/favorites/toggle/{vehicle}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
-    
-    Route::view('/about', 'pages.about-contact')->name('about');
-    Route::post('/about/contact', [VehicleController::class, 'storeContact'])->name('about.contact');
-    
-    Route::get('/dashboard', [DashboardController::class, 'index'])
+});
+
+Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+Route::post('/favorites/toggle/{vehicle}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+
+Route::view('/about', 'pages.about-contact')->name('about');
+Route::post('/about/contact', [VehicleController::class, 'storeContact'])->name('about.contact');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -50,9 +58,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 
     Route::post('/vehicles/request', [VehicleRequestController::class, 'store'])->name('vehicles.request');
-    
+
     Route::post('/test-drive/schedule', [TestDriveController::class, 'store'])->name('testdrive.store');
-    
+
     Route::patch('/my-test-drives/{testDrive}/cancel', [TestDriveController::class, 'cancel'])->name('user.test-drives.cancel');
     Route::patch('/my-vehicle-requests/{vehicleRequest}/cancel', [VehicleRequestController::class, 'cancel'])->name('user.vehicle-requests.cancel');
 

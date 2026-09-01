@@ -9,15 +9,15 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0l-7.5-4.615a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                     </svg>
                 </div>
-                <h2 class="text-xl font-bold text-gray-900 tracking-tight">Verify Your Email</h2>
+                <h2 class="text-xl font-bold text-gray-900 tracking-tight">{{ __('public/auth.verify_title') }}</h2>
                 <p class="text-xs text-gray-400 mt-2 leading-relaxed">
-                    Thanks for signing up! Please verify your email address by clicking on the link we just sent you. If you didn't receive it, we'll gladly send another.
+                    {{ __('public/auth.verify_subtitle') }}
                 </p>
             </div>
 
             @if (session('status') == 'verification-link-sent')
                 <div class="mb-6 bg-emerald-50 border border-emerald-100 text-emerald-800 px-4 py-3 rounded-xl text-xs font-medium text-center">
-                    {{ __('A new verification link has been sent to your email address.') }}
+                    {{ __('public/auth.verify_link_sent') }}
                 </div>
             @endif
 
@@ -25,14 +25,14 @@
                 <form method="POST" action="{{ route('verification.send') }}">
                     @csrf
                     <button type="submit" class="w-full py-3 bg-[#0F172A] hover:bg-gray-800 text-white font-semibold text-xs rounded-xl shadow-sm transition tracking-wide uppercase">
-                        {{ __('Resend Verification Email') }}
+                        {{ __('public/auth.resend_verification_btn') }}
                     </button>
                 </form>
 
                 <form method="POST" action="{{ route('logout') }}" class="text-center">
                     @csrf
                     <button type="submit" class="text-xs text-gray-400 hover:text-gray-900 transition underline font-medium">
-                        {{ __('Log Out') }}
+                        {{ __('public/auth.logout_btn') }}
                     </button>
                 </form>
             </div>
