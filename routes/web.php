@@ -28,6 +28,9 @@ Route::get('/', [VehicleController::class, 'index'])->name('home');
 Route::get('/vehicles/search', [VehicleController::class, 'search'])->name('vehicles.search');
 Route::get('/vehicles/filter', [VehicleController::class, 'filter'])->name('vehicles.filter');
 Route::get('/cars/{vehicle}', [VehicleController::class, 'show'])->name('vehicles.show');
+Route::post('/testimonials', [VehicleController::class, 'storeTestimonial'])
+    ->middleware('auth')
+    ->name('testimonials.store');
 
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 

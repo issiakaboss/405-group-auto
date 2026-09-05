@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Vehicle;
 use App\Models\VehicleRequest;
+use App\Models\Testimonial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -23,6 +24,10 @@ class VehicleController extends Controller
         $categories = Vehicle::select('vehicle_type')->distinct()->pluck('vehicle_type');
         $fuelTypes = Vehicle::select('fuel_type')->whereNotNull('fuel_type')->distinct()->pluck('fuel_type');
         $transmissions = Vehicle::select('transmission')->whereNotNull('transmission')->distinct()->pluck('transmission');
+        $testimonials = Testimonial::with('user')
+            ->where('is_approved', true)
+            ->latest()
+            ->get();
 
         return view('welcome', compact(
             'featuredVehicles',
@@ -32,8 +37,22 @@ class VehicleController extends Controller
             'brands',
             'categories',
             'fuelTypes',
-            'transmissions'
+            'transmissions',
+            'testimonials'
         ));
+    }
+
+    public function storeTestimonial(Request $request)
+    {
+        $validated = $request->validate([
+            'rating' => ['required', 'integer', 'between:1,5'],
+            'comment' => ['required', 'string', 'min:10', 'max:1000'],
+        ]);
+
+        $request->user()->testimonials()->create($validated);
+
+        return redirect()->to(route('home') . '#testimonials')
+            ->with('success', __('public/home.testimonial_success'));
     }
 
     public function filter(Request $request)

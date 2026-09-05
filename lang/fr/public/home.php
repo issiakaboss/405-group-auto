@@ -40,6 +40,25 @@ return [
     'view_details' => 'Voir les détails',
     'reserve_similar' => 'Réserver un modèle similaire',
 
+    // Témoignages clients
+    'testimonials_badge' => 'Ils nous font confiance',
+    'testimonials_title' => 'Des clients satisfaits, des histoires vraies',
+    'testimonials_subtitle' => 'Chaque véhicule livré est une nouvelle relation construite sur la confiance, la transparence et un service attentif.',
+    'stars' => 'étoiles',
+    'previous_testimonial' => 'Témoignage précédent',
+    'next_testimonial' => 'Témoignage suivant',
+    'testimonials_empty' => 'Soyez le premier client à partager votre expérience.',
+    'testimonial_form_title' => 'Partagez votre expérience',
+    'testimonial_form_subtitle' => 'Votre avis aide les prochains clients à nous découvrir.',
+    'rating' => 'Votre note',
+    'testimonial_comment' => 'Votre témoignage',
+    'testimonial_placeholder' => 'Racontez-nous votre expérience avec 405 Auto Group...',
+    'submit_testimonial' => 'Publier mon témoignage',
+    'testimonial_success' => 'Merci pour votre témoignage !',
+    'testimonial_login_title' => 'Vous avez apprécié notre service ?',
+    'testimonial_login_subtitle' => 'Connectez-vous pour partager votre expérience avec notre communauté.',
+    'testimonial_login' => 'Se connecter pour témoigner',
+
     // Formulaire de Recherche sur Mesure (Sourcing)
     'finder_badge' => 'Service de recherche sur mesure',
     'finder_title' => 'Vous ne trouvez pas ce que vous cherchez ?',

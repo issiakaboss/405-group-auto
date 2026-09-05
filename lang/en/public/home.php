@@ -40,6 +40,25 @@ return [
     'view_details' => 'View Details',
     'reserve_similar' => 'Reserve Similar',
 
+    // Customer testimonials
+    'testimonials_badge' => 'Trusted by our customers',
+    'testimonials_title' => 'Happy customers, real stories',
+    'testimonials_subtitle' => 'Every vehicle delivered is a new relationship built on trust, transparency, and attentive service.',
+    'stars' => 'stars',
+    'previous_testimonial' => 'Previous testimonial',
+    'next_testimonial' => 'Next testimonial',
+    'testimonials_empty' => 'Be the first customer to share your experience.',
+    'testimonial_form_title' => 'Share your experience',
+    'testimonial_form_subtitle' => 'Your review helps future customers discover us.',
+    'rating' => 'Your rating',
+    'testimonial_comment' => 'Your testimonial',
+    'testimonial_placeholder' => 'Tell us about your experience with 405 Auto Group...',
+    'submit_testimonial' => 'Publish my testimonial',
+    'testimonial_success' => 'Thank you for your testimonial!',
+    'testimonial_login_title' => 'Did you enjoy our service?',
+    'testimonial_login_subtitle' => 'Log in to share your experience with our community.',
+    'testimonial_login' => 'Log in to testify',
+
     // Vehicle Finder Request Form
     'finder_badge' => 'Vehicle Finder Service',
     'finder_title' => "Can't Find What You're Looking For?",

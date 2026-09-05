@@ -72,9 +72,9 @@
                         <select name="category" class="w-full text-xs font-medium py-3 px-3 rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white focus:border-slate-900 focus:ring-slate-900 transition">
                             <option value="">{{ __('public/home.all_vehicle_types') }}</option>
                             @foreach($categories as $category)
-                            @php 
-                                $categoryValue = is_object($category) ? $category->value : $category; 
-                                $categoryLabel = is_object($category) && method_exists($category, 'label') ? $category->label() : $categoryValue;
+                            @php
+                            $categoryValue = is_object($category) ? $category->value : $category;
+                            $categoryLabel = is_object($category) && method_exists($category, 'label') ? $category->label() : $categoryValue;
                             @endphp
                             <option value="{{ $categoryValue }}">{{ $categoryLabel }}</option>
                             @endforeach
@@ -101,9 +101,9 @@
                         <select name="fuel_type" class="w-full text-xs font-medium py-3 px-3 rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white focus:border-slate-900 focus:ring-slate-900 transition">
                             <option value="">{{ __('public/home.all_fuel_types') }}</option>
                             @foreach($fuelTypes as $fuel)
-                            @php 
-                                $fuelValue = is_object($fuel) ? $fuel->value : $fuel; 
-                                $fuelLabel = is_object($fuel) && method_exists($fuel, 'label') ? $fuel->label() : ucfirst($fuelValue);
+                            @php
+                            $fuelValue = is_object($fuel) ? $fuel->value : $fuel;
+                            $fuelLabel = is_object($fuel) && method_exists($fuel, 'label') ? $fuel->label() : ucfirst($fuelValue);
                             @endphp
                             <option value="{{ $fuelValue }}">{{ $fuelLabel }}</option>
                             @endforeach
@@ -116,9 +116,9 @@
                         <select name="transmission" class="w-full text-xs font-medium py-3 px-3 rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white focus:border-slate-900 focus:ring-slate-900 transition">
                             <option value="">{{ __('public/home.all_transmissions') }}</option>
                             @foreach($transmissions as $trans)
-                            @php 
-                                $transValue = is_object($trans) ? $trans->value : $trans; 
-                                $transLabel = is_object($trans) && method_exists($trans, 'label') ? $trans->label() : ucfirst($transValue);
+                            @php
+                            $transValue = is_object($trans) ? $trans->value : $trans;
+                            $transLabel = is_object($trans) && method_exists($trans, 'label') ? $trans->label() : ucfirst($transValue);
                             @endphp
                             <option value="{{ $transValue }}">{{ $transLabel }}</option>
                             @endforeach
@@ -214,6 +214,79 @@
         </div>
         @endif
 
+        <!-- TÉMOIGNAGES CLIENTS -->
+        <section id="testimonials" class="mb-24 border-t border-gray-100 pt-12">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-8">
+                <div class="max-w-2xl">
+                    <span class="text-xs font-bold uppercase tracking-widest text-amber-600">{{ __('public/home.testimonials_badge') }}</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mt-2">{{ __('public/home.testimonials_title') }}</h2>
+                    <p class="text-gray-500 mt-3 leading-relaxed">{{ __('public/home.testimonials_subtitle') }}</p>
+                </div>
+                @if($testimonials->isNotEmpty())
+                <div class="flex gap-2 shrink-0">
+                    <button type="button" id="testimonials-prev" class="w-10 h-10 rounded-full border border-gray-200 text-gray-700 hover:bg-slate-900 hover:text-white transition" aria-label="{{ __('public/home.previous_testimonial') }}">&#8592;</button>
+                    <button type="button" id="testimonials-next" class="w-10 h-10 rounded-full border border-gray-200 text-gray-700 hover:bg-slate-900 hover:text-white transition" aria-label="{{ __('public/home.next_testimonial') }}">&#8594;</button>
+                </div>
+                @endif
+            </div>
+
+            @if($testimonials->isNotEmpty())
+            <div id="testimonials-slider" class="testimonials-scrollbar-hidden flex gap-6 overflow-x-auto snap-x snap-mandatory pb-5 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
+                @foreach($testimonials as $testimonial)
+                <article class="min-w-[min(88vw,360px)] md:min-w-0 md:flex-[0_0_calc((100%_-_3rem)/3)] h-72 flex flex-col snap-start bg-white rounded-2xl border border-gray-200/80 p-6 shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <div class="flex gap-1 text-amber-500 mb-5" aria-label="5 {{ __('public/home.stars') }}">
+                        @for($star = 1; $star <= 5; $star++)
+                            <svg class="w-4 h-4 {{ $star <= $testimonial->rating ? 'fill-current' : 'fill-none' }}" viewBox="0 0 20 20" aria-hidden="true">
+                            <path d="m10 1.5 2.63 5.33 5.88.85-4.25 4.14 1 5.85L10 14.91l-5.26 2.76 1-5.85L1.5 7.68l5.88-.85L10 1.5Z" />
+                            </svg>
+                            @endfor
+                    </div>
+                    <blockquote class="testimonials-scrollbar-hidden flex-1 min-h-0 overflow-y-auto pr-2 text-gray-700 leading-relaxed">"{{ $testimonial->comment }}"</blockquote>
+                    <footer class="mt-6 pt-4 border-t border-gray-100">
+                        <p class="font-bold text-gray-900">{{ $testimonial->user->name }}</p>
+                        <p class="text-xs text-gray-500 mt-1">{{ $testimonial->created_at->translatedFormat('F Y') }}</p>
+                    </footer>
+                </article>
+                @endforeach
+            </div>
+            @else
+            <div class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-gray-500">{{ __('public/home.testimonials_empty') }}</div>
+            @endif
+
+            <div class="mt-8 rounded-2xl bg-slate-900 border border-slate-800 p-6 md:p-8 text-white">
+                @auth
+                <h3 class="text-xl font-bold mb-1">{{ __('public/home.testimonial_form_title') }}</h3>
+                <p class="text-sm text-gray-400 mb-5">{{ __('public/home.testimonial_form_subtitle') }}</p>
+                <form action="{{ route('testimonials.store') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-2">{{ __('public/home.rating') }}</label>
+                        <div id="testimonial-rating" class="flex gap-2" role="radiogroup" aria-label="{{ __('public/home.rating') }}">
+                            @for($rating = 1; $rating <= 5; $rating++)
+                                <label class="cursor-pointer text-3xl leading-none transition-transform hover:scale-110">
+                                <input type="radio" name="rating" value="{{ $rating }}" class="sr-only" {{ old('rating', 5) == $rating ? 'checked' : '' }} required>
+                                <span data-rating-star="{{ $rating }}" class="text-slate-500 transition-colors" aria-hidden="true">&#9733;</span>
+                                <span class="sr-only">{{ $rating }} {{ __('public/home.stars') }}</span>
+                                </label>
+                                @endfor
+                        </div>
+                        @error('rating')<p class="text-xs text-red-400 mt-1">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label for="testimonial-comment" class="block text-xs font-semibold text-gray-300 mb-2">{{ __('public/home.testimonial_comment') }}</label>
+                        <textarea id="testimonial-comment" name="comment" rows="3" required minlength="10" maxlength="1000" placeholder="{{ __('public/home.testimonial_placeholder') }}" class="w-full rounded-xl bg-slate-900 border-slate-700 text-white placeholder-gray-500 text-sm focus:border-amber-500 focus:ring-amber-500"></textarea>
+                        @error('comment')<p class="text-xs text-red-400 mt-1">{{ $message }}</p>@enderror
+                    </div>
+                    <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-amber-500 px-5 py-3 text-xs font-extrabold uppercase tracking-wider text-slate-950 hover:bg-amber-400 transition">{{ __('public/home.submit_testimonial') }}</button>
+                </form>
+                @else
+                <h3 class="text-xl font-bold mb-2">{{ __('public/home.testimonial_login_title') }}</h3>
+                <p class="text-sm text-gray-400 mb-5">{{ __('public/home.testimonial_login_subtitle') }}</p>
+                <a href="{{ route('login', ['redirect' => url()->current() . '#testimonials']) }}" class="inline-flex items-center justify-center rounded-xl bg-amber-500 px-5 py-3 text-xs font-extrabold uppercase tracking-wider text-slate-950 hover:bg-amber-400 transition">{{ __('public/home.testimonial_login') }}</a>
+                @endauth
+            </div>
+        </section>
+
         <!-- FORMULAIRE DE REQUÊTE SOURCING -->
         <div id="vehicle-request" class="mt-12 bg-slate-950 rounded-3xl border border-slate-800 shadow-2xl p-8 md:p-12 text-white relative overflow-hidden">
             <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -283,9 +356,79 @@
 
     </div>
 
+    <style>
+        .testimonials-scrollbar-hidden {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .testimonials-scrollbar-hidden::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+
     <!-- SCRIPT DE FILTRAGE AJAX -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const testimonialSlider = document.getElementById('testimonials-slider');
+            const testimonialPrevious = document.getElementById('testimonials-prev');
+            const testimonialNext = document.getElementById('testimonials-next');
+
+            if (testimonialSlider && testimonialPrevious && testimonialNext) {
+                let testimonialTimer;
+
+                function moveTestimonials(direction) {
+                    const pageWidth = testimonialSlider.clientWidth;
+                    const lastPage = testimonialSlider.scrollWidth - pageWidth;
+                    const nextPosition = testimonialSlider.scrollLeft + (direction * pageWidth);
+                    const targetPosition = nextPosition > lastPage + 4 ? 0 : Math.max(nextPosition, 0);
+
+                    testimonialSlider.scrollTo({
+                        left: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+
+                function startTestimonialAutoSlide() {
+                    clearInterval(testimonialTimer);
+                    testimonialTimer = setInterval(() => moveTestimonials(1), 5000);
+                }
+
+                testimonialPrevious.addEventListener('click', () => {
+                    moveTestimonials(-1);
+                    startTestimonialAutoSlide();
+                });
+
+                testimonialNext.addEventListener('click', () => {
+                    moveTestimonials(1);
+                    startTestimonialAutoSlide();
+                });
+
+                testimonialSlider.addEventListener('mouseenter', () => clearInterval(testimonialTimer));
+                testimonialSlider.addEventListener('mouseleave', startTestimonialAutoSlide);
+                testimonialSlider.addEventListener('focusin', () => clearInterval(testimonialTimer));
+                testimonialSlider.addEventListener('focusout', startTestimonialAutoSlide);
+                startTestimonialAutoSlide();
+            }
+
+            const rating = document.getElementById('testimonial-rating');
+            if (rating) {
+                const radios = rating.querySelectorAll('input[name="rating"]');
+                const stars = rating.querySelectorAll('[data-rating-star]');
+
+                function paintRating(value) {
+                    stars.forEach(star => {
+                        const isActive = Number(star.dataset.ratingStar) <= Number(value);
+                        star.classList.toggle('text-amber-400', isActive);
+                        star.classList.toggle('text-slate-500', !isActive);
+                        star.classList.toggle('drop-shadow-[0_0_6px_rgba(251,191,36,0.45)]', isActive);
+                    });
+                }
+
+                radios.forEach(radio => radio.addEventListener('change', () => paintRating(radio.value)));
+                paintRating(rating.querySelector('input[name="rating"]:checked')?.value || 5);
+            }
+
             const form = document.getElementById('filter-form');
             const grid = document.getElementById('vehicles-grid');
             const countSpan = document.getElementById('vehicle-count');

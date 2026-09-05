@@ -3,6 +3,10 @@
 return [
     'nav_home' => 'Accueil',
     'nav_about' => 'À propos',
+    'nav_testimonials' => 'Témoignages clients',
+    'mobile_menu' => 'Ouvrir le menu de navigation',
+    'mobile_favorites' => 'Favoris',
+    'mobile_login' => 'Se connecter',
     'search_placeholder' => 'Rechercher un véhicule...',
     'admin_fleet' => 'Gestion de la Flotte',
     'admin_orders' => 'Gérer les Commandes',
