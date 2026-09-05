@@ -2,7 +2,7 @@
 
 return [
     'hero_badge' => 'Luxury Automotive Partner',
-    'hero_title' => 'Welcome to 405 Group Auto',
+    'hero_title' => 'Welcome to 405 Auto Group',
     'hero_description' => 'Your ultimate destination for luxury vehicles. We assist buyers in discovering premium inventory, requesting custom vehicle matches, and securing seamless transatlantic imports from the USA directly to Africa.',
     'get_in_touch' => 'Get in Touch',
     'about_contact_title' => 'About & Contact',

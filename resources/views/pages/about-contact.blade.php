@@ -80,7 +80,7 @@
                                 </div>
                                 <div>
                                     <p class="font-bold text-slate-900">{{ __('public/about.email_label') }}</p>
-                                    <a href="mailto:info@405group-auto.com" class="text-amber-600 font-medium hover:underline text-xs mt-0.5 block">info@405group-auto.com</a>
+                                    <a href="mailto:info@405autogroup.com" class="text-amber-600 font-medium hover:underline text-xs mt-0.5 block">info@405autogroup.com</a>
                                 </div>
                             </div>
                         </div>

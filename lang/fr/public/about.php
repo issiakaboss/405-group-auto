@@ -2,7 +2,7 @@
 
 return [
     'hero_badge' => 'Partenaire Automobile de Luxe',
-    'hero_title' => 'Bienvenue chez 405 Group Auto',
+    'hero_title' => 'Bienvenue chez 405 Auto Group',
     'hero_description' => 'Votre destination idéale pour les véhicules haut de gamme. Nous aidons les acheteurs à découvrir un inventaire d\'exception, à solliciter des recherches sur-mesure et à concrétiser des importations transatlantiques fluides depuis les USA vers l\'Afrique.',
     'get_in_touch' => 'Contactez-nous',
     'about_contact_title' => 'À Propos & Contact',

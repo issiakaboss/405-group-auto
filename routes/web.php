@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\TestDriveController as AdminTestDriveController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\VehicleRequestController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ProfileController;
@@ -28,6 +29,7 @@ Route::get('/vehicles/search', [VehicleController::class, 'search'])->name('vehi
 Route::get('/vehicles/filter', [VehicleController::class, 'filter'])->name('vehicles.filter');
 Route::get('/cars/{vehicle}', [VehicleController::class, 'show'])->name('vehicles.show');
 
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 Route::middleware('geo.us')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -42,7 +44,7 @@ Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.
 Route::post('/favorites/toggle/{vehicle}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
 Route::view('/about', 'pages.about-contact')->name('about');
-Route::post('/about/contact', [VehicleController::class, 'storeContact'])->name('about.contact');
+Route::post('/about/contact', [ContactController::class, 'send'])->name('about.contact');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
