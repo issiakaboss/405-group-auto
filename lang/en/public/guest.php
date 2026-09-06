@@ -13,7 +13,7 @@ return [
     'admin_requests' => 'Vehicle Requests',
     'user_dashboard' => 'My Orders & Drives',
     'logout' => 'Log Out',
-    'footer_description' => 'Your premier destination for luxury and performance vehicles. Sourcing top-tier inventory directly from nationwide US dealer auctions and private networks.',
+    'footer_description' => 'Your first-choice destination for luxury and performance vehicles. Sourcing top-tier inventory directly from nationwide US dealer auctions and private networks.',
     'footer_quick_nav' => 'Quick Navigation',
     'footer_catalog' => 'Inventory Catalog',
     'footer_cart' => 'Cart',
