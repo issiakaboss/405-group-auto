@@ -6,7 +6,7 @@
 
             <!-- Petit badge élégant à la place du logo -->
             <span class="inline-flex items-center px-3 py-1 rounded-full text-md font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20 mb-6">
-                405 AUTO GROUP LLC
+                405 AUTO GROUP
             </span>
 
             <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-4">

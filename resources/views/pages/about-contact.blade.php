@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="bg-gray-50/50 py-12 sm:py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-           <div class="flex justify-center">
+            <div class="flex justify-center">
                 <img src="{{ asset('images/logo.jpeg') }}"
                     alt="405 Auto Group Logo"
                     class="h-24 sm:h-32 md:h-36 w-auto object-contain drop-shadow-sm">
@@ -87,7 +87,7 @@
 
                         {{-- Google Maps --}}
                         <div class="rounded-xl overflow-hidden border border-slate-200 shadow-inner">
-                            <iframe class="w-full h-56 border-0" src="https://www.google.com/maps?q=Houston%20TX&z=12&output=embed" loading="lazy" allowfullscreen></iframe>
+                            <iframe class="w-full h-56 border-0" src="https://www.google.com/maps?q=4309+NW+39th+St,+Oklahoma+City,+OK+73112&z=15&output=embed" loading="lazy" allowfullscreen></iframe>
                         </div>
                     </div>
                 </div>
