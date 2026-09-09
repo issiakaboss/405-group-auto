@@ -76,6 +76,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/vehicles', [AdminVehicleController::class, 'index'])->name('vehicles.index');
     Route::get('/vehicles/create', [AdminVehicleController::class, 'create'])->name('vehicles.create');
     Route::post('/vehicles', [AdminVehicleController::class, 'store'])->name('vehicles.store');
+    Route::get('/vehicles/{vehicle}', [AdminVehicleController::class, 'show'])->name('vehicles.show');
     Route::get('/vehicles/{vehicle}/edit', [AdminVehicleController::class, 'edit'])->name('vehicles.edit');
     Route::put('/vehicles/{vehicle}', [AdminVehicleController::class, 'update'])->name('vehicles.update');
     Route::patch('/vehicles/{vehicle}/status', [AdminVehicleController::class, 'updateStatus'])->name('vehicles.update-status');

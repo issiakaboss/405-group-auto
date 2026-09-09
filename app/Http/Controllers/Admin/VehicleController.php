@@ -27,6 +27,10 @@ class VehicleController extends Controller
     {
         return view('admin.vehicles.create');
     }
+    public function show(Vehicle $vehicle)
+    {
+        return view('admin.vehicles.show', compact('vehicle'));
+    }
 
     public function store(Request $request)
     {
@@ -65,7 +69,7 @@ class VehicleController extends Controller
             }
         }
 
-        Vehicle::create([
+        $vehicle = Vehicle::create([
             'make' => $request->make,
             'model' => $request->model,
             'trim' => $request->trim,
@@ -88,7 +92,7 @@ class VehicleController extends Controller
             'images' => $uploadedImages,
         ]);
 
-        return redirect()->route('admin.vehicles.index')->with('success', 'Vehicle added to inventory successfully!');
+        return redirect()->route('admin.vehicles.show', $vehicle)->with('success', 'Vehicle added to inventory successfully!');
     }
 
     public function edit(Vehicle $vehicle)
