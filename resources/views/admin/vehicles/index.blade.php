@@ -87,6 +87,9 @@
                                 </td>
                                 <td class="py-4 px-6">
                                     <div class="flex items-center justify-center space-x-3">
+                                        <a href="{{ route('admin.vehicles.show', $vehicle) }}" class="text-emerald-400 hover:text-emerald-300 font-medium transition text-xs">
+                                            {{ __('admin/vehicles.view') }}
+                                        </a>
                                         <a href="{{ route('admin.vehicles.edit', $vehicle) }}" class="text-blue-400 hover:text-blue-300 font-medium transition text-xs">
                                             {{ __('admin/vehicles.edit') }}
                                         </a>
@@ -138,7 +141,9 @@
     <script>
         function requestVehicleDeletion(vehicleId) {
             window.dispatchEvent(new CustomEvent('open-modal-delete-vehicle-modal', {
-                detail: { vehicleId: vehicleId }
+                detail: {
+                    vehicleId: vehicleId
+                }
             }));
         }
 

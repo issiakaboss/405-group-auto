@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="min-h-screen bg-[#080d1a] text-slate-100 py-10 px-4 sm:px-6 lg:px-8" x-data="{ editModalOpen: false, activeUser: null }">
+    <div class="min-h-screen bg-[#080d1a] text-slate-100 py-10 px-4 sm:px-6 lg:px-8" x-data="{ editModalOpen: false, activeUser: { id: '', name: '', email: '' } }">
         <div class="max-w-7xl mx-auto space-y-8">
 
             <!-- Page Header -->
@@ -109,7 +109,7 @@
 
                                         <!-- Edit Button -->
                                         <button type="button"
-                                            @click="activeUser = { id: '{{ $admin->id }}', name: '{{ addslashes($admin->name) }}', email: '{{ $admin->email }}' }; editModalOpen = true"
+                                            @click="activeUser = @js(['id' => (string) $admin->id, 'name' => $admin->name, 'email' => $admin->email]); editModalOpen = true"
                                             class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
                                             <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -178,7 +178,7 @@
                     </button>
                 </div>
 
-                <form x-bind:action="'/admin/users/' + (activeUser ? activeUser.id : '')" method="POST" class="space-y-4">
+                <form x-bind:action="activeUser.id ? '/admin/users/' + activeUser.id : '#'" method="POST" class="space-y-4" x-bind:class="{ 'pointer-events-none opacity-50': !activeUser.id }">
                     @csrf
                     @method('PUT')
 

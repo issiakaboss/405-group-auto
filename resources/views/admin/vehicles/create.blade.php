@@ -14,21 +14,53 @@
                     <h2 class="text-xl font-black text-white uppercase tracking-tight mt-1">{{ __('admin/vehicles.register_new_vehicle') }}</h2>
                 </div>
 
-                <form action="{{ route('admin.vehicles.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6 text-xs font-semibold text-slate-300">
+                <form action="{{ route('admin.vehicles.store') }}" method="POST" enctype="multipart/form-data" data-loading-form class="space-y-6 text-xs font-semibold text-slate-300">
                     @csrf
 
                     <!-- 1. Identification -->
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                        <div>
+                        <!-- 1. MAKE / MARQUE -->
+                        <div data-vehicle-choice>
                             <label class="block text-slate-400 mb-1.5 uppercase tracking-wider text-[11px]">{{ __('admin/vehicles.make') }}</label>
-                            <input type="text" name="make" value="{{ old('make') }}" placeholder="ex. Chevrolet, Ford" class="w-full p-3 bg-[#1e293b] border border-slate-700/60 rounded-xl focus:border-indigo-500 focus:ring-0 text-white placeholder-slate-500 transition text-xs" required>
+
+                            <input type="hidden" name="make" value="{{ old('make') }}" data-choice-value>
+                            <select
+                                data-choice-select
+                                class="w-full p-3 bg-[#1e293b] border border-slate-700/60 rounded-xl focus:border-indigo-500 focus:ring-0 text-white transition text-xs"
+                                required>
+                                <option value="" class="bg-[#1e293b]">{{ __('admin/vehicles.select_make') }}</option>
+                                @foreach(\App\Models\Enums\VehicleMake::cases() as $make)
+                                <option value="{{ $make->value }}" class="bg-[#1e293b]" {{ old('make') === $make->value ? 'selected' : '' }}>{{ $make->label() }}</option>
+                                @endforeach
+                                <option value="other" class="bg-[#1e293b]" {{ old('make') && !in_array(old('make'), array_column(\App\Models\Enums\VehicleMake::cases(), 'value')) ? 'selected' : '' }}>+ {{ __('admin/vehicles.custom_option') }}</option>
+                            </select>
+
+                            <input type="text" data-choice-custom value="{{ old('make') }}" placeholder="{{ __('admin/vehicles.enter_custom_make') }}" class="hidden w-full mt-2 p-3 bg-[#1e293b] border border-indigo-500/70 rounded-xl focus:border-indigo-500 focus:ring-0 text-white placeholder-slate-500 transition text-xs">
+
                             @error('make') <p class="text-red-400 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
-                        <div>
+
+                        <!-- 2. MODEL / MODÈLE -->
+                        <div data-vehicle-choice>
                             <label class="block text-slate-400 mb-1.5 uppercase tracking-wider text-[11px]">{{ __('admin/vehicles.model') }}</label>
-                            <input type="text" name="model" value="{{ old('model') }}" placeholder="ex. Malibu Limited, Mustang" class="w-full p-3 bg-[#1e293b] border border-slate-700/60 rounded-xl focus:border-indigo-500 focus:ring-0 text-white placeholder-slate-500 transition text-xs" required>
+
+                            <input type="hidden" name="model" value="{{ old('model') }}" data-choice-value>
+                            <select
+                                data-choice-select
+                                class="w-full p-3 bg-[#1e293b] border border-slate-700/60 rounded-xl focus:border-indigo-500 focus:ring-0 text-white transition text-xs"
+                                required>
+                                <option value="" class="bg-[#1e293b]">{{ __('admin/vehicles.select_model') }}</option>
+                                @foreach(\App\Models\Enums\VehicleModel::cases() as $model)
+                                <option value="{{ $model->value }}" class="bg-[#1e293b]" {{ old('model') === $model->value ? 'selected' : '' }}>{{ $model->label() }}</option>
+                                @endforeach
+                                <option value="other" class="bg-[#1e293b]" {{ old('model') && !in_array(old('model'), array_column(\App\Models\Enums\VehicleModel::cases(), 'value')) ? 'selected' : '' }}>+ {{ __('admin/vehicles.custom_option') }}</option>
+                            </select>
+
+                            <input type="text" data-choice-custom value="{{ old('model') }}" placeholder="{{ __('admin/vehicles.enter_custom_model') }}" class="hidden w-full mt-2 p-3 bg-[#1e293b] border border-indigo-500/70 rounded-xl focus:border-indigo-500 focus:ring-0 text-white placeholder-slate-500 transition text-xs">
+
                             @error('model') <p class="text-red-400 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
+
                         <div>
                             <label class="block text-slate-400 mb-1.5 uppercase tracking-wider text-[11px]">{{ __('admin/vehicles.trim') }}</label>
                             <input type="text" name="trim" value="{{ old('trim') }}" placeholder="ex. LT, LS, GT" class="w-full p-3 bg-[#1e293b] border border-slate-700/60 rounded-xl focus:border-indigo-500 focus:ring-0 text-white placeholder-slate-500 transition text-xs">
@@ -155,7 +187,7 @@
                                 {{ __('admin/vehicles.clean_title_notice') }}
                             </label>
                         </div>
-                       
+
                     </div>
 
                     <!-- 6. Description -->
@@ -186,8 +218,8 @@
                         <a href="{{ route('admin.vehicles.index') }}" class="px-5 py-3 bg-[#1e293b] hover:bg-slate-700 text-slate-300 rounded-xl transition uppercase tracking-wider font-bold">
                             {{ __('admin/vehicles.cancel') }}
                         </a>
-                        <button type="submit" class="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl shadow-md transition uppercase tracking-wider font-extrabold">
-                            {{ __('admin/vehicles.save_vehicle') }}
+                        <button type="submit" data-loading-button data-loading-label="{{ __('admin/vehicles.saving_vehicle') }}" class="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl shadow-md transition uppercase tracking-wider font-extrabold">
+                            <span data-button-label>{{ __('admin/vehicles.save_vehicle') }}</span>
                         </button>
                     </div>
 
@@ -198,6 +230,37 @@
     </div>
 
     <script>
+        document.querySelector('[data-loading-form]').addEventListener('submit', function(event) {
+            if (this.dataset.submitting === 'true') {
+                event.preventDefault();
+                return;
+            }
+
+            this.dataset.submitting = 'true';
+            const button = this.querySelector('[data-loading-button]');
+            button.disabled = true;
+            button.classList.add('opacity-70', 'cursor-not-allowed');
+            button.querySelector('[data-button-label]').textContent = button.dataset.loadingLabel;
+        });
+
+        document.querySelectorAll('[data-vehicle-choice]').forEach(function(choice) {
+            const select = choice.querySelector('[data-choice-select]');
+            const valueInput = choice.querySelector('[data-choice-value]');
+            const customInput = choice.querySelector('[data-choice-custom]');
+
+            function syncChoice() {
+                const isCustom = select.value === 'other';
+                customInput.classList.toggle('hidden', !isCustom);
+                customInput.disabled = !isCustom;
+                customInput.required = isCustom;
+                valueInput.value = isCustom ? customInput.value : select.value;
+            }
+
+            select.addEventListener('change', syncChoice);
+            customInput.addEventListener('input', syncChoice);
+            syncChoice();
+        });
+
         let selectedFiles = new DataTransfer();
         const imageInput = document.getElementById('image-input');
         const previewContainer = document.getElementById('images-preview');

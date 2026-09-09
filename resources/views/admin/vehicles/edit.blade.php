@@ -14,7 +14,7 @@
                     <h1 class="text-2xl font-black text-white uppercase tracking-tight mt-1">{{ __('admin/vehicles.edit_vehicle') }} {{ $vehicle->title ?? $vehicle->make . ' ' . $vehicle->model }}</h1>
                 </div>
 
-                <form action="{{ route('admin.vehicles.update', $vehicle->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6 text-xs font-semibold text-slate-300">
+                <form action="{{ route('admin.vehicles.update', $vehicle->id) }}" method="POST" enctype="multipart/form-data" data-loading-form class="space-y-6 text-xs font-semibold text-slate-300">
                     @csrf
                     @method('PUT')
 
@@ -23,14 +23,30 @@
 
                     <!-- 1. Identification -->
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                        <div>
+                        <div data-vehicle-choice>
                             <label class="block text-slate-400 mb-1.5 uppercase text-[10px] tracking-wider font-bold">{{ __('admin/vehicles.make') }}</label>
-                            <input type="text" name="make" value="{{ old('make', $vehicle->make) }}" placeholder="ex. Chevrolet, Ford" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs" required>
+                            <input type="hidden" name="make" value="{{ old('make', $vehicle->make) }}" data-choice-value>
+                            <select data-choice-select class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs" required>
+                                <option value="">{{ __('admin/vehicles.select_make') }}</option>
+                                @foreach(\App\Models\Enums\VehicleMake::cases() as $make)
+                                <option value="{{ $make->value }}" {{ old('make', $vehicle->make) === $make->value ? 'selected' : '' }}>{{ $make->label() }}</option>
+                                @endforeach
+                                <option value="other" {{ old('make', $vehicle->make) && !in_array(old('make', $vehicle->make), array_column(\App\Models\Enums\VehicleMake::cases(), 'value')) ? 'selected' : '' }}>+ {{ __('admin/vehicles.custom_option') }}</option>
+                            </select>
+                            <input type="text" data-choice-custom value="{{ old('make', $vehicle->make) }}" placeholder="{{ __('admin/vehicles.enter_custom_make') }}" class="hidden w-full mt-2 p-3 bg-slate-800 border border-blue-500/70 rounded-xl text-white placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs">
                             @error('make') <p class="text-rose-400 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
-                        <div>
+                        <div data-vehicle-choice>
                             <label class="block text-slate-400 mb-1.5 uppercase text-[10px] tracking-wider font-bold">{{ __('admin/vehicles.model') }}</label>
-                            <input type="text" name="model" value="{{ old('model', $vehicle->model) }}" placeholder="ex. Malibu Limited, Mustang" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs" required>
+                            <input type="hidden" name="model" value="{{ old('model', $vehicle->model) }}" data-choice-value>
+                            <select data-choice-select class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs" required>
+                                <option value="">{{ __('admin/vehicles.select_model') }}</option>
+                                @foreach(\App\Models\Enums\VehicleModel::cases() as $model)
+                                <option value="{{ $model->value }}" {{ old('model', $vehicle->model) === $model->value ? 'selected' : '' }}>{{ $model->label() }}</option>
+                                @endforeach
+                                <option value="other" {{ old('model', $vehicle->model) && !in_array(old('model', $vehicle->model), array_column(\App\Models\Enums\VehicleModel::cases(), 'value')) ? 'selected' : '' }}>+ {{ __('admin/vehicles.custom_option') }}</option>
+                            </select>
+                            <input type="text" data-choice-custom value="{{ old('model', $vehicle->model) }}" placeholder="{{ __('admin/vehicles.enter_custom_model') }}" class="hidden w-full mt-2 p-3 bg-slate-800 border border-blue-500/70 rounded-xl text-white placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs">
                             @error('model') <p class="text-rose-400 text-[10px] mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
@@ -52,10 +68,10 @@
                             <select name="vehicle_type" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs" required>
                                 <option value="">{{ __('admin/vehicles.select_type') }}</option>
                                 @foreach(\App\Models\Enums\VehicleType::cases() as $type)
-                                    @php $currentType = $vehicle->vehicle_type?->value ?? $vehicle->vehicle_type; @endphp
-                                    <option value="{{ $type->value }}" {{ old('vehicle_type', $currentType) == $type->value ? 'selected' : '' }}>
-                                        {{ $type->label() }}
-                                    </option>
+                                @php $currentType = $vehicle->vehicle_type?->value ?? $vehicle->vehicle_type; @endphp
+                                <option value="{{ $type->value }}" {{ old('vehicle_type', $currentType) == $type->value ? 'selected' : '' }}>
+                                    {{ $type->label() }}
+                                </option>
                                 @endforeach
                             </select>
                             @error('vehicle_type') <p class="text-rose-400 text-[10px] mt-1">{{ $message }}</p> @enderror
@@ -65,10 +81,10 @@
                             <select name="body_style" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs" required>
                                 <option value="">{{ __('admin/vehicles.select_style') }}</option>
                                 @foreach(\App\Models\Enums\BodyStyle::cases() as $style)
-                                    @php $currentStyle = $vehicle->body_style?->value ?? $vehicle->body_style; @endphp
-                                    <option value="{{ $style->value }}" {{ old('body_style', $currentStyle) == $style->value ? 'selected' : '' }}>
-                                        {{ $style->label() }}
-                                    </option>
+                                @php $currentStyle = $vehicle->body_style?->value ?? $vehicle->body_style; @endphp
+                                <option value="{{ $style->value }}" {{ old('body_style', $currentStyle) == $style->value ? 'selected' : '' }}>
+                                    {{ $style->label() }}
+                                </option>
                                 @endforeach
                             </select>
                             @error('body_style') <p class="text-rose-400 text-[10px] mt-1">{{ $message }}</p> @enderror
@@ -82,10 +98,10 @@
                             <select name="exterior_color" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs" required>
                                 <option value="">{{ __('admin/vehicles.select_exterior') }}</option>
                                 @foreach(\App\Models\Enums\VehicleColor::cases() as $color)
-                                    @php $currentExtColor = $vehicle->exterior_color?->value ?? $vehicle->exterior_color; @endphp
-                                    <option value="{{ $color->value }}" {{ old('exterior_color', $currentExtColor) == $color->value ? 'selected' : '' }}>
-                                        {{ $color->label() }}
-                                    </option>
+                                @php $currentExtColor = $vehicle->exterior_color?->value ?? $vehicle->exterior_color; @endphp
+                                <option value="{{ $color->value }}" {{ old('exterior_color', $currentExtColor) == $color->value ? 'selected' : '' }}>
+                                    {{ $color->label() }}
+                                </option>
                                 @endforeach
                             </select>
                             @error('exterior_color') <p class="text-rose-400 text-[10px] mt-1">{{ $message }}</p> @enderror
@@ -95,10 +111,10 @@
                             <select name="interior_color" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs" required>
                                 <option value="">{{ __('admin/vehicles.select_interior') }}</option>
                                 @foreach(\App\Models\Enums\VehicleColor::cases() as $color)
-                                    @php $currentIntColor = $vehicle->interior_color?->value ?? $vehicle->interior_color; @endphp
-                                    <option value="{{ $color->value }}" {{ old('interior_color', $currentIntColor) == $color->value ? 'selected' : '' }}>
-                                        {{ $color->label() }}
-                                    </option>
+                                @php $currentIntColor = $vehicle->interior_color?->value ?? $vehicle->interior_color; @endphp
+                                <option value="{{ $color->value }}" {{ old('interior_color', $currentIntColor) == $color->value ? 'selected' : '' }}>
+                                    {{ $color->label() }}
+                                </option>
                                 @endforeach
                             </select>
                             @error('interior_color') <p class="text-rose-400 text-[10px] mt-1">{{ $message }}</p> @enderror
@@ -108,10 +124,10 @@
                             <select name="transmission" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs">
                                 <option value="">{{ __('admin/vehicles.select_transmission') }}</option>
                                 @foreach(\App\Models\Enums\Transmission::cases() as $trans)
-                                    @php $currentTrans = $vehicle->transmission?->value ?? $vehicle->transmission; @endphp
-                                    <option value="{{ $trans->value }}" {{ old('transmission', $currentTrans) == $trans->value ? 'selected' : '' }}>
-                                        {{ $trans->label() }}
-                                    </option>
+                                @php $currentTrans = $vehicle->transmission?->value ?? $vehicle->transmission; @endphp
+                                <option value="{{ $trans->value }}" {{ old('transmission', $currentTrans) == $trans->value ? 'selected' : '' }}>
+                                    {{ $trans->label() }}
+                                </option>
                                 @endforeach
                             </select>
                             @error('transmission') <p class="text-rose-400 text-[10px] mt-1">{{ $message }}</p> @enderror
@@ -121,10 +137,10 @@
                             <select name="fuel_type" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs">
                                 <option value="">{{ __('admin/vehicles.select_fuel') }}</option>
                                 @foreach(\App\Models\Enums\FuelType::cases() as $fuel)
-                                    @php $currentFuel = $vehicle->fuel_type?->value ?? $vehicle->fuel_type; @endphp
-                                    <option value="{{ $fuel->value }}" {{ old('fuel_type', $currentFuel) == $fuel->value ? 'selected' : '' }}>
-                                        {{ $fuel->label() }}
-                                    </option>
+                                @php $currentFuel = $vehicle->fuel_type?->value ?? $vehicle->fuel_type; @endphp
+                                <option value="{{ $fuel->value }}" {{ old('fuel_type', $currentFuel) == $fuel->value ? 'selected' : '' }}>
+                                    {{ $fuel->label() }}
+                                </option>
                                 @endforeach
                             </select>
                             @error('fuel_type') <p class="text-rose-400 text-[10px] mt-1">{{ $message }}</p> @enderror
@@ -148,10 +164,10 @@
                             <select name="location" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-xs" required>
                                 <option value="">{{ __('admin/vehicles.select_location') }}</option>
                                 @foreach(\App\Models\Enums\VehicleLocation::cases() as $loc)
-                                    @php $currentLoc = $vehicle->location?->value ?? $vehicle->location; @endphp
-                                    <option value="{{ $loc->value }}" {{ old('location', $currentLoc) == $loc->value ? 'selected' : '' }}>
-                                        {{ $loc->label() }}
-                                    </option>
+                                @php $currentLoc = $vehicle->location?->value ?? $vehicle->location; @endphp
+                                <option value="{{ $loc->value }}" {{ old('location', $currentLoc) == $loc->value ? 'selected' : '' }}>
+                                    {{ $loc->label() }}
+                                </option>
                                 @endforeach
                             </select>
                             @error('location') <p class="text-rose-400 text-[10px] mt-1">{{ $message }}</p> @enderror
@@ -213,8 +229,8 @@
                         <a href="{{ route('admin.vehicles.index') }}" class="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition uppercase tracking-wider font-bold text-xs">
                             {{ __('admin/vehicles.cancel') }}
                         </a>
-                        <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-md transition uppercase tracking-wider font-extrabold text-xs">
-                            {{ __('admin/vehicles.update_vehicle') }}
+                        <button type="submit" data-loading-button data-loading-label="{{ __('admin/vehicles.updating_vehicle') }}" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-md transition uppercase tracking-wider font-extrabold text-xs">
+                            <span data-button-label>{{ __('admin/vehicles.update_vehicle') }}</span>
                         </button>
                     </div>
 
@@ -225,6 +241,37 @@
     </div>
 
     <script>
+        document.querySelector('[data-loading-form]').addEventListener('submit', function(event) {
+            if (this.dataset.submitting === 'true') {
+                event.preventDefault();
+                return;
+            }
+
+            this.dataset.submitting = 'true';
+            const button = this.querySelector('[data-loading-button]');
+            button.disabled = true;
+            button.classList.add('opacity-70', 'cursor-not-allowed');
+            button.querySelector('[data-button-label]').textContent = button.dataset.loadingLabel;
+        });
+
+        document.querySelectorAll('[data-vehicle-choice]').forEach(function(choice) {
+            const select = choice.querySelector('[data-choice-select]');
+            const valueInput = choice.querySelector('[data-choice-value]');
+            const customInput = choice.querySelector('[data-choice-custom]');
+
+            function syncChoice() {
+                const isCustom = select.value === 'other';
+                customInput.classList.toggle('hidden', !isCustom);
+                customInput.disabled = !isCustom;
+                customInput.required = isCustom;
+                valueInput.value = isCustom ? customInput.value : select.value;
+            }
+
+            select.addEventListener('change', syncChoice);
+            customInput.addEventListener('input', syncChoice);
+            syncChoice();
+        });
+
         let selectedFiles = new DataTransfer();
         const imageInput = document.getElementById('image-input');
         const previewContainer = document.getElementById('images-preview');
