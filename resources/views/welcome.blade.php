@@ -218,7 +218,7 @@
         <section id="testimonials" class="mb-24 border-t border-gray-100 pt-12">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-8">
                 <div class="max-w-2xl">
-                    <span class="text-xs font-bold uppercase tracking-widest text-amber-600">{{ __('public/home.testimonials_badge') }}</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-primary">{{ __('public/home.testimonials_badge') }}</span>
                     <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mt-2">{{ __('public/home.testimonials_title') }}</h2>
                     <p class="text-gray-500 mt-3 leading-relaxed">{{ __('public/home.testimonials_subtitle') }}</p>
                 </div>
@@ -231,18 +231,23 @@
             </div>
 
             @if($testimonials->isNotEmpty())
-            <div id="testimonials-slider" class="testimonials-scrollbar-hidden flex gap-6 overflow-x-auto snap-x snap-mandatory pb-5 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
+            {{-- MODIFICATION ICI : Ajout de items-stretch pour que toutes les cartes aient la même hauteur sur une ligne --}}
+            <div id="testimonials-slider" class="testimonials-scrollbar-hidden flex items-stretch gap-6 overflow-x-auto snap-x snap-mandatory pb-5 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
                 @foreach($testimonials as $testimonial)
-                <article class="min-w-[min(88vw,360px)] md:min-w-0 md:flex-[0_0_calc((100%_-_3rem)/3)] h-72 flex flex-col snap-start bg-white rounded-2xl border border-gray-200/80 p-6 shadow-md hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex gap-1 text-amber-500 mb-5" aria-label="5 {{ __('public/home.stars') }}">
+                {{-- MODIFICATION ICI : Suppression de h-72, ajout de h-full pour s'adapter au contenu --}}
+                <article class="min-w-[min(88vw,360px)] md:min-w-0 md:flex-[0_0_calc((100%_-_3rem)/3)] h-full flex flex-col snap-start bg-white rounded-2xl border border-gray-200/80 p-6 shadow-md hover:shadow-xl transition-shadow duration-300">
+                    {{-- MODIFICATION ICI : Réduction du margin-bottom de 5 à 4 --}}
+                    <div class="flex gap-1 text-primary mb-4" aria-label="5 {{ __('public/home.stars') }}">
                         @for($star = 1; $star <= 5; $star++)
                             <svg class="w-4 h-4 {{ $star <= $testimonial->rating ? 'fill-current' : 'fill-none' }}" viewBox="0 0 20 20" aria-hidden="true">
                             <path d="m10 1.5 2.63 5.33 5.88.85-4.25 4.14 1 5.85L10 14.91l-5.26 2.76 1-5.85L1.5 7.68l5.88-.85L10 1.5Z" />
                             </svg>
                             @endfor
                     </div>
-                    <blockquote class="testimonials-scrollbar-hidden flex-1 min-h-0 overflow-y-auto pr-2 text-gray-700 leading-relaxed">"{{ $testimonial->comment }}"</blockquote>
-                    <footer class="mt-6 pt-4 border-t border-gray-100">
+                    {{-- MODIFICATION ICI : Suppression des classes de scroll overflow-y-auto, pr-2 --}}
+                    <blockquote class="flex-1 min-h-0 text-gray-700 leading-relaxed text-sm italic">"{{ $testimonial->comment }}"</blockquote>
+                    {{-- MODIFICATION ICI : Réduction du margin-top et padding-top --}}
+                    <footer class="mt-5 pt-3 border-t border-gray-100">
                         <p class="font-bold text-gray-900">{{ $testimonial->user->name }}</p>
                         <p class="text-xs text-gray-500 mt-1">{{ $testimonial->created_at->translatedFormat('F Y') }}</p>
                     </footer>
@@ -253,6 +258,7 @@
             <div class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-gray-500">{{ __('public/home.testimonials_empty') }}</div>
             @endif
 
+            {{-- FORMULAIRE --}}
             <div class="mt-8 rounded-2xl bg-slate-900 border border-slate-800 p-6 md:p-8 text-white">
                 @auth
                 <h3 class="text-xl font-bold mb-1">{{ __('public/home.testimonial_form_title') }}</h3>
@@ -274,15 +280,15 @@
                     </div>
                     <div>
                         <label for="testimonial-comment" class="block text-xs font-semibold text-gray-300 mb-2">{{ __('public/home.testimonial_comment') }}</label>
-                        <textarea id="testimonial-comment" name="comment" rows="3" required minlength="10" maxlength="1000" placeholder="{{ __('public/home.testimonial_placeholder') }}" class="w-full rounded-xl bg-slate-900 border-slate-700 text-white placeholder-gray-500 text-sm focus:border-amber-500 focus:ring-amber-500"></textarea>
+                        <textarea id="testimonial-comment" name="comment" rows="3" required minlength="10" maxlength="1000" placeholder="{{ __('public/home.testimonial_placeholder') }}" class="w-full rounded-xl bg-slate-900 border-slate-700 text-white placeholder-gray-500 text-sm focus:border-primary focus:ring-primary"></textarea>
                         @error('comment')<p class="text-xs text-red-400 mt-1">{{ $message }}</p>@enderror
                     </div>
-                    <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-amber-500 px-5 py-3 text-xs font-extrabold uppercase tracking-wider text-slate-950 hover:bg-amber-400 transition">{{ __('public/home.submit_testimonial') }}</button>
+                    <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-xs font-extrabold uppercase tracking-wider text-white hover:bg-primary-hover transition">{{ __('public/home.submit_testimonial') }}</button>
                 </form>
                 @else
                 <h3 class="text-xl font-bold mb-2">{{ __('public/home.testimonial_login_title') }}</h3>
                 <p class="text-sm text-gray-400 mb-5">{{ __('public/home.testimonial_login_subtitle') }}</p>
-                <a href="{{ route('login', ['redirect' => url()->current() . '#testimonials']) }}" class="inline-flex items-center justify-center rounded-xl bg-amber-500 px-5 py-3 text-xs font-extrabold uppercase tracking-wider text-slate-950 hover:bg-amber-400 transition">{{ __('public/home.testimonial_login') }}</a>
+                <a href="{{ route('login', ['redirect' => url()->current() . '#testimonials']) }}" class="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-xs font-extrabold uppercase tracking-wider text-white hover:bg-primary-hover transition">{{ __('public/home.testimonial_login') }}</a>
                 @endauth
             </div>
         </section>
