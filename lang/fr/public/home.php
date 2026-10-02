@@ -35,6 +35,7 @@ return [
     // Section Véhicules Vendus & Livrés
     'proven_track_record' => 'Nos réalisations',
     'recently_sold' => 'Récemment vendus et livrés',
+    'sold_delivered' => 'Vendu & livré',
     'browse_available' => 'Parcourir le stock disponible',
     'unit_miles' => 'mi',
     'view_details' => 'Voir les détails',

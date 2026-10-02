@@ -3,6 +3,7 @@
 return [
     'dashboard' => 'Tableau de bord',
     'admin_fleet' => 'Parc Automobile',
+    'sold_vehicles' => 'Véhicules vendus',
     'test_drives' => 'Essais Routiers',
     'orders' => 'Commandes',
     'vehicle_requests' => 'Demandes de Véhicules',

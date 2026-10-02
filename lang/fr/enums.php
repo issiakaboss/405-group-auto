@@ -89,7 +89,7 @@ return [
         'available'  => 'Disponible (USA)',
         'in_transit' => 'En Transit',
         'reserved'   => 'Réservé',
-        'sold'       => 'Vendu',
+        'unavailable' => 'Non Disponible',
     ],
     'vehicle_type' => [
         'cars_and_trucks' => 'Voitures & Camions',

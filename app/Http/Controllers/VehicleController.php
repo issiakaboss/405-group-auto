@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Vehicle;
 use App\Models\VehicleRequest;
 use App\Models\Testimonial;
+use App\Models\SoldVehicle;
+use App\Models\Enums\VehicleStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,9 +18,11 @@ class VehicleController extends Controller
         $latestVehicles = Vehicle::where('is_featured', false)->orderBy('year', 'desc')->take(3)->get();
         $allVehicles = Vehicle::all();
 
-        $recentlySoldVehicles = Vehicle::whereHas('orders', function ($query) {
-            $query->where('orders.status', \App\Models\Enums\OrderStatus::DELIVERED);
-        })->take(3)->get();
+        $recentlySoldVehicles = SoldVehicle::with('vehicle')
+            ->where('is_visible', true)
+            ->latest('sold_date')
+            ->take(3)
+            ->get();
 
         $brands = Vehicle::select('make')->distinct()->pluck('make');
         $categories = Vehicle::select('vehicle_type')->distinct()->pluck('vehicle_type');
@@ -113,7 +117,13 @@ class VehicleController extends Controller
 
     public function show(Vehicle $vehicle)
     {
-        return view('vehicles.show', compact('vehicle'));
+        $fromSold = request()->query('from') === 'sold';
+        $soldRecord = $fromSold ? $vehicle->soldRecords()->latest('sold_date')->first() : null;
+        $isSold = $fromSold && ($soldRecord !== null || $vehicle->hasBeenSold());
+        $isUnavailable = $vehicle->status === VehicleStatus::UNAVAILABLE;
+        $canInteract = ! $isSold && ! $isUnavailable;
+
+        return view('vehicles.show', compact('vehicle', 'soldRecord', 'isSold', 'isUnavailable', 'canInteract'));
     }
 
     public function search(Request $request)

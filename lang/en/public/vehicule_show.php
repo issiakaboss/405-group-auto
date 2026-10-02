@@ -7,6 +7,8 @@ return [
     'thumbnail' => 'Thumbnail',
     'vehicle' => 'Vehicle',
     'sold' => 'Sold',
+    'sold_delivered_on' => 'Sold and delivered on :date',
+    'sold_legacy_notice' => 'This vehicle has already been sold and delivered.',
     'plus_taxes' => '+ applicable taxes & fees',
     'year' => 'Year',
     'mileage' => 'Mileage',

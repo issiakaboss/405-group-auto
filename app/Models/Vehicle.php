@@ -61,6 +61,11 @@ class Vehicle extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function soldRecords(): HasMany
+    {
+        return $this->hasMany(SoldVehicle::class);
+    }
+
     public function orders(): HasManyThrough
     {
         return $this->hasManyThrough(Order::class, OrderItem::class, 'vehicle_id', 'id', 'id', 'order_id');
@@ -96,6 +101,10 @@ class Vehicle extends Model
             if (empty($vehicle->title)) {
                 $vehicle->title = trim(sprintf('%s %s %s', $vehicle->make, $vehicle->model, $vehicle->trim ?: ''));
             }
+        });
+
+        static::deleting(function (Vehicle $vehicle): void {
+            $vehicle->soldRecords->each->delete();
         });
     }
 

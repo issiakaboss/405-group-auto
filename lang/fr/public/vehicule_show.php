@@ -7,6 +7,8 @@ return [
     'thumbnail' => 'Miniature',
     'vehicle' => 'Véhicule',
     'sold' => 'Vendu',
+    'sold_delivered_on' => 'Vendu et livré le :date',
+    'sold_legacy_notice' => 'Ce véhicule a déjà été vendu et livré.',
     'plus_taxes' => '+ taxes et frais applicables',
     'year' => 'Année',
     'mileage' => 'Kilométrage',

@@ -29,6 +29,11 @@
                     ⚙️ {{ __('admin/navigation.admin_fleet') }}
                 </a>
 
+                <a href="{{ route('admin.sold-vehicles.index') }}"
+                    class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('admin.sold-vehicles.*') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800' }}">
+                    ✓ {{ __('admin/navigation.sold_vehicles') }}
+                </a>
+
                 <a href="{{ route('admin.test-drives.index') }}"
                     class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {{ request()->routeIs('admin.test-drives.*') ? 'bg-amber-500 text-slate-950 shadow-sm font-bold' : 'text-amber-400 hover:text-amber-300 hover:bg-slate-800' }}">
                     🏎️ {{ __('admin/navigation.test_drives') }}
@@ -53,7 +58,7 @@
 
             <!-- 3. DROITE : SELECTEUR DE LANGUE & PROFIL USER -->
             <div class="hidden sm:flex items-center space-x-3 shrink-0">
-                
+
                 <!-- SELECTEUR DE LANGUE (DESKTOP) -->
                 <x-dropdown align="right" width="36">
                     <x-slot name="trigger">
@@ -137,6 +142,9 @@
             @role('admin')
             <a href="{{ route('admin.vehicles.index') }}" class="block px-3 py-2 rounded-md text-sm font-semibold {{ request()->routeIs('admin.vehicles.*') ? 'bg-amber-500 text-slate-950 font-bold' : 'text-amber-400 hover:bg-slate-800' }}">
                 ⚙️ {{ __('admin/navigation.admin_fleet') }}
+            </a>
+            <a href="{{ route('admin.sold-vehicles.index') }}" class="block px-3 py-2 rounded-md text-sm font-semibold {{ request()->routeIs('admin.sold-vehicles.*') ? 'bg-amber-500 text-slate-950 font-bold' : 'text-amber-400 hover:bg-slate-800' }}">
+                ✓ {{ __('admin/navigation.sold_vehicles') }}
             </a>
             <a href="{{ route('admin.test-drives.index') }}" class="block px-3 py-2 rounded-md text-sm font-semibold {{ request()->routeIs('admin.test-drives.*') ? 'bg-amber-500 text-slate-950 font-bold' : 'text-amber-400 hover:bg-slate-800' }}">
                 🏎️ {{ __('admin/navigation.test_drives') }}
