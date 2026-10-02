@@ -7,9 +7,9 @@ export default defineConfig({
         port: 5173,
         strictPort: true,
         cors: true,
-        origin: 'http://192.168.11.109:5173',
+        origin: 'http://192.168.1.68:5173',
         hmr: {
-            host: process.env.VITE_DEV_HOST || '192.168.11.109',
+            host: process.env.VITE_DEV_HOST || '192.168.1.68',
             port: 5173,
         },
     },

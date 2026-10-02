@@ -3,6 +3,7 @@
 return [
     'dashboard' => 'Dashboard',
     'admin_fleet' => 'Admin Fleet',
+    'sold_vehicles' => 'Sold Vehicles',
     'test_drives' => 'Test Drives',
     'orders' => 'Orders',
     'vehicle_requests' => 'Vehicle Requests',

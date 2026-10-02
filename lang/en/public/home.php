@@ -35,6 +35,7 @@ return [
     // Recently Sold & Delivered Section
     'proven_track_record' => 'Proven Track Record',
     'recently_sold' => 'Recently Sold & Delivered',
+    'sold_delivered' => 'Sold & Delivered',
     'browse_available' => 'Browse Available Inventory',
     'unit_miles' => 'mi',
     'view_details' => 'View Details',

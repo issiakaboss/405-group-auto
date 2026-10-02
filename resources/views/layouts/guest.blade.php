@@ -310,8 +310,8 @@
             <div class="mt-8 pt-4 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-4">
                 <p>&copy; {{ date('Y') }} 405 Auto Group LLC. {{ __('public/guest.footer_rights') }}</p>
                 <div class="flex items-center space-x-6">
-                    <a href="#" class="hover:text-slate-400 transition">{{ __('public/guest.footer_privacy') }}</a>
-                    <a href="#" class="hover:text-slate-400 transition">{{ __('public/guest.footer_terms') }}</a>
+                    <a href="{{ route('privacy') }}" class="hover:text-slate-400 transition">{{ __('public/guest.footer_privacy') }}</a>
+                    <a href="{{ route('terms') }}" class="hover:text-slate-400 transition">{{ __('public/guest.footer_terms') }}</a>
                 </div>
             </div>
         </div>
