@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\VehicleRequestController as AdminVehicleRequestController;
 use App\Http\Controllers\Admin\TestDriveController as AdminTestDriveController;
+use App\Http\Controllers\Admin\SoldVehicleController as AdminSoldVehicleController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\VehicleRequestController;
 use App\Http\Controllers\CheckoutController;
@@ -47,6 +48,8 @@ Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.
 Route::post('/favorites/toggle/{vehicle}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
 Route::view('/about', 'pages.about-contact')->name('about');
+Route::view('/privacy', 'public.privacy')->name('privacy');
+Route::view('/terms', 'public.terms')->name('terms');
 Route::post('/about/contact', [ContactController::class, 'send'])->name('about.contact');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -73,6 +76,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/sold-vehicles/{soldVehicle}/invoice', [AdminSoldVehicleController::class, 'downloadInvoice'])->name('sold-vehicles.invoice');
+    Route::resource('sold-vehicles', AdminSoldVehicleController::class)->names('sold-vehicles')->except(['show']);
+
     Route::get('/vehicles', [AdminVehicleController::class, 'index'])->name('vehicles.index');
     Route::get('/vehicles/create', [AdminVehicleController::class, 'create'])->name('vehicles.create');
     Route::post('/vehicles', [AdminVehicleController::class, 'store'])->name('vehicles.store');

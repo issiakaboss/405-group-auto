@@ -139,13 +139,13 @@
         </div>
 
         <!-- GRILLE DE VÉHICULES -->
-        <div id="vehicles-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 relative min-h-[200px]">
+        <div id="vehicles-grid" class="animate-fade-in grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 relative min-h-[200px]">
             @include('vehicles.partials.list', ['vehicles' => $allVehicles])
         </div>
 
         <!-- SECTION HISTORIQUE DES VENTES & LIVRAISONS -->
         @if(isset($recentlySoldVehicles) && $recentlySoldVehicles->isNotEmpty())
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-t border-gray-100 pt-12">
+        <div class="animate-fade-in flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-t border-gray-100 pt-12">
             <div>
                 <span class="text-xs font-bold uppercase tracking-widest text-amber-600 mb-1 block">{{ __('public/home.proven_track_record') }}</span>
                 <h3 class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ __('public/home.recently_sold') }}</h3>
@@ -158,27 +158,25 @@
             </a>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-            @foreach($recentlySoldVehicles as $vehicle)
+        <div class="animate-fade-in grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+            @foreach($recentlySoldVehicles as $soldRecord)
             @php
-            $statusEnum = $vehicle->status instanceof \App\Models\Enums\VehicleStatus
-            ? $vehicle->status
-            : \App\Models\Enums\VehicleStatus::tryFrom($vehicle->status);
+            $vehicle = $soldRecord->vehicle;
             $locationLabel = $vehicle->location instanceof \App\Models\Enums\VehicleLocation
             ? $vehicle->location->label()
             : (\App\Models\Enums\VehicleLocation::tryFrom($vehicle->location)?->label() ?? __('enums.location.usa_warehouse'));
             @endphp
-            <div class="bg-white rounded-3xl border border-gray-200/80 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
+            <div class="bg-white rounded-3xl border border-gray-200/80 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl overflow-hidden group">
                 <div class="relative h-52 bg-gray-100 overflow-hidden">
                     <img src="{{ !empty($vehicle->images) ? $vehicle->images[0] : 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80' }}"
                         alt="{{ $vehicle->title }}"
-                        class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105">
 
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
 
                     <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
                         <span class="bg-red-600 text-white text-[10px] uppercase font-extrabold px-2.5 py-1 rounded-md shadow-md tracking-wider">
-                            {{ __('enums.status.sold_delivered') }}
+                            {{ __('public/home.sold_delivered') }}
                         </span>
                     </div>
 
@@ -198,14 +196,16 @@
                         <span class="text-slate-700 font-bold">{{ $locationLabel }}</span>
                     </div>
 
+                    <p class="text-xs text-gray-500 mb-4">{{ __('public/home.recently_sold') }} · {{ $soldRecord->sold_date->translatedFormat('d F Y') }}</p>
+
                     <div class="grid grid-cols-2 gap-2 pt-2 border-t border-gray-100">
-                        <a href="{{ route('vehicles.show', $vehicle->id) }}"
-                            class="py-2.5 px-3 border border-gray-200 text-center text-gray-700 font-bold text-xs rounded-xl hover:bg-gray-50 transition">
+                        <a href="{{ route('vehicles.show', ['vehicle' => $vehicle->id, 'from' => 'sold']) }}"
+                            class="py-2 px-2 border border-gray-200 text-center text-gray-700 font-bold text-[11px] rounded-xl transition-all duration-200 hover:bg-gray-50 hover:opacity-95 active:scale-95">
                             {{ __('public/home.view_details') }}
                         </a>
-                        <a href="{{ route('vehicles.show', ['vehicle' => $vehicle->id, 'action' => 'order_similar']) }}"
-                            class="py-2.5 px-3 bg-amber-500 text-white text-center font-bold text-xs rounded-xl hover:bg-amber-600 transition shadow-sm">
-                            {{ __('public/home.reserve_similar') }}
+                        <a href="#catalog"
+                            class="py-2 px-2 bg-amber-500 text-white text-center font-bold text-[11px] rounded-xl transition-all duration-200 hover:bg-amber-600 hover:opacity-95 active:scale-95 shadow-sm">
+                            {{ __('public/home.browse_available') }}
                         </a>
                     </div>
                 </div>
@@ -214,43 +214,61 @@
         </div>
         @endif
 
-        <!-- TÉMOIGNAGES CLIENTS -->
+        <!-- TÉMOIGNAGES CLIENTS (Style Google Reviews) -->
         <section id="testimonials" class="mb-24 border-t border-gray-100 pt-12">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-8">
                 <div class="max-w-2xl">
-                    <span class="text-xs font-bold uppercase tracking-widest text-primary">{{ __('public/home.testimonials_badge') }}</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-amber-500">{{ __('public/home.testimonials_badge') }}</span>
                     <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mt-2">{{ __('public/home.testimonials_title') }}</h2>
                     <p class="text-gray-500 mt-3 leading-relaxed">{{ __('public/home.testimonials_subtitle') }}</p>
                 </div>
                 @if($testimonials->isNotEmpty())
                 <div class="flex gap-2 shrink-0">
-                    <button type="button" id="testimonials-prev" class="w-10 h-10 rounded-full border border-gray-200 text-gray-700 hover:bg-slate-900 hover:text-white transition" aria-label="{{ __('public/home.previous_testimonial') }}">&#8592;</button>
-                    <button type="button" id="testimonials-next" class="w-10 h-10 rounded-full border border-gray-200 text-gray-700 hover:bg-slate-900 hover:text-white transition" aria-label="{{ __('public/home.next_testimonial') }}">&#8594;</button>
+                    <button type="button" id="testimonials-prev" class="w-10 h-10 rounded-full border border-gray-200 text-gray-700 hover:bg-slate-900 hover:text-white transition flex items-center justify-center" aria-label="{{ __('public/home.previous_testimonial') }}">&#8592;</button>
+                    <button type="button" id="testimonials-next" class="w-10 h-10 rounded-full border border-gray-200 text-gray-700 hover:bg-slate-900 hover:text-white transition flex items-center justify-center" aria-label="{{ __('public/home.next_testimonial') }}">&#8594;</button>
                 </div>
                 @endif
             </div>
 
             @if($testimonials->isNotEmpty())
-            {{-- MODIFICATION ICI : Ajout de items-stretch pour que toutes les cartes aient la même hauteur sur une ligne --}}
-            <div id="testimonials-slider" class="testimonials-scrollbar-hidden flex items-stretch gap-6 overflow-x-auto snap-x snap-mandatory pb-5 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
+            <!-- Remplacez la ligne du slider par celle-ci (items-start au lieu de items-stretch) -->
+            <div id="testimonials-slider" class="testimonials-scrollbar-hidden flex items-start gap-6 overflow-x-auto snap-x snap-mandatory pb-5 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
                 @foreach($testimonials as $testimonial)
-                {{-- MODIFICATION ICI : Suppression de h-72, ajout de h-full pour s'adapter au contenu --}}
-                <article class="min-w-[min(88vw,360px)] md:min-w-0 md:flex-[0_0_calc((100%_-_3rem)/3)] h-full flex flex-col snap-start bg-white rounded-2xl border border-gray-200/80 p-6 shadow-md hover:shadow-xl transition-shadow duration-300">
-                    {{-- MODIFICATION ICI : Réduction du margin-bottom de 5 à 4 --}}
-                    <div class="flex gap-1 text-primary mb-4" aria-label="5 {{ __('public/home.stars') }}">
-                        @for($star = 1; $star <= 5; $star++)
-                            <svg class="w-4 h-4 {{ $star <= $testimonial->rating ? 'fill-current' : 'fill-none' }}" viewBox="0 0 20 20" aria-hidden="true">
-                            <path d="m10 1.5 2.63 5.33 5.88.85-4.25 4.14 1 5.85L10 14.91l-5.26 2.76 1-5.85L1.5 7.68l5.88-.85L10 1.5Z" />
-                            </svg>
-                            @endfor
+                @php
+                $initial = mb_strtoupper(mb_substr($testimonial->user->name ?? 'A', 0, 1));
+                $bgColors = ['bg-slate-600', 'bg-blue-600', 'bg-emerald-600', 'bg-indigo-600', 'bg-purple-600', 'bg-amber-600'];
+                $avatarBg = $bgColors[ord($initial) % count($bgColors)];
+                @endphp
+                <article class="min-w-[min(88vw,360px)] md:min-w-0 md:flex-[0_0_calc((100%_-_3rem)/3)] h-[210px] flex flex-col justify-between snap-start bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div>
+                        <!-- En-tête : Avatar + Nom + Étoiles -->
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-full {{ $avatarBg }} text-white font-bold text-base flex items-center justify-center shrink-0 shadow-sm">
+                                {{ $initial }}
+                            </div>
+
+                            <div class="overflow-hidden">
+                                <h4 class="font-bold text-gray-900 text-sm truncate">{{ $testimonial->user->name }}</h4>
+                                <div class="flex gap-0.5 text-amber-400 mt-0.5" aria-label="{{ $testimonial->rating }} {{ __('public/home.stars') }}">
+                                    @for($star = 1; $star <= 5; $star++)
+                                        <svg class="w-3.5 h-3.5 {{ $star <= $testimonial->rating ? 'fill-current' : 'text-gray-200 fill-current' }}" viewBox="0 0 20 20" aria-hidden="true">
+                                        <path d="m10 1.5 2.63 5.33 5.88.85-4.25 4.14 1 5.85L10 14.91l-5.26 2.76 1-5.85L1.5 7.68l5.88-.85L10 1.5Z" />
+                                        </svg>
+                                        @endfor
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Commentaire tronqué à 3 lignes avec survol natif -->
+                        <p title="{{ $testimonial->comment }}" class="text-gray-600 leading-snug text-xs md:text-sm line-clamp-3 cursor-help">
+                            "{{ $testimonial->comment }}"
+                        </p>
                     </div>
-                    {{-- MODIFICATION ICI : Suppression des classes de scroll overflow-y-auto, pr-2 --}}
-                    <blockquote class="flex-1 min-h-0 text-gray-700 leading-relaxed text-sm italic">"{{ $testimonial->comment }}"</blockquote>
-                    {{-- MODIFICATION ICI : Réduction du margin-top et padding-top --}}
-                    <footer class="mt-5 pt-3 border-t border-gray-100">
-                        <p class="font-bold text-gray-900">{{ $testimonial->user->name }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ $testimonial->created_at->translatedFormat('F Y') }}</p>
-                    </footer>
+
+                    <!-- Date en bas de carte -->
+                    <div class="pt-2 border-t border-gray-100 text-[11px] text-gray-400">
+                        {{ $testimonial->created_at->translatedFormat('F Y') }}
+                    </div>
                 </article>
                 @endforeach
             </div>
@@ -258,7 +276,7 @@
             <div class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-gray-500">{{ __('public/home.testimonials_empty') }}</div>
             @endif
 
-            {{-- FORMULAIRE --}}
+            <!-- Formulaire d'avis / Bouton Login -->
             <div class="mt-8 rounded-2xl bg-slate-900 border border-slate-800 p-6 md:p-8 text-white">
                 @auth
                 <h3 class="text-xl font-bold mb-1">{{ __('public/home.testimonial_form_title') }}</h3>
@@ -271,7 +289,7 @@
                             @for($rating = 1; $rating <= 5; $rating++)
                                 <label class="cursor-pointer text-3xl leading-none transition-transform hover:scale-110">
                                 <input type="radio" name="rating" value="{{ $rating }}" class="sr-only" {{ old('rating', 5) == $rating ? 'checked' : '' }} required>
-                                <span data-rating-star="{{ $rating }}" class="text-slate-500 transition-colors" aria-hidden="true">&#9733;</span>
+                                <span data-rating-star="{{ $rating }}" class="text-amber-400 transition-colors" aria-hidden="true">&#9733;</span>
                                 <span class="sr-only">{{ $rating }} {{ __('public/home.stars') }}</span>
                                 </label>
                                 @endfor
@@ -280,15 +298,15 @@
                     </div>
                     <div>
                         <label for="testimonial-comment" class="block text-xs font-semibold text-gray-300 mb-2">{{ __('public/home.testimonial_comment') }}</label>
-                        <textarea id="testimonial-comment" name="comment" rows="3" required minlength="10" maxlength="1000" placeholder="{{ __('public/home.testimonial_placeholder') }}" class="w-full rounded-xl bg-slate-900 border-slate-700 text-white placeholder-gray-500 text-sm focus:border-primary focus:ring-primary"></textarea>
+                        <textarea id="testimonial-comment" name="comment" rows="3" required minlength="10" maxlength="1000" placeholder="{{ __('public/home.testimonial_placeholder') }}" class="w-full rounded-xl bg-slate-900 border-slate-700 text-white placeholder-gray-500 text-sm focus:border-amber-400 focus:ring-amber-400"></textarea>
                         @error('comment')<p class="text-xs text-red-400 mt-1">{{ $message }}</p>@enderror
                     </div>
-                    <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-xs font-extrabold uppercase tracking-wider text-white hover:bg-primary-hover transition">{{ __('public/home.submit_testimonial') }}</button>
+                    <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-amber-500 px-5 py-3 text-xs font-extrabold uppercase tracking-wider text-slate-950 hover:bg-amber-400 transition shadow-lg shadow-amber-500/20">{{ __('public/home.submit_testimonial') }}</button>
                 </form>
                 @else
                 <h3 class="text-xl font-bold mb-2">{{ __('public/home.testimonial_login_title') }}</h3>
                 <p class="text-sm text-gray-400 mb-5">{{ __('public/home.testimonial_login_subtitle') }}</p>
-                <a href="{{ route('login', ['redirect' => url()->current() . '#testimonials']) }}" class="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-xs font-extrabold uppercase tracking-wider text-white hover:bg-primary-hover transition">{{ __('public/home.testimonial_login') }}</a>
+                <a href="{{ route('login', ['redirect' => url()->current() . '#testimonials']) }}" class="inline-flex items-center justify-center rounded-xl bg-amber-500 px-6 py-3.5 text-xs font-extrabold uppercase tracking-wider text-slate-950 hover:bg-amber-400 transition shadow-lg shadow-amber-500/20">{{ __('public/home.testimonial_login') }}</a>
                 @endauth
             </div>
         </section>

@@ -13,14 +13,14 @@ $transLabel = $vehicle->transmission instanceof \BackedEnum ? $vehicle->transmis
 $bodyStyleLabel = $vehicle->body_style instanceof \BackedEnum ? $vehicle->body_style->value : $vehicle->body_style;
 @endphp
 
-<div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group">
+<div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl overflow-hidden flex flex-col justify-between group">
     <div>
         {{-- VISUEL & BADGES DE CONFIANCE --}}
         <div class="relative h-48 bg-gray-100 overflow-hidden">
             <a href="{{ route('vehicles.show', $vehicle->id) }}" class="block w-full h-full" aria-label="{{ __('public/vehicule_show.details') }}: {{ $vehicle->title }}">
                 <img src="{{ is_array($vehicle->images) && count($vehicle->images) > 0 ? $vehicle->images[0] : 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=400' }}"
                     alt="{{ $vehicle->title }}"
-                    class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105">
             </a>
 
             {{-- Overlay Dégradé pour lisibilité --}}
@@ -53,7 +53,7 @@ $bodyStyleLabel = $vehicle->body_style instanceof \BackedEnum ? $vehicle->body_s
             {{-- Bouton Favoris --}}
             <form action="{{ route('favorites.toggle', $vehicle->id) }}" method="POST" class="absolute top-3 right-3 z-20">
                 @csrf
-                <button type="submit" class="p-2 rounded-full bg-slate-900/40 backdrop-blur-md text-white hover:text-rose-500 hover:bg-white transition-all shadow-md">
+                <button type="submit" class="p-2 rounded-full bg-slate-900/40 backdrop-blur-md text-white hover:text-rose-500 hover:bg-white transition-all duration-200 hover:opacity-95 active:scale-95 shadow-md">
                     <svg class="h-4 w-4 {{ isset(session()->get('favorites', [])[$vehicle->id]) ? 'fill-rose-500 text-rose-500' : 'fill-none stroke-current' }}" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                     </svg>
@@ -137,20 +137,24 @@ $bodyStyleLabel = $vehicle->body_style instanceof \BackedEnum ? $vehicle->body_s
     {{-- BOUTONS D'ACTION --}}
     <div class="p-4 pt-0 grid grid-cols-2 gap-2">
         <a href="{{ route('vehicles.show', $vehicle->id) }}"
-            class="w-full text-center py-2.5 px-2 text-xs font-bold text-slate-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
+            class="w-full text-center py-2.5 px-2 text-xs font-bold text-slate-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all duration-200 hover:opacity-95 active:scale-95">
             {{ __('public/vehicule_show.details') }}
         </a>
 
-        @if($vehicle->hasBeenSold() || $vehicle->isCurrentlyReserved())
+        @if($statusEnum === \App\Models\Enums\VehicleStatus::UNAVAILABLE)
+        <span aria-disabled="true" class="w-full text-center py-2.5 px-2 text-xs font-bold text-gray-500 bg-gray-100 rounded-xl cursor-not-allowed">
+            {{ $statusEnum->label() }}
+        </span>
+        @elseif($vehicle->hasBeenSold() || $vehicle->isCurrentlyReserved())
         <a href="{{ route('vehicles.show', ['vehicle' => $vehicle->id, 'action' => 'order_similar']) }}"
-            class="w-full text-center py-2.5 px-2 text-xs font-bold text-slate-900 bg-amber-400 hover:bg-amber-500 rounded-xl transition shadow-sm">
+            class="w-full text-center py-2.5 px-2 text-xs font-bold text-slate-900 bg-amber-400 hover:bg-amber-500 rounded-xl transition-all duration-200 hover:opacity-95 active:scale-95 shadow-sm">
             {{ __('public/vehicule_show.reserve_similar') }}
         </a>
         @else
         <form action="{{ route('cart.add', $vehicle->id) }}" method="POST" class="w-full">
             @csrf
             <button type="submit"
-                class="w-full text-center py-2.5 px-2 text-xs font-bold text-white bg-slate-950 hover:bg-slate-800 rounded-xl transition shadow-sm">
+                class="w-full text-center py-2.5 px-2 text-xs font-bold text-white bg-slate-950 hover:bg-slate-800 rounded-xl transition-all duration-200 hover:opacity-95 active:scale-95 shadow-sm">
                 {{ __('public/vehicule_show.reserve') }}
             </button>
         </form>

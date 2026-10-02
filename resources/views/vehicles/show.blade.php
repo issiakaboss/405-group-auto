@@ -82,8 +82,8 @@
                             {{ $vehicle->vehicle_type?->label() ?? $vehicle->vehicle_type?->value ?? $vehicle->vehicle_type ?? $vehicle->category ?? __('public/vehicule_show.vehicle') }}
                         </span>
 
-                        @if($vehicle->hasBeenSold())
-                        <span class="bg-rose-100 text-rose-800 text-[11px] uppercase font-bold px-3 py-1 rounded-md border border-rose-200">{{ __('public/vehicule_show.sold') }}</span>
+                        @if($isSold)
+                        <span class="bg-rose-100 text-rose-800 text-[11px] uppercase font-bold px-3 py-1 rounded-md border border-rose-200">{{ __('public/home.sold_delivered') }}</span>
                         @elseif($statusEnum)
                         <span class="{{ $statusEnum->badgeColor() }} text-[11px] uppercase font-bold px-3 py-1 rounded-md shadow-sm">
                             {{ $statusEnum->label() }}
@@ -97,6 +97,16 @@
                         <span class="text-xs text-slate-600 font-medium">{{ __('public/vehicule_show.plus_taxes') }}</span>
                     </div>
                 </div>
+
+                @if($isSold)
+                <div class="p-4 bg-rose-50 border border-rose-100 rounded-xl">
+                    @if($soldRecord)
+                    <p class="text-sm font-bold text-rose-900">{{ __('public/vehicule_show.sold_delivered_on', ['date' => $soldRecord->sold_date->translatedFormat('d F Y')]) }}</p>
+                    @else
+                    <p class="text-sm font-bold text-rose-900">{{ __('public/vehicule_show.sold_legacy_notice') }}</p>
+                    @endif
+                </div>
+                @endif
 
                 <!-- Grille des caractéristiques clés -->
                 <div class="grid grid-cols-2 gap-3">
@@ -132,6 +142,7 @@
                     </div>
                 </div>
 
+                @if($canInteract)
                 <!-- 1. ACTIONS PRINCIPALES (PANIER & FAVORIS) -->
                 <div class="space-y-3 mb-6">
                     <div class="flex gap-3">
@@ -193,6 +204,7 @@
                         {{ __('public/vehicule_show.book_appointment') }}
                     </button>
                 </div>
+                @endif
 
                 <!-- DÉTAILS COMPLÉMENTAIRES -->
                 <div class="border-t border-slate-200 pt-5 space-y-4">
@@ -286,6 +298,7 @@
             </div>
         </div>
 
+        @if($canInteract)
         <!-- MODAL SCHEDULE TEST DRIVE / SHOWROOM VISIT -->
         <div x-show="testDriveModal"
             class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
@@ -302,7 +315,7 @@
                     <h3 class="font-bold text-gray-900 text-base">{{ __('public/vehicule_show.schedule_test_drive') }}</h3>
                     <button type="button" @click="testDriveModal = false" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
                 </div>
-                
+
                 <p class="text-xs text-gray-500 leading-relaxed">
                     {{ __('public/vehicule_show.book_private_slot') }} <span class="font-bold text-gray-900" x-text="selectedVehicleTitle"></span>.
                 </p>
@@ -336,6 +349,7 @@
                 </form>
             </div>
         </div>
+        @endif
 
     </div>
 </x-guest-layout>

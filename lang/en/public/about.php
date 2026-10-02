@@ -3,7 +3,11 @@
 return [
     'hero_badge' => 'Luxury Automotive Partner',
     'hero_title' => 'Welcome to 405 Auto Group',
-    'hero_description' => 'your trusted source for quality used, affordable, and luxury vehicles. We help customers find the right vehicle at the right price through our extensive network of dealers and auctions. Whether you\'re buying for personal use or business, we make the process simple and transparent. We also provide vehicle sourcing and export services for customers around the world. At 405 Auto Group, your satisfaction drives everything we do.',
+    'hero_description' => 'your trusted source for quality used, affordable, and luxury vehicles. We help customers find the right vehicle at the right price through our network of trusted dealers. Whether you\'re buying for personal use or business, we make the process simple and transparent. We also coordinate vehicle sourcing, shipping, and export for customers around the world. At 405 Auto Group, your satisfaction drives everything we do.',
+    'stat_vehicles_delivered' => 'Vehicles delivered',
+    'stat_secure_titles' => 'Secure titles',
+    'stat_customer_support' => 'Customer support',
+    'stat_us_dealer_network' => 'US dealer network',
     'get_in_touch' => 'Get in Touch',
     'about_contact_title' => 'About & Contact',
     'address_label' => 'Address',
@@ -32,6 +36,6 @@ return [
     'feature_2_desc' => 'Full tracking from US ports straight to your local destination.',
     'feature_3_title' => 'Expert Support',
     'feature_3_desc' => '24/7 dedicated support team covering two continents.',
-    'feature_4_title' => 'Transatlantic Deals',
-    'feature_4_desc' => 'Direct auction access in the USA with optimized localized pricing.',
+    'feature_4_title' => 'International network',
+    'feature_4_desc' => 'We connect customers with trusted US dealers and coordinate vehicle sourcing, shipping, and export.',
 ];

@@ -3,7 +3,11 @@
 return [
     'hero_badge' => 'Partenaire Automobile de Luxe',
     'hero_title' => 'Bienvenue chez 405 Auto Group',
-    'hero_description' => 'votre source de confiance pour des véhicules d\'occasion de qualité, abordables et de luxe. Nous aidons les clients à trouver le bon véhicule au bon prix grâce à notre vaste réseau de concessionnaires et d\'enchères. Que vous achetiez pour un usage personnel ou professionnel, nous rendons le processus simple et transparent. Nous fournissons également des services d\'approvisionnement et d\'exportation de véhicules pour les clients du monde entier. Chez 405 Auto Group, votre satisfaction est au cœur de tout ce que nous faisons.',
+    'hero_description' => 'votre source de confiance pour des véhicules d\'occasion de qualité, abordables et de luxe. Nous aidons nos clients à trouver le bon véhicule au bon prix grâce à notre réseau de concessionnaires de confiance. Que vous achetiez pour un usage personnel ou professionnel, nous rendons le processus simple et transparent. Nous proposons également des services d\'approvisionnement, de transport et d\'exportation de véhicules partout dans le monde. Chez 405 Auto Group, votre satisfaction est au cœur de tout ce que nous faisons.',
+    'stat_vehicles_delivered' => 'Véhicules livrés',
+    'stat_secure_titles' => 'Titres sécurisés',
+    'stat_customer_support' => 'Assistance client',
+    'stat_us_dealer_network' => 'Réseau de concessionnaires aux États-Unis',
     'get_in_touch' => 'Contactez-nous',
     'about_contact_title' => 'À Propos & Contact',
     'address_label' => 'Adresse',
@@ -32,6 +36,6 @@ return [
     'feature_2_desc' => 'Suivi complet depuis les ports américains jusqu\'à votre destination finale.',
     'feature_3_title' => 'Assistance d\'Experts',
     'feature_3_desc' => 'Une équipe dédiée disponible 24/7 pour couvrir les deux continents.',
-    'feature_4_title' => 'Offres Transatlantiques',
-    'feature_4_desc' => 'Accès direct aux enchères américaines avec une optimisation des prix régionaux.',
+    'feature_4_title' => 'Réseau international',
+    'feature_4_desc' => 'Nous vous mettons en relation avec des concessionnaires américains de confiance et coordonnons l’approvisionnement, le transport et l’exportation.',
 ];
